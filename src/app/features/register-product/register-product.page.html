@@ -1,0 +1,142 @@
+<div class="register-product-page">
+  <div class="register-container">
+    <div class="register-card">
+      <div class="register-header">
+        <h1>Registrar Nuevo Producto</h1>
+        <p>Agregar un nuevo producto al catálogo de AgroMarket</p>
+      </div>
+      
+      <form (ngSubmit)="onSubmit()" class="register-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="name">Nombre *</label>
+            <input
+              type="text"
+              id="name"
+              [(ngModel)]="productData.name"
+              name="name"
+              class="form-input"
+              placeholder="Ingrese el nombre del producto"
+              required
+            >
+          </div>
+          
+          <div class="form-group">
+            <label for="brand">Marca *</label>
+            <input
+              type="text"
+              id="brand"
+              [(ngModel)]="productData.brand"
+              name="brand"
+              class="form-input"
+              placeholder="Ingrese la marca"
+              required
+            >
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="category">Categoría *</label>
+            <select
+              id="category"
+              [(ngModel)]="productData.category"
+              name="category"
+              class="form-input"
+              required
+            >
+              <option value="">Seleccione una categoría</option>
+              <option *ngFor="let category of categories" [value]="category">
+                {{ category }}
+              </option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="price">Precio (COP) *</label>
+            <input
+              type="number"
+              id="price"
+              [(ngModel)]="productData.price"
+              name="price"
+              class="form-input"
+              placeholder="0"
+              min="0"
+              required
+            >
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="discountPercent">Porcentaje de Descuento</label>
+            <input
+              type="number"
+              id="discountPercent"
+              [(ngModel)]="productData.discountPercent"
+              name="discountPercent"
+              class="form-input"
+              placeholder="0"
+              min="0"
+              max="100"
+            >
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="imageUrl">URL de la Imagen *</label>
+          <input
+            type="url"
+            id="imageUrl"
+            [(ngModel)]="productData.imageUrl"
+            name="imageUrl"
+            class="form-input"
+            placeholder="https://ejemplo.com/imagen-producto.jpg"
+            required
+          >
+        </div>
+        
+        <div class="form-group">
+          <label for="description">Descripción *</label>
+          <textarea
+            id="description"
+            [(ngModel)]="productData.description"
+            name="description"
+            class="form-textarea"
+            placeholder="Ingrese la descripción del producto"
+            rows="4"
+            required
+          ></textarea>
+        </div>
+        
+        <div class="form-actions">
+          <button 
+            type="button" 
+            class="secondary-button"
+            (click)="resetForm()"
+            [disabled]="isSubmitting"
+          >
+            Limpiar
+          </button>
+          <button 
+            type="submit" 
+            class="primary-button"
+            [disabled]="!isFormValid() || isSubmitting"
+          >
+            <span *ngIf="!isSubmitting">Registrar Producto</span>
+            <span *ngIf="isSubmitting">Registrando...</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+  <app-confirm-dialog
+    [isVisible]="showSuccessDialog"
+    title="Éxito"
+    message="Producto registrado exitosamente"
+    confirmText="OK"
+    (confirmed)="onSuccessConfirm()"
+    (closed)="onSuccessConfirm()"
+  ></app-confirm-dialog>
+</div>

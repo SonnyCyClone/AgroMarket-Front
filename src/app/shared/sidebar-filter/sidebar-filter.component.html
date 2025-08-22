@@ -1,0 +1,48 @@
+<div class="sidebar-filter">
+  <div class="filter-header">
+    <h3>Filtros</h3>
+    <button class="clear-button" (click)="clearFilters()">Limpiar Todo</button>
+  </div>
+
+  <div class="filter-group">
+    <h4>Categoría</h4>
+    <div class="filter-options">
+      <div 
+        *ngFor="let category of categories" 
+        class="filter-option"
+        [class.selected]="selectedCategory === category"
+        (click)="onCategoryChange(category)"
+      >
+        {{ category }}
+      </div>
+    </div>
+  </div>
+
+  <div class="filter-group">
+    <h4>Marca</h4>
+    <div class="filter-options">
+      <div 
+        *ngFor="let brand of brands" 
+        class="filter-option"
+        [class.selected]="selectedBrand === brand"
+        (click)="onBrandChange(brand)"
+      >
+        {{ brand }}
+      </div>
+    </div>
+  </div>
+
+  <div class="filter-group">
+    <h4>Rango de Precio</h4>
+    <div class="filter-options">
+      <div 
+        *ngFor="let priceRange of priceRanges" 
+        class="filter-option"
+        [class.selected]="selectedPriceRange === priceRange"
+        (click)="onPriceRangeChange(priceRange)"
+      >
+        {{ priceRange }}
+      </div>
+    </div>
+  </div>
+</div>

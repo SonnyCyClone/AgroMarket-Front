@@ -1,0 +1,37 @@
+<div class="product-card">
+  <div class="product-image-container">
+    <img 
+      *ngIf="!imageError"
+      [src]="product.imageUrl" 
+      [alt]="product.name"
+      class="product-image"
+      (error)="onImageError($event)"
+    >
+    <div *ngIf="imageError" class="placeholder-image">
+      <span>Imagen no disponible</span>
+    </div>
+    <div *ngIf="hasDiscount" class="discount-badge">
+      -{{ product.discountPercent }}%
+    </div>
+  </div>
+  
+  <div class="product-info">
+    <h3 class="product-name">{{ product.name }}</h3>
+    <p class="product-brand">{{ product.brand }}</p>
+    <p class="product-category">{{ product.category }}</p>
+    
+    <div class="price-section">
+      <div *ngIf="hasDiscount" class="price-container">
+        <span class="current-price">{{ formatPrice(discountedPrice) }}</span>
+        <span class="original-price">{{ formatPrice(product.price) }}</span>
+      </div>
+      <div *ngIf="!hasDiscount" class="price-container">
+        <span class="current-price">{{ formatPrice(product.price) }}</span>
+      </div>
+    </div>
+    
+    <button class="add-to-cart-button">
+      Agregar al Carrito
+    </button>
+  </div>
+</div>

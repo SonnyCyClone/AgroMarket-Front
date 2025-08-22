@@ -1,59 +1,176 @@
-# AgroMarketFront
+# AgroMarket
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.2.0.
+AgroMarket es una aplicación moderna de marketplace agrícola construida con Angular 20+ utilizando componentes standalone. La aplicación imita el diseño de listado de productos de Miravia con un diseño responsivo que incluye navegación en el header, barra lateral de filtros, grilla de productos y footer.
 
-## Development server
+## Características
 
-To start a local development server, run:
+- 🌱 **Marketplace Agrícola**: Especializado en equipos y suministros agrícolas
+- 🛍️ **Catálogo de Productos**: Navegar y ver productos agrícolas con información detallada
+- 🔍 **Búsqueda y Filtros**: Buscar productos y filtrar por categoría, marca y rango de precio
+- 👤 **Autenticación Simulada**: Sistema de login simple con almacenamiento de token en localStorage
+- ➕ **Registro de Productos**: Agregar nuevos productos al marketplace (requiere login)
+- 📱 **Diseño Responsivo**: Layout completamente responsivo para escritorio y móviles
+- 🎨 **UI Moderna**: Diseño limpio y profesional solo con CSS
+- 💰 **Moneda Colombiana**: Precios mostrados en Pesos Colombianos (COP)
 
-```bash
-ng serve
-```
+## Stack Tecnológico
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+- **Angular 20+** con componentes standalone
+- **TypeScript** para seguridad de tipos
+- **CSS Puro** (sin SCSS o librerías de UI)
+- **localStorage** para persistencia de datos
+- **Sin backend requerido** - aplicación completamente del lado del cliente
 
-## Code scaffolding
+## Estructura del Proyecto
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+\`\`\`
+src/app/
+├── core/
+│   ├── guards/auth/          # Guards de rutas
+│   ├── models/              # Modelos de datos
+│   └── services/            # Servicios de lógica de negocio
+├── layout/                  # Componentes de layout
+│   ├── app-shell/
+│   ├── header-bar/
+│   └── footer-bar/
+├── shared/                  # Componentes reutilizables
+│   ├── search-bar/
+│   ├── sidebar-filter/
+│   ├── product-card/
+│   └── confirm-dialog/
+└── features/               # Páginas de funcionalidades
+    ├── home/
+    ├── login/
+    └── register-product/
+\`\`\`
 
-```bash
-ng generate component component-name
-```
+## Comenzando
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+### Prerequisitos
 
-```bash
-ng generate --help
-```
+- Node.js (v18 o superior)
+- npm (v9 o superior)
+- Angular CLI (v20 o superior)
 
-## Building
+### Instalación
 
-To build the project run:
+1. Clonar el repositorio
+2. Instalar dependencias:
+   \`\`\`bash
+   npm install
+   \`\`\`
 
-```bash
-ng build
-```
+3. Iniciar el servidor de desarrollo:
+   \`\`\`bash
+   ng serve -o
+   \`\`\`
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+La aplicación se abrirá automáticamente en su navegador en \`http://localhost:4200/\`.
 
-## Running unit tests
+## Rutas
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+- \`/\` - Página principal con catálogo de productos
+- \`/login\` - Página de inicio de sesión
+- \`/products/new\` - Página de registro de productos (requiere autenticación)
 
-```bash
-ng test
-```
+## Autenticación
 
-## Running end-to-end tests
+### Credenciales de Login de Prueba
 
-For end-to-end (e2e) testing, run:
+La aplicación incluye un sistema de autenticación simulado. Puede iniciar sesión usando:
 
-```bash
-ng e2e
-```
+- **Email**: \`admin@example.com\`
+- **Contraseña**: \`password\`
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+Alternativamente, puede usar cualquier combinación de email y contraseña no vacíos.
 
-## Additional Resources
+### Características de Autenticación
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- Token almacenado en localStorage bajo la clave \`agromarket_token\`
+- Protección de rutas para la página de registro de productos
+- Redirección automática al login para rutas protegidas
+- Funcionalidad de logout con limpieza de token
+
+## Almacenamiento de Datos
+
+La aplicación usa un store en memoria con respaldo en localStorage:
+
+- **Productos**: Almacenados bajo la clave \`agromarket_products\`
+- **Token de Auth**: Almacenado bajo la clave \`agromarket_token\`
+- **Datos Semilla**: La aplicación automáticamente carga 10 productos agrícolas de muestra en la primera carga
+
+## Productos de Muestra
+
+La aplicación viene pre-cargada con productos agrícolas de muestra incluyendo:
+
+- Herramientas de jardín (azadas, carretillas)
+- Semillas (variedades orgánicas)
+- Equipos de invernadero
+- Sistemas de riego
+- Mobiliario de jardín
+- Fertilizantes y equipos de monitoreo
+
+Algunos productos incluyen precios con descuento para demostrar la funcionalidad de badge de descuento.
+
+## Manejo de Imágenes Faltantes
+
+La aplicación incluye manejo de imágenes rotas:
+
+- **Producto "Semillas de Tomate Orgánico"** tiene una URL de imagen rota intencionalmente
+- Cuando una imagen falla al cargar, se muestra un placeholder con el texto "Imagen no disponible"
+- El placeholder tiene un estilo consistente con el diseño general
+
+## Desarrollo
+
+### Scripts Disponibles
+
+- \`npm start\` - Iniciar servidor de desarrollo
+- \`npm run build\` - Construir para producción
+- \`npm test\` - Ejecutar pruebas unitarias
+- \`npm run watch\` - Construir en modo watch
+
+### Estilo de Código
+
+- **Componentes**: Nombres de clase en PascalCase, nombres de archivo en kebab-case
+- **Servicios**: PascalCase con sufijo \`.service.ts\`
+- **Modelos**: Interfaces en PascalCase con sufijo \`.model.ts\`
+- **Estilos**: CSS puro con convenciones de nomenclatura tipo BEM
+
+### Agregar Nuevos Productos
+
+Use el formulario de registro de productos (\`/products/new\`) para agregar nuevos productos. Campos requeridos:
+
+- Nombre del producto
+- Categoría (de lista predefinida)
+- Marca
+- Precio (en COP)
+- URL de imagen
+- Descripción
+
+Campos opcionales:
+- Porcentaje de descuento
+
+## Soporte de Navegadores
+
+- Chrome (última versión)
+- Firefox (última versión)
+- Safari (última versión)
+- Edge (última versión)
+
+## Mejoras Futuras
+
+- Validación de formularios
+- Búsqueda y filtrado avanzado
+- Página de detalles de producto
+- Funcionalidad de carrito de compras
+- Perfiles de usuario
+- Gestión de órdenes
+- Integración con backend real
+
+## Licencia
+
+Este proyecto es para propósitos de demostración. Todos los derechos reservados.
+
+---
+
+Construido con ❤️ usando Angular 20+

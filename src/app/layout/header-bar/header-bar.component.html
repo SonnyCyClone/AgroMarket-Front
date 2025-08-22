@@ -1,0 +1,43 @@
+<header class="header">
+  <div class="header-container">
+    <div class="logo-section">
+      <h1 class="logo" (click)="onLogoClick()">AgroMarket</h1>
+    </div>
+    
+    <div class="search-section">
+      <app-search-bar></app-search-bar>
+    </div>
+    
+    <div class="actions-section">
+      <button *ngIf="isLoggedIn" class="register-button" (click)="onRegisterProductClick()">
+        Registrar Producto
+      </button>
+      
+      <button class="icon-button cart-button">
+        <span class="icon">🛒</span>
+        <span class="label">Carrito</span>
+      </button>
+      
+      <div class="user-actions">
+        <button 
+          *ngIf="!isLoggedIn" 
+          class="icon-button user-button"
+          (click)="onLoginClick()"
+        >
+          <span class="icon">👤</span>
+          <span class="label">Iniciar Sesión</span>
+        </button>
+        
+        <div *ngIf="isLoggedIn" class="user-menu">
+          <button class="icon-button user-button">
+            <span class="icon">👤</span>
+            <span class="label">Cuenta</span>
+          </button>
+          <button class="logout-button" (click)="onLogout()">
+            Cerrar Sesión
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>

@@ -1,0 +1,43 @@
+<div class="home-page">
+  <div class="home-container">
+    <aside class="sidebar-section">
+      <app-sidebar-filter></app-sidebar-filter>
+    </aside>
+    
+    <main class="content-section">
+      <div class="toolbar">
+        <div class="results-info">
+          <h2>Productos ({{ products.length }})</h2>
+        </div>
+        
+        <div class="sort-section">
+          <label for="sort-select">Ordenar por:</label>
+          <select 
+            id="sort-select" 
+            [value]="sortOption" 
+            (change)="onSortChange($event)"
+            class="sort-select"
+          >
+            <option 
+              *ngFor="let option of sortOptions" 
+              [value]="option.value"
+            >
+              {{ option.label }}
+            </option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="product-grid">
+        <app-product-card 
+          *ngFor="let product of products" 
+          [product]="product"
+        ></app-product-card>
+      </div>
+      
+      <div *ngIf="products.length === 0" class="no-products">
+        <p>No se encontraron productos.</p>
+      </div>
+    </main>
+  </div>
+</div>
