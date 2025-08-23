@@ -43,14 +43,14 @@ export class RegisterProductPage implements OnInit {
 
   private initForm(): void {
     this.productForm = this.fb.group({
-      variedad: ['', [Validators.required, Validators.minLength(3)]],
-      descripcion: ['', [Validators.required, Validators.minLength(10)]],
-      precio: [0, [Validators.required, Validators.min(1)]],
-      cantidadDisponible: [1, [Validators.required, Validators.min(1)]],
-      unidadesId: [null, [Validators.required]],
-      categoriaId: [null, [Validators.required]],
-      idTipoProducto: [null, [Validators.required]],
-      imagenUrl: ['', [Validators.required]],
+      variedad: [''],
+      descripcion: [''],
+      precio: [0],
+      cantidadDisponible: [1],
+      unidadesId: [null],
+      categoriaId: [null],
+      idTipoProducto: [null],
+      imagenUrl: [''],
       activo: [true]
     });
 
