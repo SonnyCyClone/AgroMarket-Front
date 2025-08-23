@@ -1,127 +1,184 @@
 <div class="register-product-page">
   <div class="register-container">
-    <div class="register-card">
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="loading-container">
+      <div class="loading-spinner"></div>
+      <p>Cargando formulario...</p>
+    </div>
+
+    <!-- Main Form -->
+    <div *ngIf="!isLoading" class="register-card">
       <div class="register-header">
         <h1>Registrar Nuevo Producto</h1>
         <p>Agregar un nuevo producto al catálogo de AgroMarket</p>
       </div>
       
-      <form (ngSubmit)="onSubmit()" class="register-form">
+      <form [formGroup]="productForm" (ngSubmit)="onSubmit()" class="register-form">
         <div class="form-row">
           <div class="form-group">
-            <label for="name">Nombre *</label>
+            <label for="variedad">Variedad *</label>
             <input
               type="text"
-              id="name"
-              [(ngModel)]="productData.name"
-              name="name"
+              id="variedad"
+              formControlName="variedad"
               class="form-input"
-              placeholder="Ingrese el nombre del producto"
-              required
+              [class.error]="getFieldError('variedad')"
+              placeholder="Ej: Tomate Cherry, Lechuga Romana"
             >
+            <div class="error-message" *ngIf="getFieldError('variedad')">
+              {{ getFieldError('variedad') }}
+            </div>
           </div>
           
           <div class="form-group">
-            <label for="brand">Marca *</label>
+            <label for="precio">Precio (COP) *</label>
             <input
-              type="text"
-              id="brand"
-              [(ngModel)]="productData.brand"
-              name="brand"
+              type="number"
+              id="precio"
+              formControlName="precio"
               class="form-input"
-              placeholder="Ingrese la marca"
-              required
+              [class.error]="getFieldError('precio')"
+              placeholder="0"
+              min="1"
             >
+            <div class="price-preview" *ngIf="productForm.get('precio')?.value > 0">
+              {{ formatPrice(productForm.get('precio')?.value) }}
+            </div>
+            <div class="error-message" *ngIf="getFieldError('precio')">
+              {{ getFieldError('precio') }}
+            </div>
           </div>
         </div>
-        
+
         <div class="form-row">
           <div class="form-group">
-            <label for="category">Categoría *</label>
-            <select
-              id="category"
-              [(ngModel)]="productData.category"
-              name="category"
+            <label for="cantidadDisponible">Cantidad Disponible *</label>
+            <input
+              type="number"
+              id="cantidadDisponible"
+              formControlName="cantidadDisponible"
               class="form-input"
-              required
+              [class.error]="getFieldError('cantidadDisponible')"
+              placeholder="1"
+              min="1"
             >
-              <option value="">Seleccione una categoría</option>
-              <option *ngFor="let category of categories" [value]="category">
-                {{ category }}
+            <div class="error-message" *ngIf="getFieldError('cantidadDisponible')">
+              {{ getFieldError('cantidadDisponible') }}
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="unidadesId">Unidad *</label>
+            <select
+              id="unidadesId"
+              formControlName="unidadesId"
+              class="form-input"
+              [class.error]="getFieldError('unidadesId')"
+            >
+              <option value="">Seleccione una unidad</option>
+              <option *ngFor="let unidad of unidades" [value]="unidad.id">
+                {{ unidad.nombre }} ({{ unidad.abreviatura }})
               </option>
             </select>
-          </div>
-          
-          <div class="form-group">
-            <label for="price">Precio (COP) *</label>
-            <input
-              type="number"
-              id="price"
-              [(ngModel)]="productData.price"
-              name="price"
-              class="form-input"
-              placeholder="0"
-              min="0"
-              required
-            >
+            <div class="error-message" *ngIf="getFieldError('unidadesId')">
+              {{ getFieldError('unidadesId') }}
+            </div>
           </div>
         </div>
         
         <div class="form-row">
           <div class="form-group">
-            <label for="discountPercent">Porcentaje de Descuento</label>
-            <input
-              type="number"
-              id="discountPercent"
-              [(ngModel)]="productData.discountPercent"
-              name="discountPercent"
+            <label for="categoriaId">Categoría *</label>
+            <select
+              id="categoriaId"
+              formControlName="categoriaId"
               class="form-input"
-              placeholder="0"
-              min="0"
-              max="100"
+              [class.error]="getFieldError('categoriaId')"
             >
+              <option value="">Seleccione una categoría</option>
+              <option *ngFor="let categoria of categorias" [value]="categoria.id">
+                {{ categoria.nombre }}
+              </option>
+            </select>
+            <div class="error-message" *ngIf="getFieldError('categoriaId')">
+              {{ getFieldError('categoriaId') }}
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="idTipoProducto">Tipo de Producto *</label>
+            <select
+              id="idTipoProducto"
+              formControlName="idTipoProducto"
+              class="form-input"
+              [class.error]="getFieldError('idTipoProducto')"
+              [disabled]="!productForm.get('categoriaId')?.value"
+            >
+              <option value="">Seleccione un tipo</option>
+              <option *ngFor="let tipo of tiposProducto" [value]="tipo.id">
+                {{ tipo.nombre }}
+              </option>
+            </select>
+            <div class="error-message" *ngIf="getFieldError('idTipoProducto')">
+              {{ getFieldError('idTipoProducto') }}
+            </div>
           </div>
         </div>
         
         <div class="form-group">
-          <label for="imageUrl">URL de la Imagen *</label>
+          <label for="imagenUrl">URL de la Imagen *</label>
           <input
             type="url"
-            id="imageUrl"
-            [(ngModel)]="productData.imageUrl"
-            name="imageUrl"
+            id="imagenUrl"
+            formControlName="imagenUrl"
             class="form-input"
+            [class.error]="getFieldError('imagenUrl')"
             placeholder="https://ejemplo.com/imagen-producto.jpg"
-            required
           >
+          <div class="error-message" *ngIf="getFieldError('imagenUrl')">
+            {{ getFieldError('imagenUrl') }}
+          </div>
         </div>
         
         <div class="form-group">
-          <label for="description">Descripción *</label>
+          <label for="descripcion">Descripción *</label>
           <textarea
-            id="description"
-            [(ngModel)]="productData.description"
-            name="description"
+            id="descripcion"
+            formControlName="descripcion"
             class="form-textarea"
-            placeholder="Ingrese la descripción del producto"
+            [class.error]="getFieldError('descripcion')"
+            placeholder="Ingrese una descripción detallada del producto"
             rows="4"
-            required
           ></textarea>
+          <div class="error-message" *ngIf="getFieldError('descripcion')">
+            {{ getFieldError('descripcion') }}
+          </div>
+        </div>
+
+        <div class="form-group checkbox-group">
+          <label class="checkbox-label">
+            <input
+              type="checkbox"
+              formControlName="activo"
+              class="checkbox-input"
+            >
+            <span class="checkbox-text">Producto activo</span>
+          </label>
         </div>
         
         <div class="form-actions">
           <button 
             type="button" 
             class="secondary-button"
-            (click)="resetForm()"
             [disabled]="isSubmitting"
+            (click)="productForm.reset()"
           >
             Limpiar
           </button>
           <button 
             type="submit" 
             class="primary-button"
-            [disabled]="!isFormValid() || isSubmitting"
+            [disabled]="!productForm.valid || isSubmitting"
           >
             <span *ngIf="!isSubmitting">Registrar Producto</span>
             <span *ngIf="isSubmitting">Registrando...</span>
@@ -131,12 +188,23 @@
     </div>
   </div>
   
+  <!-- Success Dialog -->
   <app-confirm-dialog
-    [isVisible]="showSuccessDialog"
+    [isVisible]="showConfirmDialog"
     title="Éxito"
     message="Producto registrado exitosamente"
-    confirmText="OK"
-    (confirmed)="onSuccessConfirm()"
-    (closed)="onSuccessConfirm()"
+    confirmText="Aceptar"
+    (confirmed)="onConfirmDialogClose()"
+    (closed)="onConfirmDialogClose()"
+  ></app-confirm-dialog>
+
+  <!-- Error Dialog -->
+  <app-confirm-dialog
+    [isVisible]="showError"
+    title="Error"
+    [message]="errorMessage"
+    confirmText="Cerrar"
+    (confirmed)="onErrorDialogClose()"
+    (closed)="onErrorDialogClose()"
   ></app-confirm-dialog>
 </div>
