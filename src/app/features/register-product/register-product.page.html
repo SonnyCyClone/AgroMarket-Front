@@ -158,6 +158,7 @@
         <div class="form-group checkbox-group">
           <label class="checkbox-label">
             <input
+              id="activo"
               type="checkbox"
               formControlName="activo"
               class="checkbox-input"
@@ -168,6 +169,7 @@
         
         <div class="form-actions">
           <button 
+            id="reset"
             type="button" 
             class="secondary-button"
             [disabled]="isSubmitting"
@@ -176,6 +178,7 @@
             Limpiar
           </button>
           <button 
+            id="submitproduct"
             type="submit" 
             class="primary-button"
             [disabled]="!productForm.valid || isSubmitting"
