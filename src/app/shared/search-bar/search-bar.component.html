@@ -1,12 +1,17 @@
 <div class="search-container">
   <input 
+    id="search-input"
     type="text" 
     class="search-input"
     placeholder="Buscar productos, marcas y más..."
     [(ngModel)]="searchQuery"
     (keypress)="onKeyPress($event)"
   >
-  <button class="search-button" (click)="onSearch()">
+  <button 
+    id="search-button"
+    class="search-button" 
+    (click)="onSearch()"
+  >
     <span class="search-icon">🔍</span>
   </button>
 </div>

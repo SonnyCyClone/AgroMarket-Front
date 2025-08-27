@@ -7,7 +7,11 @@
       <p>{{ message }}</p>
     </div>
     <div class="dialog-footer">
-      <button class="confirm-button" (click)="onConfirm()">
+      <button 
+        id="confirm-dialog-button"
+        class="confirm-button" 
+        (click)="onConfirm()"
+      >
         {{ confirmText }}
       </button>
     </div>

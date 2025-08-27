@@ -49,7 +49,7 @@ export class ProductService {
           category: 'Semillas',
           brand: 'EcoGrow',
           price: 50000,
-          imageUrl: 'https://broken-image-url-that-will-fail.com/tomato-seeds.jpg',
+          imageUrl: 'https://images.theconversation.com/files/616601/original/file-20240901-18-g3xyjw.jpg?ixlib=rb-4.1.0&rect=0%2C0%2C5221%2C3691&q=20&auto=format&w=320&fit=clip&dpr=2&usm=12&cs=strip',
           description: 'Semillas orgánicas de tomate premium para alto rendimiento',
           createdAt: '2024-01-16T10:00:00Z'
         },

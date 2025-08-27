@@ -1,0 +1,268 @@
+/* Estilos para la página de registro de usuarios */
+
+.register-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.register-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.register-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0 0 0.5rem 0;
+  text-align: center;
+}
+
+.register-subtitle {
+  font-size: 1rem;
+  color: #7f8c8d;
+  margin: 0 0 2rem 0;
+  text-align: center;
+  line-height: 1.5;
+}
+
+/* Sección de información de tipos de documento */
+.info-section {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.info-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #495057;
+  margin: 0 0 1rem 0;
+}
+
+.tipos-documento {
+  min-height: 2rem;
+}
+
+.loading-text {
+  color: #6c757d;
+  font-style: italic;
+  margin: 0;
+}
+
+.tipos-lista {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.tipo-item {
+  background: #e9ecef;
+  color: #495057;
+  padding: 0.25rem 0.75rem;
+  border-radius: 16px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.no-tipos {
+  color: #dc3545;
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+/* Formulario */
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-label {
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.form-input {
+  padding: 0.875rem 1rem;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #27ae60;
+  box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.1);
+}
+
+.form-input.error {
+  border-color: #e74c3c;
+  background-color: #fdf2f2;
+}
+
+.form-input.error:focus {
+  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+}
+
+.error-message {
+  color: #e74c3c;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* Acciones del formulario */
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.submit-button {
+  flex: 1;
+  background: #27ae60;
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.submit-button:hover:not(:disabled) {
+  background: #219a52;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+}
+
+.submit-button:disabled {
+  background: #95a5a6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.cancel-button {
+  flex: 1;
+  background: transparent;
+  color: #7f8c8d;
+  border: 2px solid #bdc3c7;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.cancel-button:hover:not(:disabled) {
+  background: #ecf0f1;
+  border-color: #95a5a6;
+  color: #2c3e50;
+}
+
+.cancel-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Notas y enlaces */
+.form-note {
+  color: #7f8c8d;
+  font-size: 0.875rem;
+  margin: 1rem 0 0 0;
+  text-align: center;
+}
+
+.login-link {
+  color: #7f8c8d;
+  font-size: 0.9rem;
+  margin: 1.5rem 0 0 0;
+  text-align: center;
+}
+
+.link-button {
+  background: none;
+  border: none;
+  color: #27ae60;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  font-size: inherit;
+  padding: 0;
+}
+
+.link-button:hover:not(:disabled) {
+  color: #219a52;
+}
+
+.link-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .register-container {
+    padding: 1rem;
+    align-items: flex-start;
+  }
+  
+  .register-card {
+    padding: 1.5rem;
+    margin-top: 2rem;
+  }
+  
+  .register-title {
+    font-size: 1.75rem;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+  }
+  
+  .tipos-lista {
+    flex-direction: column;
+  }
+  
+  .tipo-item {
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .register-card {
+    padding: 1rem;
+  }
+  
+  .register-title {
+    font-size: 1.5rem;
+  }
+  
+  .info-section {
+    padding: 1rem;
+  }
+}

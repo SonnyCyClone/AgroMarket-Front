@@ -1,4 +1,4 @@
-.login-page {
+.register-page {
   min-height: calc(100vh - 160px);
   display: flex;
   align-items: center;
@@ -7,38 +7,38 @@
   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
 }
 
-.login-container {
+.register-container {
   width: 100%;
   max-width: 450px;
 }
 
-.login-card {
+.register-card {
   background: white;
   border-radius: 12px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   overflow: hidden;
 }
 
-.login-header {
+.register-header {
   text-align: center;
   padding: 32px 32px 24px;
   background: linear-gradient(135deg, #2c5aa0 0%, #1a4480 100%);
   color: white;
 }
 
-.login-header h1 {
+.register-header h1 {
   margin: 0 0 8px 0;
   font-size: 28px;
   font-weight: 700;
 }
 
-.login-header p {
+.register-header p {
   margin: 0;
   opacity: 0.9;
   font-size: 16px;
 }
 
-.login-form {
+.register-form {
   padding: 32px;
 }
 
@@ -78,31 +78,6 @@
   box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
 }
 
-.auth-mode-toggle {
-  margin-bottom: 20px;
-  padding: 12px;
-  background: #f8f9fa;
-  border-radius: 6px;
-  border: 1px solid #e9ecef;
-}
-
-.toggle-label {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  font-size: 14px;
-  color: #666;
-}
-
-.toggle-input {
-  margin-right: 8px;
-  transform: scale(1.1);
-}
-
-.toggle-text {
-  line-height: 1.4;
-}
-
 .error-message {
   color: #dc3545;
   font-size: 14px;
@@ -116,7 +91,6 @@
   border-radius: 6px;
   padding: 12px;
   margin-bottom: 20px;
-  cursor: pointer;
 }
 
 .form-actions {
@@ -147,14 +121,14 @@
   transform: none;
 }
 
-.login-footer {
+.register-footer {
   text-align: center;
   padding: 24px 32px 32px;
   border-top: 1px solid #e0e0e0;
   background: #f8f9fa;
 }
 
-.login-footer p {
+.register-footer p {
   margin: 0;
   color: #666;
   font-size: 14px;
@@ -188,23 +162,23 @@
 }
 
 @media (max-width: 480px) {
-  .login-page {
+  .register-page {
     padding: 12px;
   }
   
-  .login-header {
+  .register-header {
     padding: 24px 20px 20px;
   }
   
-  .login-header h1 {
+  .register-header h1 {
     font-size: 24px;
   }
   
-  .login-form {
+  .register-form {
     padding: 24px 20px;
   }
   
-  .login-footer {
+  .register-footer {
     padding: 20px;
   }
 }

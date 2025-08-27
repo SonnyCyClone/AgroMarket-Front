@@ -1,0 +1,190 @@
+<div class="register-container">
+  <div class="register-card">
+    <h1 class="register-title">Crear Cuenta</h1>
+    <p class="register-subtitle">Únete a AgroMarket y accede a los mejores productos agrícolas</p>
+
+    <!-- Información de tipos de documento (dropdown seleccionable) -->
+    <div class="info-section">
+      <h2 class="info-title">Tipo de Documento</h2>
+      <div class="tipos-documento">
+        @if (cargandoTipos()) {
+          <p class="loading-text">Cargando tipos de documento...</p>
+        } @else {
+          @if (tiposDocumento().length > 0) {
+            <div class="form-group">
+              <label for="tipo-documento-select" class="form-label">Seleccionar tipo de documento (opcional)</label>
+              <select
+                id="tipo-documento-select"
+                formControlName="TipoDocumento"
+                class="form-input"
+              >
+                <option value="">-- Seleccionar tipo --</option>
+                @for (tipo of tiposDocumento(); track tipo.id) {
+                  <option [value]="tipo.id">{{ formatearTipoDocumento(tipo) }}</option>
+                }
+              </select>
+            </div>
+          } @else {
+            <p class="no-tipos">No se pudieron cargar los tipos de documento</p>
+          }
+        }
+      </div>
+    </div>
+
+    <!-- Formulario de registro -->
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-form">
+      
+      <!-- Email -->
+      <div class="form-group">
+        <label for="email-input" class="form-label">Correo electrónico</label>
+        <input
+          id="email-input"
+          type="email"
+          formControlName="Email"
+          class="form-input"
+          placeholder="ejemplo@correo.com"
+          autocomplete="email"
+        />
+      </div>
+
+      <!-- Nombre -->
+      <div class="form-group">
+        <label for="nombre-input" class="form-label">Nombre</label>
+        <input
+          id="nombre-input"
+          type="text"
+          formControlName="Nombre"
+          class="form-input"
+          placeholder="Ingrese su nombre"
+          autocomplete="given-name"
+        />
+      </div>
+
+      <!-- Apellido -->
+      <div class="form-group">
+        <label for="apellido-input" class="form-label">Apellido</label>
+        <input
+          id="apellido-input"
+          type="text"
+          formControlName="Apellido"
+          class="form-input"
+          placeholder="Ingrese su apellido"
+          autocomplete="family-name"
+        />
+      </div>
+
+      <!-- Teléfono -->
+      <div class="form-group">
+        <label for="telefono-input" class="form-label">Teléfono</label>
+        <input
+          id="telefono-input"
+          type="tel"
+          formControlName="Telefono"
+          class="form-input"
+          placeholder="3001234567"
+          autocomplete="tel"
+        />
+      </div>
+
+      <!-- Dirección -->
+      <div class="form-group">
+        <label for="direccion-input" class="form-label">Dirección</label>
+        <input
+          id="direccion-input"
+          type="text"
+          formControlName="Direccion"
+          class="form-input"
+          placeholder="Calle 123 #45-67"
+          autocomplete="street-address"
+        />
+      </div>
+
+      <!-- Documento -->
+      <div class="form-group">
+        <label for="documento-input" class="form-label">Documento</label>
+        <input
+          id="documento-input"
+          type="text"
+          formControlName="Documento"
+          class="form-input"
+          placeholder="123456789"
+          autocomplete="off"
+        />
+      </div>
+
+      <!-- Contraseña -->
+      <div class="form-group">
+        <label for="password-input" class="form-label">Contraseña</label>
+        <input
+          id="password-input"
+          type="password"
+          formControlName="Password"
+          class="form-input"
+          placeholder="Ingrese su contraseña"
+          autocomplete="new-password"
+        />
+      </div>
+
+      <!-- Botones -->
+      <div class="form-actions">
+        <button
+          id="submit-register-button"
+          type="submit"
+          class="submit-button"
+          [disabled]="enviandoFormulario()"
+        >
+          @if (enviandoFormulario()) {
+            Creando cuenta...
+          } @else {
+            Crear Cuenta
+          }
+        </button>
+        
+        <button
+          id="cancel-register-button"
+          type="button"
+          class="cancel-button"
+          (click)="router.navigate(['/'])"
+          [disabled]="enviandoFormulario()"
+        >
+          Cancelar
+        </button>
+      </div>
+
+      <p class="login-link">
+        ¿Ya tienes cuenta? 
+        <button 
+          id="login-link-button"
+          type="button" 
+          class="link-button" 
+          (click)="router.navigate(['/login'])"
+          [disabled]="enviandoFormulario()"
+        >
+          Inicia sesión aquí
+        </button>
+      </p>
+    </form>
+  </div>
+</div>
+
+<!-- Dialog de éxito -->
+@if (mostrarDialogExito()) {
+  <app-confirm-dialog
+    [isVisible]="true"
+    title="¡Cuenta Creada!"
+    message="Usuario creado exitosamente. Ahora puedes iniciar sesión con tus credenciales."
+    confirmText="Aceptar"
+    (confirmed)="onConfirmarExito()"
+  ></app-confirm-dialog>
+}
+
+<!-- Dialog de error -->
+@if (mostrarDialogError()) {
+  <app-confirm-dialog
+    [isVisible]="true"
+    title="Error al Crear Cuenta"
+    [message]="mensajeError()"
+    confirmText="Aceptar"
+    (confirmed)="onConfirmarError()"
+  ></app-confirm-dialog>
+}

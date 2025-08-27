@@ -9,31 +9,80 @@
     </div>
     
     <div class="actions-section">
-      <button *ngIf="isLoggedIn" class="register-button" (click)="onRegisterProductClick()">
+      <button 
+        id="header-register-product-button"
+        *ngIf="isLoggedIn" 
+        class="register-button" 
+        (click)="onRegisterProductClick()"
+      >
         Registrar Producto
       </button>
       
-      <button class="icon-button cart-button">
+      <button 
+        id="header-cart-button"
+        class="icon-button cart-button" 
+        aria-label="Ver carrito de compras"
+      >
         <span class="icon">🛒</span>
         <span class="label">Carrito</span>
       </button>
       
       <div class="user-actions">
-        <button 
-          *ngIf="!isLoggedIn" 
-          class="icon-button user-button"
-          (click)="onLoginClick()"
-        >
-          <span class="icon">👤</span>
-          <span class="label">Iniciar Sesión</span>
-        </button>
-        
-        <div *ngIf="isLoggedIn" class="user-menu">
-          <button class="icon-button user-button">
+        <!-- User Dropdown for Non-Logged Users -->
+        <div *ngIf="!isLoggedIn" class="user-dropdown-container">
+          <button 
+            id="header-user-dropdown-button"
+            class="icon-button user-button"
+            (click)="onUserDropdownToggle($event)"
+            (mouseenter)="showUserDropdown = true"
+            aria-label="Opciones de usuario"
+            aria-expanded="{{showUserDropdown}}"
+            aria-haspopup="menu"
+          >
             <span class="icon">👤</span>
             <span class="label">Cuenta</span>
+            <span class="dropdown-arrow">▼</span>
           </button>
-          <button class="logout-button" (click)="onLogout()">
+          
+          <div 
+            *ngIf="showUserDropdown" 
+            class="user-dropdown"
+            (mouseleave)="showUserDropdown = false"
+            role="menu"
+            aria-label="Menú de opciones de usuario"
+          >
+            <button 
+              id="header-login-dropdown-button"
+              class="dropdown-item" 
+              (click)="onLoginClick()"
+              role="menuitem"
+            >
+              <span class="dropdown-icon">🔑</span>
+              Iniciar Sesión
+            </button>
+            <button 
+              id="header-register-dropdown-button"
+              class="dropdown-item" 
+              (click)="onRegisterClick()"
+              role="menuitem"
+            >
+              <span class="dropdown-icon">🔓</span>
+              Crear Cuenta
+            </button>
+          </div>
+        </div>
+        
+        <!-- Logged User Menu -->
+        <div *ngIf="isLoggedIn" class="user-menu">
+          <div class="user-info">
+            <span class="user-name">{{ currentUser?.nombre || 'Usuario' }}</span>
+          </div>
+          <button 
+            id="header-logout-button"
+            class="logout-button" 
+            (click)="onLogout()" 
+            aria-label="Cerrar sesión"
+          >
             Cerrar Sesión
           </button>
         </div>
