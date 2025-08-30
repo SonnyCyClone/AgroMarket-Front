@@ -1,9 +1,25 @@
+/**
+ * Página de inicio de sesión para AgroMarket
+ * 
+ * @description Componente que maneja el formulario de login con autenticación
+ * real contra el API. Incluye manejo de errores 401 y persistencia de sesión.
+ * 
+ * @author AgroMarket Team
+ * @since 1.0.0
+ */
+
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth/auth.service';
 
+/**
+ * Componente de login con autenticación real
+ * 
+ * @description Permite a los usuarios iniciar sesión utilizando el endpoint
+ * real del API. Maneja errores 401 y muestra mensajes apropiados.
+ */
 @Component({
   selector: 'app-login',
   imports: [CommonModule, ReactiveFormsModule, FormsModule],
@@ -11,9 +27,17 @@ import { AuthService } from '../../core/services/auth/auth.service';
   styleUrl: './login.page.css'
 })
 export class LoginPage {
+  /** Formulario reactivo para las credenciales */
   loginForm: FormGroup;
+  
+  /** Mensaje de error para mostrar al usuario */
   errorMessage = '';
+  
+  /** Indica si se está procesando el login */
   isLoading = false;
+  
+  /** Controla la visibilidad del mensaje de error 401 */
+  showUnauthorizedError = false;
 
   constructor(
     private fb: FormBuilder,
@@ -30,21 +54,31 @@ export class LoginPage {
     if (this.loginForm.valid && !this.isLoading) {
       this.isLoading = true;
       this.errorMessage = '';
+      this.showUnauthorizedError = false;
 
       const { email, password } = this.loginForm.value;
-      
-      // Simulate async operation for mock login
-      setTimeout(() => {
-        const success = this.authService.loginMock(email, password);
-        
-        if (success) {
+
+      this.authService.loginReal(email, password).subscribe({
+        next: (response) => {
+          // Login exitoso - navegar al home
           this.router.navigate(['/']);
-        } else {
-          this.errorMessage = 'Credenciales inválidas. Intente admin@example.com / password o cualquier valor no vacío.';
+        },
+        error: (error) => {
+          this.isLoading = false;
+          
+          // Manejar error 401 específicamente
+          if (error.status === 401) {
+            this.showUnauthorizedError = true;
+            this.errorMessage = 'Credenciales incorrectas. Por favor, verifica tu email y contraseña.';
+          } else {
+            // Otros errores del servidor
+            this.errorMessage = 'Error del servidor. Por favor, inténtalo de nuevo más tarde.';
+          }
+        },
+        complete: () => {
+          this.isLoading = false;
         }
-        
-        this.isLoading = false;
-      }, 500);
+      });
     } else {
       this.markFormGroupTouched();
     }
@@ -76,10 +110,18 @@ export class LoginPage {
   }
 
   goToRegister(): void {
-    this.router.navigate(['/register']);
+    this.router.navigate(['/register-user']);
   }
 
   clearError(): void {
+    this.errorMessage = '';
+  }
+
+  /**
+   * Oculta el mensaje de error 401
+   */
+  hideUnauthorizedError(): void {
+    this.showUnauthorizedError = false;
     this.errorMessage = '';
   }
 }

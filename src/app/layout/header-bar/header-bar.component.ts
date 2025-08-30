@@ -92,6 +92,27 @@ export class HeaderBarComponent implements OnDestroy {
   }
 
   /**
+   * Obtiene el nombre completo del usuario actual
+   * 
+   * @description Genera el nombre completo combinando nombre y apellido
+   * del usuario autenticado, o retorna un valor por defecto.
+   * 
+   * @returns {string} Nombre completo del usuario o "Usuario" por defecto
+   */
+  get userDisplayName(): string {
+    const nombre = this.authService.getUserNombre();
+    const apellido = this.authService.getUserApellido();
+    
+    if (nombre && apellido) {
+      return `${nombre} ${apellido}`;
+    } else if (nombre) {
+      return nombre;
+    }
+    
+    return 'Usuario';
+  }
+
+  /**
    * Maneja clics en el documento para cerrar el dropdown
    * 
    * @description Listener global que cierra el dropdown de usuario cuando
@@ -149,7 +170,7 @@ export class HeaderBarComponent implements OnDestroy {
    */
   onRegisterClick(): void {
     this.showUserDropdown = false;
-    this.router.navigate(['/register']);
+    this.router.navigate(['/register-user']);
   }
 
   /**
@@ -171,5 +192,17 @@ export class HeaderBarComponent implements OnDestroy {
    */
   onRegisterProductClick(): void {
     this.router.navigate(['/products/new']);
+  }
+
+  /**
+   * Maneja el error de carga del logo del header
+   * 
+   * @description Fallback a un ícono placeholder en caso de error de carga
+   * del logo principal de AgroMarket. Utiliza placeholder.svg como respaldo.
+   * 
+   * @param {Event} ev - Evento de error de carga de imagen
+   */
+  onHeaderLogoError(ev: Event): void {
+    (ev.target as HTMLImageElement).src = 'assets/icon/placeholder.svg';
   }
 }

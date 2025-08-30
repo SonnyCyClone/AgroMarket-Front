@@ -47,10 +47,35 @@ export interface RegisterRequest {
 }
 
 /**
- * Respuesta del servidor para operaciones de autenticación
+ * Estructura de datos para respuesta de login del API real
+ * 
+ * @description Interface que define la estructura de respuesta del endpoint
+ * POST /api/Usuario/login para el sistema de autenticación real.
+ */
+export interface LoginResponse {
+  /** Dirección de correo electrónico del usuario */
+  email: string;
+  
+  /** Nombre de usuario (generalmente igual al email) */
+  username: string;
+  
+  /** Nombre del usuario */
+  nombre: string;
+  
+  /** Apellido del usuario */
+  apellido: string;
+  
+  /** Token JWT para autenticación */
+  token: string;
+}
+
+/**
+ * Respuesta del servidor para operaciones de autenticación (legacy)
  * 
  * @description Interface que define la estructura de respuesta para login
  * y otros procesos de autenticación en el sistema mock.
+ * 
+ * @deprecated Usar LoginResponse para autenticación real
  */
 export interface AuthResponse {
   /** Token de autenticación JWT o similar */

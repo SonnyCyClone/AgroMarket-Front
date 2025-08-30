@@ -20,7 +20,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, tap, catchError, of } from 'rxjs';
 import { AuthApiService } from './auth.api';
-import { LoginRequest, RegisterRequest, AuthResponse, User } from '../../models/auth.model';
+import { LoginRequest, RegisterRequest, AuthResponse, User, LoginResponse } from '../../models/auth.model';
 
 /**
  * Servicio para gestionar la autenticación de usuarios
@@ -36,7 +36,13 @@ export class AuthService {
   /** Clave para almacenar el token JWT en localStorage */
   private readonly tokenKey = 'agromarket_token';
   
-  /** Clave para almacenar datos del usuario en localStorage */
+  /** Clave para almacenar el nombre del usuario en localStorage */
+  private readonly userNombreKey = 'agromarket_user_nombre';
+  
+  /** Clave para almacenar el apellido del usuario en localStorage */
+  private readonly userApellidoKey = 'agromarket_user_apellido';
+  
+  /** Clave para almacenar datos del usuario en localStorage (legacy) */
   private readonly userKey = 'agromarket_user';
   
   /** Subject para el usuario actual (estado reactivo) */
@@ -71,15 +77,64 @@ export class AuthService {
    * @private
    */
   private loadStoredUser(): void {
-    const userData = localStorage.getItem(this.userKey);
-    if (userData && this.isLoggedIn()) {
-      try {
-        const user = JSON.parse(userData);
-        this.currentUserSubject.next(user);
-      } catch (error) {
-        this.clearAuthData();
+    const token = localStorage.getItem(this.tokenKey);
+    const nombre = localStorage.getItem(this.userNombreKey);
+    const apellido = localStorage.getItem(this.userApellidoKey);
+    
+    if (token && nombre && apellido) {
+      const user: User = {
+        id: 1, // Mock ID since real API doesn't provide it
+        nombre: `${nombre} ${apellido}`,
+        email: '' // We don't store email separately
+      };
+      this.currentUserSubject.next(user);
+    } else {
+      // Try legacy format
+      const userData = localStorage.getItem(this.userKey);
+      if (userData && token) {
+        try {
+          const user = JSON.parse(userData);
+          this.currentUserSubject.next(user);
+        } catch (error) {
+          this.clearAuthData();
+        }
       }
     }
+  }
+
+  /**
+   * Autentica un usuario contra el API real
+   * 
+   * @description Envía las credenciales al endpoint real de login
+   * y maneja la respuesta guardando token y datos del usuario.
+   * 
+   * @param {string} email - Email del usuario
+   * @param {string} password - Contraseña del usuario
+   * @returns {Observable<LoginResponse>} Observable con la respuesta de login
+   * 
+   * @example
+   * ```typescript
+   * this.authService.loginReal('user@example.com', 'password123')
+   *   .subscribe({
+   *     next: (response) => console.log('Login exitoso:', response),
+   *     error: (error) => {
+   *       if (error.status === 401) {
+   *         console.log('Credenciales inválidas');
+   *       }
+   *     }
+   *   });
+   * ```
+   */
+  loginReal(email: string, password: string): Observable<LoginResponse> {
+    return this.authApiService.loginReal(email, password).pipe(
+      tap(response => {
+        this.setRealAuthData(response);
+      }),
+      catchError(error => {
+        console.error('Error de login real:', error);
+        throw error;
+      })
+    );
   }
 
   /**
@@ -175,7 +230,30 @@ export class AuthService {
   }
 
   /**
-   * Almacena los datos de autenticación en localStorage
+   * Almacena los datos de autenticación real en localStorage
+   * 
+   * @description Guarda el token JWT y los datos del usuario (nombre y apellido)
+   * en localStorage y actualiza el estado reactivo del usuario actual.
+   * 
+   * @param {LoginResponse} response - Respuesta de autenticación del API real
+   * @private
+   */
+  private setRealAuthData(response: LoginResponse): void {
+    localStorage.setItem(this.tokenKey, response.token);
+    localStorage.setItem(this.userNombreKey, response.nombre);
+    localStorage.setItem(this.userApellidoKey, response.apellido);
+    
+    const user: User = {
+      id: 1, // Mock ID since real API doesn't provide it
+      nombre: `${response.nombre} ${response.apellido}`,
+      email: response.email
+    };
+    
+    this.currentUserSubject.next(user);
+  }
+
+  /**
+   * Almacena los datos de autenticación en localStorage (legacy)
    * 
    * @description Guarda el token JWT y los datos del usuario en localStorage
    * y actualiza el estado reactivo del usuario actual.
@@ -192,14 +270,25 @@ export class AuthService {
   /**
    * Limpia todos los datos de autenticación
    * 
-   * @description Elimina el token y datos de usuario de localStorage
-   * y resetea el estado del usuario actual a null.
+   * @description Elimina completamente todos los datos de sesión y resetea
+   * el estado de la aplicación para permitir un login fresco.
    * 
    * @private
    */
   private clearAuthData(): void {
+    // Remover claves específicas de AgroMarket primero
     localStorage.removeItem(this.tokenKey);
     localStorage.removeItem(this.userKey);
+    localStorage.removeItem(this.userNombreKey);
+    localStorage.removeItem(this.userApellidoKey);
+    localStorage.removeItem('agromarket_token');
+    localStorage.removeItem('agromarket_user_nombre');
+    localStorage.removeItem('agromarket_user_apellido');
+    
+    // Limpiar completamente localStorage para asegurar que no queden datos
+    localStorage.clear();
+    
+    // Resetear el estado interno
     this.currentUserSubject.next(null);
   }
 
@@ -222,9 +311,9 @@ export class AuthService {
   /**
    * Cierra la sesión del usuario actual
    * 
-   * @description Notifica al servidor del logout, limpia los datos locales
-   * y redirige al usuario a la página principal. Si la llamada al servidor
-   * falla, aún así limpia los datos locales.
+   * @description Notifica al servidor del logout, limpia todos los datos locales
+   * completamente y redirige al usuario a la página de login para iniciar
+   * una sesión completamente fresca.
    * 
    * @returns {void}
    */
@@ -232,13 +321,17 @@ export class AuthService {
     this.authApiService.logout().subscribe({
       next: () => {
         this.clearAuthData();
-        this.router.navigate(['/']);
+        this.router.navigate(['/login']);
+        // Recargar la página para asegurar un estado completamente fresco
+        window.location.reload();
       },
       error: (error) => {
         console.error('Error en logout:', error);
         // Limpiar datos locales aunque falle la llamada al API
         this.clearAuthData();
-        this.router.navigate(['/']);
+        this.router.navigate(['/login']);
+        // Recargar la página para asegurar un estado completamente fresco
+        window.location.reload();
       }
     });
   }
@@ -265,5 +358,23 @@ export class AuthService {
    */
   getCurrentUser(): User | null {
     return this.currentUserSubject.value;
+  }
+
+  /**
+   * Obtiene el nombre del usuario almacenado
+   * 
+   * @returns {string | null} Nombre del usuario o null si no existe
+   */
+  getUserNombre(): string | null {
+    return localStorage.getItem('agromarket_user_nombre');
+  }
+
+  /**
+   * Obtiene el apellido del usuario almacenado
+   * 
+   * @returns {string | null} Apellido del usuario o null si no existe
+   */
+  getUserApellido(): string | null {
+    return localStorage.getItem('agromarket_user_apellido');
   }
 }
