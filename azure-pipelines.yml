@@ -8,12 +8,12 @@ pr:
   branches: { include: [ '*' ] }
 
 variables:
-  vmImage: 'ubuntu-latest'             # Cambia a 'windows-latest' si lo requieres
-  azureSubscription: 'sc-azure-yaper'  # Nombre de tu Service Connection en Azure DevOps
+  vmImage: 'ubuntu-latest'             # Cambia a 'windows-latest' si se requiere
+  azureSubscription: 'sc-azure-agromarket'  # Nombre  Service Connection en Azure DevOps
   artifactName: 'frontend'
   zipName: 'frontend.zip'
   feRoot: '.'                          # Carpeta raíz del proyecto Angular
-  app_prd: 'az-webapp-front-yaper'     # Nombre de tu WebApp en Azure
+  app_prd: 'az-agromarket-front'     # Nombre  WebApp en Azure
 
 pool: { vmImage: $(vmImage) }
 
