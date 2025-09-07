@@ -40,8 +40,8 @@ stages:
         Set-StrictMode -Version Latest
         cd "$(feRoot)"
         # si ci falla por peer deps, cae a install
-        npm ci 2>$null; if ($LASTEXITCODE -ne 0) { npm install --legacy-peer-deps }
-        npm run build -- --configuration production --output-path "dist"
+        npm ci 2>$null; if ($LASTEXITCODE -ne 0) { npm install --legacy-peer-deps } --verbose
+        npm run build -- --configuration production --output-path "dist" --verbose
       displayName: 'npm ci / install & ng build'
 
     # empaqueta a .zip en el staging de artefactos (PowerShell)
