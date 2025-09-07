@@ -10,7 +10,7 @@ pr:
 
 # ==== VARIABLES ====
 variables:
-  azureSubscription: 'sc-azure-agromarket'
+  azureSubscription: 'sc-azure-agromarket'   # Service Connection (ARM) que creaste
   artifactName: 'frontend'
   zipName: 'frontend.zip'
   feRoot: '.'
@@ -22,70 +22,77 @@ pool:
   demands:
     - agent.name -equals agromarket-agent-win
 
-# ======== A PARTIR DE AQUÍ AGREGA ESTA CLAVE ========
+# =================== STAGES ===================
 stages:
+# --------------- BUILD ----------------
 - stage: Build
   displayName: Build Angular
   jobs:
   - job: build
+    displayName: Build
     steps:
-    - task: NodeTool@0
-      displayName: 'Use Node 20.x'
-      inputs:
-        versionSpec: '20.x'
-  - script: |
-    node -v
-    npm -v
-  displayName: 'Mostrar versiones
+      - task: NodeTool@0
+        displayName: 'Use Node 20.x'
+        inputs:
+          versionSpec: '20.x'
 
-    - powershell: |
-        $ErrorActionPreference = 'Stop'
-        Set-StrictMode -Version Latest
-        cd "$(feRoot)"
+      - script: |
+          node -v
+          npm -v
+        displayName: 'Mostrar versiones'
 
-        $npmCache = "$env:AGENT_WORKFOLDER\_npmcache"
-        if (-not (Test-Path $npmCache)) { New-Item -ItemType Directory -Force -Path $npmCache | Out-Null }
-        npm config set cache "$npmCache" --global | Out-Null
+      # Instala deps y compila Angular (PowerShell)
+      - powershell: |
+          $ErrorActionPreference = 'Stop'
+          Set-StrictMode -Version Latest
+          cd "$(feRoot)"
 
-        Write-Host ">> npm ci"
-        npm ci --verbose
-        if ($LASTEXITCODE -ne 0) {
-          Write-Host "npm ci falló. Probando npm install --legacy-peer-deps..."
-          npm install --legacy-peer-deps --verbose
-          if ($LASTEXITCODE -ne 0) { throw "npm install falló ($LASTEXITCODE)" }
-        }
+          # Cache local para acelerar
+          $npmCache = "$env:AGENT_WORKFOLDER\_npmcache"
+          if (-not (Test-Path $npmCache)) { New-Item -ItemType Directory -Force -Path $npmCache | Out-Null }
+          npm config set cache "$npmCache" --global | Out-Null
 
-        Write-Host ">> ng build (prod)"
-        npm run build -- --configuration production --output-path "dist" --verbose
-        if ($LASTEXITCODE -ne 0) { throw "ng build falló ($LASTEXITCODE)" }
-      displayName: 'npm ci / install & ng build'
+          Write-Host ">> npm ci"
+          npm ci --verbose
+          if ($LASTEXITCODE -ne 0) {
+            Write-Host "npm ci falló. Probando npm install --legacy-peer-deps..."
+            npm install --legacy-peer-deps --verbose
+            if ($LASTEXITCODE -ne 0) { throw "npm install falló ($LASTEXITCODE)" }
+          }
 
-    - powershell: |
-        $srcRoot = "$(Build.SourcesDirectory)"
-        $distRoot = Join-Path $srcRoot 'dist'
-        $sub = Get-ChildItem -Directory $distRoot | Select-Object -First 1
-        if (-not $sub) { throw "No se encontró carpeta de salida en $distRoot" }
+          Write-Host ">> ng build (prod)"
+          npm run build -- --configuration production --output-path "dist" --verbose
+          if ($LASTEXITCODE -ne 0) { throw "ng build falló ($LASTEXITCODE)" }
+        displayName: 'npm ci / install & ng build'
 
-        $content = Join-Path $sub.FullName 'browser'
-        if (-not (Test-Path $content)) { $content = $sub.FullName }
+      # Empaquetar dist + web.config en ZIP
+      - powershell: |
+          $srcRoot = "$(Build.SourcesDirectory)"
+          $distRoot = Join-Path $srcRoot 'dist'
+          $sub = Get-ChildItem -Directory $distRoot | Select-Object -First 1
+          if (-not $sub) { throw "No se encontró carpeta de salida en $distRoot" }
 
-        $webConfig = Join-Path $srcRoot 'web.config'
-        if (-not (Test-Path $webConfig)) { throw "Falta web.config en la raíz del repo." }
-        Copy-Item -Force $webConfig (Join-Path $content 'web.config')
+          $content = Join-Path $sub.FullName 'browser'
+          if (-not (Test-Path $content)) { $content = $sub.FullName }
 
-        $outDir = "$(Build.ArtifactStagingDirectory)"
-        New-Item -ItemType Directory -Force -Path $outDir | Out-Null
-        $zipPath = Join-Path $outDir "$(zipName)"
-        if (Test-Path $zipPath) { Remove-Item -Force $zipPath }
-        Compress-Archive -Path (Join-Path $content '*') -DestinationPath $zipPath -Force
-      displayName: 'crear ZIP'
+          $webConfig = Join-Path $srcRoot 'web.config'
+          if (-not (Test-Path $webConfig)) { throw "Falta web.config en la raíz del repo." }
+          Copy-Item -Force $webConfig (Join-Path $content 'web.config')
 
-    - task: PublishBuildArtifacts@1
-      displayName: 'Publicar artefacto'
-      inputs:
-        pathToPublish: '$(Build.ArtifactStagingDirectory)'
-        artifactName: '$(artifactName)'
+          $outDir = "$(Build.ArtifactStagingDirectory)"
+          New-Item -ItemType Directory -Force -Path $outDir | Out-Null
+          $zipPath = Join-Path $outDir "$(zipName)"
+          if (Test-Path $zipPath) { Remove-Item -Force $zipPath }
+          Compress-Archive -Path (Join-Path $content '*') -DestinationPath $zipPath -Force
+        displayName: 'crear ZIP'
 
+      - task: PublishBuildArtifacts@1
+        displayName: 'Publicar artefacto'
+        inputs:
+          pathToPublish: '$(Build.ArtifactStagingDirectory)'
+          artifactName: '$(artifactName)'
+
+# --------------- DEPLOY PRD -------------
 - stage: Deploy_PRD
   displayName: Deploy to PRD
   dependsOn: Build
@@ -97,12 +104,13 @@ stages:
       runOnce:
         deploy:
           steps:
-          - download: current
-            artifact: $(artifactName)
-          - task: AzureWebApp@1
-            displayName: 'Deploy to $(app_prd)'
-            inputs:
-              azureSubscription: '$(azureSubscription)'
-              appType: 'webApp'
-              appName: '$(app_prd)'
-              package: '$(Pipeline.Workspace)/$(artifactName)/$(zipName)'
+            - download: current
+              artifact: $(artifactName)
+
+            - task: AzureWebApp@1
+              displayName: 'Deploy to $(app_prd)'
+              inputs:
+                azureSubscription: '$(azureSubscription)'   # nombre EXACTO del Service Connection
+                appType: 'webApp'
+                appName: '$(app_prd)'
+                package: '$(Pipeline.Workspace)/$(artifactName)/$(zipName)'
