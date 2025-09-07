@@ -1,0 +1,77 @@
+trigger:
+  branches:
+    include: [ main, master ]
+  paths:
+    exclude: [ README.md, .gitignore, azure-pipelines.yml, .gitattributes ]
+
+pr:
+  branches: { include: [ '*' ] }
+
+variables:
+  vmImage: 'ubuntu-latest'             # Cambia a 'windows-latest' si lo requieres
+  azureSubscription: 'sc-azure-yaper'  # Nombre de tu Service Connection en Azure DevOps
+  artifactName: 'frontend'
+  zipName: 'frontend.zip'
+  feRoot: '.'                          # Carpeta raíz del proyecto Angular
+  app_prd: 'az-webapp-front-yaper'     # Nombre de tu WebApp en Azure
+
+pool: { vmImage: $(vmImage) }
+
+stages:
+# -------------------- BUILD --------------------
+- stage: Build
+  displayName: Build Angular
+  jobs:
+  - job: build
+    steps:
+    - task: NodeTool@0
+      inputs: { versionSpec: '18.x' }
+
+    - script: |
+        set -e
+        cd "$(feRoot)"
+        if [ -f package-lock.json ]; then
+          npm ci --no-audit --no-fund || npm ci --legacy-peer-deps
+        else
+          npm install --no-audit --no-fund
+        fi
+        npx ng build --configuration production
+      displayName: npm ci & ng build
+
+    - script: |
+        set -e
+        DIST_ROOT="$(ls -d $(feRoot)/dist/* | head -n 1)"
+        CONTENT="$DIST_ROOT/browser"
+        [ -d "$CONTENT" ] || CONTENT="$DIST_ROOT"
+        cp -f "$(feRoot)/web.config" "$CONTENT/web.config"
+        mkdir -p "$(Build.ArtifactStagingDirectory)"
+        (cd "$CONTENT" && zip -r -9 "$(Build.ArtifactStagingDirectory)/$(zipName)" .)
+      displayName: Copiar web.config + crear ZIP
+
+    - task: PublishBuildArtifacts@1
+      inputs:
+        pathToPublish: '$(Build.ArtifactStagingDirectory)'
+        artifactName: '$(artifactName)'
+      displayName: Publicar artefacto
+
+# -------------------- DEPLOY PRD --------------------
+- stage: Deploy_PRD
+  displayName: Deploy to PRD
+  dependsOn: Build
+  condition: and(succeeded(), in(variables['Build.SourceBranchName'], 'master','main'))
+  jobs:
+  - deployment: deploy_prd
+    environment: 'front-prd'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - download: current
+            artifact: $(artifactName)
+          - task: AzureWebApp@1
+            displayName: Deploy to $(app_prd)
+            inputs:
+              azureSubscription: '$(azureSubscription)'
+              appType: 'webApp'
+              appName: '$(app_prd)'
+              package: '$(Pipeline.Workspace)/$(artifactName)/$(zipName)'
