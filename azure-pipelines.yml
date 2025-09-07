@@ -10,11 +10,11 @@ pr:
 
 # ==== VARIABLES ====
 variables:
-  azureSubscription: 'sc-azure-agromarket'   # Service Connection
+  azureSubscription: 'sc-azure-agromarket'
   artifactName: 'frontend'
   zipName: 'frontend.zip'
-  feRoot: '.'                                # Raíz del proyecto Angular
-  app_prd: 'az-agromarket-front'             # WebApp en Azure
+  feRoot: '.'
+  app_prd: 'az-agromarket-front'
 
 # ==== AGENTE (self-hosted Windows) ====
 pool:
@@ -22,7 +22,8 @@ pool:
   demands:
     - agent.name -equals agromarket-agent-win
 
-# =================== STAGES ===================
+# ======== A PARTIR DE AQUÍ AGREGA ESTA CLAVE ========
+stages:
 - stage: Build
   displayName: Build Angular
   jobs:
@@ -33,14 +34,11 @@ pool:
       inputs:
         versionSpec: '18.x'
 
-    # Instala deps y compila Angular (PowerShell)
     - powershell: |
         $ErrorActionPreference = 'Stop'
         Set-StrictMode -Version Latest
-
         cd "$(feRoot)"
 
-        # caché npm local (acelera runs siguientes)
         $npmCache = "$env:AGENT_WORKFOLDER\_npmcache"
         if (-not (Test-Path $npmCache)) { New-Item -ItemType Directory -Force -Path $npmCache | Out-Null }
         npm config set cache "$npmCache" --global | Out-Null
@@ -58,7 +56,6 @@ pool:
         if ($LASTEXITCODE -ne 0) { throw "ng build falló ($LASTEXITCODE)" }
       displayName: 'npm ci / install & ng build'
 
-    # Empaqueta a .zip en el staging de artefactos (PowerShell)
     - powershell: |
         $srcRoot = "$(Build.SourcesDirectory)"
         $distRoot = Join-Path $srcRoot 'dist'
@@ -98,7 +95,6 @@ pool:
           steps:
           - download: current
             artifact: $(artifactName)
-
           - task: AzureWebApp@1
             displayName: 'Deploy to $(app_prd)'
             inputs:
