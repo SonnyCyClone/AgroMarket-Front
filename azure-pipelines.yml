@@ -15,7 +15,10 @@ variables:
   feRoot: '.'                          # Carpeta raíz del proyecto Angular
   app_prd: 'az-agromarket-front'     # Nombre  WebApp en Azure
 
-pool: { vmImage: $(vmImage) }
+pool:
+  name: Default
+  demands:
+    - agent.name -equals agromarket-agent-win
 
 stages:
 # -------------------- BUILD --------------------
