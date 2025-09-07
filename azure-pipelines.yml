@@ -36,13 +36,30 @@ stages:
         versionSpec: '18.x'
 
     # Instala deps y compila Angular (PowerShell)
-    - powershell: |
-        Set-StrictMode -Version Latest
-        cd "$(feRoot)"
-        # si ci falla por peer deps, cae a install
-        npm ci 2>$null; if ($LASTEXITCODE -ne 0) { npm install --legacy-peer-deps } --verbose
-        npm run build -- --configuration production --output-path "dist" --verbose
-      displayName: 'npm ci / install & ng build'
+- powershell: |
+    $ErrorActionPreference = 'Stop'
+    Set-StrictMode -Version Latest
+
+    cd "$(feRoot)"
+
+    # Opcional: usa caché local de npm para acelerar
+    $npmCache = "$env:AGENT_WORKFOLDER\_npmcache"
+    if (-not (Test-Path $npmCache)) { New-Item -ItemType Directory -Force -Path $npmCache | Out-Null }
+    npm config set cache "$npmCache" --global | Out-Null
+
+    Write-Host ">> npm ci"
+    npm ci --verbose
+    if ($LASTEXITCODE -ne 0) {
+      Write-Host "npm ci falló. Probando npm install --legacy-peer-deps..."
+      npm install --legacy-peer-deps --verbose
+      if ($LASTEXITCODE -ne 0) { throw "npm install falló ($LASTEXITCODE)" }
+    }
+
+    Write-Host ">> ng build (prod)"
+    npm run build -- --configuration production --output-path "dist" --verbose
+    if ($LASTEXITCODE -ne 0) { throw "ng build falló ($LASTEXITCODE)" }
+  displayName: 'npm ci / install & ng build'
+
 
     # empaqueta a .zip en el staging de artefactos (PowerShell)
     - powershell: |
