@@ -31,15 +31,13 @@ stages:
       inputs: { versionSpec: '18.x' }
 
     - script: |
-        set -e
-        cd "$(feRoot)"
-        if [ -f package-lock.json ]; then
-          npm ci --no-audit --no-fund || npm ci --legacy-peer-deps
-        else
-          npm install --no-audit --no-fund
-        fi
-        npx ng build --configuration production
-      displayName: npm ci & ng build
+    cd $(feRoot)
+    npm install --legacy-peer-deps
+    npm run build -- --configuration production --output-path dist
+    powershell Compress-Archive -Path dist\* -DestinationPath "$(Pipeline.Workspace)\$(artifactName)\$(zipName)" -Force
+  displayName: 'npm install & ng build'
+  shell: powershell
+
 
     - script: |
         set -e
