@@ -5,6 +5,10 @@
   background: white;
   border-bottom: 1px solid #e0e0e0;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  /* Asegurar que el header tenga el ancho completo */
+  left: 0;
+  right: 0;
 }
 
 .header-container {
@@ -25,6 +29,32 @@
   min-height: 32px; /* Altura mínima para evitar saltos de diseño */
 }
 
+.logo-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 8px;
+  transition: background-color 0.2s, transform 0.1s;
+  text-decoration: none;
+  outline: none;
+}
+
+.logo-wrapper:hover {
+  background-color: rgba(44, 90, 160, 0.05);
+  transform: translateY(-1px);
+}
+
+.logo-wrapper:focus {
+  background-color: rgba(44, 90, 160, 0.1);
+  box-shadow: 0 0 0 2px rgba(44, 90, 160, 0.2);
+}
+
+.logo-wrapper:active {
+  transform: translateY(0);
+}
+
 .logo-icon {
   width: 28px;
   height: 28px;
@@ -38,11 +68,10 @@
   font-size: 24px;
   font-weight: 700;
   color: #2c5aa0;
-  cursor: pointer;
   transition: color 0.2s;
 }
 
-.logo:hover {
+.logo-wrapper:hover .logo {
   color: #1a4480;
 }
 
@@ -77,6 +106,57 @@
   background: #218838;
 }
 
+/* Admin Dropdown Styles */
+.admin-dropdown-container {
+  position: relative;
+  display: inline-block;
+}
+
+.admin-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: #28a745;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background-color 0.2s;
+  white-space: nowrap;
+}
+
+.admin-button:hover {
+  background: #218838;
+}
+
+.admin-button .dropdown-arrow {
+  font-size: 10px;
+  margin-left: 4px;
+  transition: transform 0.2s;
+}
+
+.admin-dropdown-container:hover .admin-button .dropdown-arrow {
+  transform: rotate(180deg);
+}
+
+.admin-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  min-width: 220px;
+  z-index: 1000;
+  overflow: hidden;
+  animation: dropdownSlide 0.2s ease-out;
+}
+
+/* User Dropdown Styles */
 .user-dropdown-container {
   position: relative;
   display: inline-block;

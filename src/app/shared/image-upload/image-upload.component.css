@@ -1,0 +1,425 @@
+/**
+ * Estilos para el componente de carga de imágenes con drag & drop
+ * 
+ * @description Implementa un diseño moderno y responsivo para la carga
+ * de imágenes con soporte visual para drag & drop, estados de carga,
+ * preview de imágenes y accesibilidad.
+ */
+
+/* =================================================================
+   CONTENEDOR PRINCIPAL
+   ================================================================= */
+
+.image-upload-container {
+  width: 100%;
+  position: relative;
+}
+
+/* =================================================================
+   ÁREA DE UPLOAD
+   ================================================================= */
+
+.upload-area {
+  position: relative;
+  border: 2px dashed #e0e0e0;
+  border-radius: 12px;
+  background: #fafafa;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  outline: none;
+}
+
+.upload-area:hover:not(.disabled):not(.loading) {
+  border-color: #2e7d32;
+  background: #f1f8e9;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(46, 125, 50, 0.1);
+}
+
+.upload-area:focus:not(.disabled):not(.loading) {
+  border-color: #2e7d32;
+  background: #f1f8e9;
+  box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.2);
+}
+
+.upload-area.drag-over {
+  border-color: #2e7d32;
+  background: #e8f5e8;
+  border-style: solid;
+  box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.2);
+  transform: scale(1.02);
+}
+
+.upload-area.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: #f5f5f5;
+}
+
+.upload-area.loading {
+  cursor: wait;
+  background: #f9f9f9;
+}
+
+.upload-area.has-file {
+  border-style: solid;
+  border-color: #2e7d32;
+  background: #ffffff;
+}
+
+/* =================================================================
+   INPUT DE ARCHIVO OCULTO
+   ================================================================= */
+
+.file-input-hidden {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  width: 0;
+  height: 0;
+}
+
+/* =================================================================
+   ESTADO DE CARGA
+   ================================================================= */
+
+.upload-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  color: #666;
+}
+
+.loading-spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid #f0f0f0;
+  border-top: 4px solid #2e7d32;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+  font-size: 1rem;
+  font-weight: 500;
+  margin: 0;
+}
+
+/* =================================================================
+   PREVIEW DE IMAGEN
+   ================================================================= */
+
+.image-preview {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.preview-image {
+  max-width: 100%;
+  max-height: 300px;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.preview-overlay {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  left: 12px;
+  bottom: 12px;
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 16px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+
+.upload-area:hover .preview-overlay {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.file-info {
+  color: white;
+}
+
+.file-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin: 0 0 4px 0;
+  word-break: break-word;
+}
+
+.file-size {
+  font-size: 0.8rem;
+  opacity: 0.8;
+  margin: 0;
+}
+
+.remove-button {
+  align-self: flex-end;
+  background: rgba(244, 67, 54, 0.9);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.remove-button:hover {
+  background: #f44336;
+  transform: scale(1.1);
+}
+
+.remove-button:focus {
+  outline: 2px solid white;
+  outline-offset: 2px;
+}
+
+.remove-icon {
+  line-height: 1;
+}
+
+/* =================================================================
+   INFORMACIÓN DE ARCHIVO SIN PREVIEW
+   ================================================================= */
+
+.file-info-no-preview {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  width: 100%;
+  max-width: 400px;
+}
+
+.file-icon {
+  font-size: 2rem;
+  opacity: 0.6;
+}
+
+.file-details {
+  flex: 1;
+}
+
+.file-details .file-name {
+  color: #333;
+  font-size: 1rem;
+  font-weight: 500;
+  margin: 0 0 4px 0;
+  word-break: break-word;
+}
+
+.file-details .file-size {
+  color: #666;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.file-info-no-preview .remove-button {
+  background: #f44336;
+  margin-top: 0;
+  align-self: center;
+}
+
+/* =================================================================
+   PLACEHOLDER / ESTADO INICIAL
+   ================================================================= */
+
+.upload-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 32px 24px;
+  color: #666;
+  max-width: 500px;
+}
+
+.upload-icon {
+  margin-bottom: 16px;
+  color: #9e9e9e;
+  transition: color 0.3s ease;
+}
+
+.upload-area:hover:not(.disabled) .upload-icon {
+  color: #2e7d32;
+}
+
+.upload-text {
+  margin-bottom: 16px;
+}
+
+.primary-text {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 8px 0;
+}
+
+.secondary-text {
+  font-size: 0.95rem;
+  color: #666;
+  margin: 0;
+}
+
+.upload-hints {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.hint-text {
+  font-size: 0.8rem;
+  color: #999;
+  margin: 0;
+}
+
+/* =================================================================
+   RESPONSIVE DESIGN
+   ================================================================= */
+
+/* Tablets */
+@media (max-width: 768px) {
+  .upload-area {
+    min-height: 180px;
+  }
+  
+  .upload-placeholder {
+    padding: 24px 16px;
+  }
+  
+  .upload-icon svg {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .primary-text {
+    font-size: 1rem;
+  }
+  
+  .secondary-text {
+    font-size: 0.9rem;
+  }
+  
+  .preview-image {
+    max-height: 250px;
+  }
+}
+
+/* Móviles */
+@media (max-width: 480px) {
+  .upload-area {
+    min-height: 160px;
+    border-radius: 8px;
+  }
+  
+  .upload-placeholder {
+    padding: 20px 12px;
+  }
+  
+  .upload-icon svg {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .primary-text {
+    font-size: 0.95rem;
+  }
+  
+  .secondary-text {
+    font-size: 0.85rem;
+  }
+  
+  .hint-text {
+    font-size: 0.75rem;
+  }
+  
+  .preview-image {
+    max-height: 200px;
+  }
+  
+  .file-info-no-preview {
+    padding: 16px;
+    gap: 12px;
+  }
+  
+  .file-icon {
+    font-size: 1.5rem;
+  }
+  
+  .preview-overlay {
+    top: 8px;
+    right: 8px;
+    left: 8px;
+    bottom: 8px;
+    padding: 12px;
+  }
+  
+  .remove-button {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+  }
+}
+
+/* =================================================================
+   ESTADOS DE ACCESIBILIDAD
+   ================================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .upload-area,
+  .upload-icon,
+  .loading-spinner,
+  .remove-button,
+  .preview-overlay {
+    animation: none;
+    transition: none;
+  }
+}
+
+/* Contraste alto */
+@media (prefers-contrast: high) {
+  .upload-area {
+    border-width: 3px;
+  }
+  
+  .upload-area:hover:not(.disabled):not(.loading),
+  .upload-area:focus:not(.disabled):not(.loading),
+  .upload-area.drag-over {
+    border-color: #000;
+  }
+  
+  .remove-button {
+    background: #000;
+    color: #fff;
+  }
+}

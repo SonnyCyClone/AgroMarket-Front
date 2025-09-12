@@ -20,7 +20,7 @@
 
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { HttpService } from '../http/http.service';
+import { AuthApiService } from '../auth/auth.api';
 import { CrearUsuarioRequest, CrearUsuarioResponse } from '../../models/crear-usuario.model';
 import { TipoDocumento } from '../../models/tipo-documento.model';
 
@@ -35,7 +35,7 @@ import { TipoDocumento } from '../../models/tipo-documento.model';
   providedIn: 'root'
 })
 export class UserApiService {
-  private readonly httpService = inject(HttpService);
+  private readonly authApiService = inject(AuthApiService);
 
   /**
    * Crea un nuevo usuario en el sistema
@@ -65,7 +65,7 @@ export class UserApiService {
    * ```
    */
   crearUsuario(userData: CrearUsuarioRequest): Observable<CrearUsuarioResponse> {
-    return this.httpService.post<CrearUsuarioResponse>('/api/Usuario', userData);
+    return this.authApiService.postPublic<CrearUsuarioResponse>('/api/Usuario', userData);
   }
 
   /**
@@ -91,6 +91,31 @@ export class UserApiService {
    * ```
    */
   listarTiposDocumento(): Observable<TipoDocumento[]> {
-    return this.httpService.get<TipoDocumento[]>('/api/TipoDocumento');
+    return this.authApiService.getPublic<TipoDocumento[]>('/api/TipoDocumento');
+  }
+
+  /**
+   * Obtiene la lista de roles disponibles en el sistema
+   * 
+   * @description Realiza una petición GET al endpoint /api/Usuario/roles para
+   * obtener todos los roles disponibles. Útil para poblar dropdowns de selección
+   * de roles en formularios de registro.
+   * 
+   * @returns {Observable<any[]>} Observable con el array de roles
+   * 
+   * @example
+   * ```typescript
+   * this.userApiService.listarRoles().subscribe({
+   *   next: (roles) => {
+   *     roles.forEach(rol => {
+   *       console.log(`${rol.id} - ${rol.name}`);
+   *     });
+   *   },
+   *   error: (error) => console.error('Error al cargar roles:', error)
+   * });
+   * ```
+   */
+  listarRoles(): Observable<any[]> {
+    return this.authApiService.getPublic<any[]>('/api/Usuario/roles');
   }
 }

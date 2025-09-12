@@ -1,0 +1,327 @@
+<!--
+  Modal de edición de producto - AgroMarket
+  
+  Template completo para editar productos con diseño por secciones,
+  todos los campos del contrato PUT API y funcionalidad de imagen.
+-->
+
+<!-- Backdrop del modal -->
+<div class="modal-backdrop" (click)="onBackdropClick($event)" *ngIf="isOpen">
+  <!-- Contenedor del modal -->
+  <div class="modal-container">
+    <!-- Header -->
+    <div class="modal-header">
+      <h2 class="modal-title">
+        <span class="icon">✏️</span>
+        Editar Producto
+      </h2>
+      <button 
+        type="button" 
+        class="close-button"
+        (click)="onCancel()"
+        aria-label="Cerrar modal">
+        <span class="close-icon">✕</span>
+      </button>
+    </div>
+
+    <!-- Body con formulario -->
+    <div class="modal-body">
+      <form [formGroup]="editForm" (ngSubmit)="onSubmit()">
+        
+        <!-- Grid de secciones -->
+        <div class="form-grid">
+          
+          <!-- Sección: Información Básica -->
+          <div class="form-section">
+            <h3 class="section-title">
+              <span class="section-icon">📝</span>
+              Información Básica
+            </h3>
+            
+            <div class="section-content">
+              <!-- Campo Variedad -->
+              <div class="form-group">
+                <label for="variedad-edit" class="form-label">
+                  Variedad <span class="required">*</span>
+                </label>
+                <input
+                  id="variedad-edit"
+                  type="text"
+                  class="form-input"
+                  [class.error]="hasFieldError('variedad')"
+                  formControlName="variedad"
+                  placeholder="Ej: Tomate cherry, Lechuga romana..."
+                  maxlength="100">
+                <div *ngIf="hasFieldError('variedad')" class="error-message">
+                  {{ getFieldError('variedad') }}
+                </div>
+              </div>
+
+              <!-- Campo Descripción -->
+              <div class="form-group">
+                <label for="descripcion-edit" class="form-label">
+                  Descripción <span class="required">*</span>
+                </label>
+                <textarea
+                  id="descripcion-edit"
+                  class="form-textarea"
+                  [class.error]="hasFieldError('descripcion')"
+                  formControlName="descripcion"
+                  placeholder="Describe las características de tu producto..."
+                  rows="3"
+                  maxlength="500">
+                </textarea>
+                <div class="char-counter">
+                  {{ editForm.get('descripcion')?.value?.length || 0 }}/500
+                </div>
+                <div *ngIf="hasFieldError('descripcion')" class="error-message">
+                  {{ getFieldError('descripcion') }}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sección: Inventario y Precio -->
+          <div class="form-section">
+            <h3 class="section-title">
+              <span class="section-icon">💰</span>
+              Inventario y Precio
+            </h3>
+            
+            <div class="section-content">
+              <!-- Fila de precio y cantidad -->
+              <div class="form-row">
+                <!-- Campo Precio -->
+                <div class="form-group">
+                  <label for="precio-edit" class="form-label">
+                    Precio <span class="required">*</span>
+                  </label>
+                  <div class="input-with-addon">
+                    <span class="input-addon">$</span>
+                    <input
+                      id="precio-edit"
+                      type="number"
+                      class="form-input"
+                      [class.error]="hasFieldError('precio')"
+                      formControlName="precio"
+                      placeholder="0"
+                      min="0"
+                      step="100">
+                  </div>
+                  <div *ngIf="hasFieldError('precio')" class="error-message">
+                    {{ getFieldError('precio') }}
+                  </div>
+                </div>
+
+                <!-- Campo Cantidad -->
+                <div class="form-group">
+                  <label for="cantidad-edit" class="form-label">
+                    Cantidad Disponible <span class="required">*</span>
+                  </label>
+                  <input
+                    id="cantidad-edit"
+                    type="number"
+                    class="form-input"
+                    [class.error]="hasFieldError('cantidadDisponible')"
+                    formControlName="cantidadDisponible"
+                    placeholder="0"
+                    min="0"
+                    step="1">
+                  <div *ngIf="hasFieldError('cantidadDisponible')" class="error-message">
+                    {{ getFieldError('cantidadDisponible') }}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Campo Unidad de Medida -->
+              <div class="form-group">
+                <label for="unidades-edit" class="form-label">
+                  Unidad de Medida <span class="required">*</span>
+                </label>
+                <select
+                  id="unidades-edit"
+                  class="form-select"
+                  [class.error]="hasFieldError('unidadesId')"
+                  formControlName="unidadesId">
+                  <option value="">Selecciona una unidad</option>
+                  <option *ngFor="let unidad of unidades()" [value]="unidad.id">
+                    {{ unidad.nombre }} ({{ unidad.abreviatura }})
+                  </option>
+                </select>
+                <div *ngIf="hasFieldError('unidadesId')" class="error-message">
+                  {{ getFieldError('unidadesId') }}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sección: Clasificación -->
+          <div class="form-section">
+            <h3 class="section-title">
+              <span class="section-icon">🏷️</span>
+              Clasificación
+            </h3>
+            
+            <div class="section-content">
+              <!-- Campo Categoría (para filtrar tipos) -->
+              <div class="form-group">
+                <label for="categoria-filter" class="form-label">
+                  Categoría
+                </label>
+                <select
+                  id="categoria-filter"
+                  class="form-select"
+                  [value]="selectedCategoriaId()"
+                  (change)="onCategoriaChange(+$any($event.target).value)">
+                  <option value="">Selecciona una categoría</option>
+                  <option *ngFor="let categoria of categorias()" [value]="categoria.id">
+                    {{ categoria.nombre }}
+                  </option>
+                </select>
+                <small class="help-text">
+                  Selecciona la categoría para filtrar los tipos de producto
+                </small>
+              </div>
+
+              <!-- Campo Tipo de Producto -->
+              <div class="form-group">
+                <label for="tipo-producto-edit" class="form-label">
+                  Tipo de Producto <span class="required">*</span>
+                </label>
+                <select
+                  id="tipo-producto-edit"
+                  class="form-select"
+                  [class.error]="hasFieldError('idTipoProducto')"
+                  formControlName="idTipoProducto">
+                  <option value="">Selecciona un tipo</option>
+                  <option *ngFor="let tipo of tiposProducto()" [value]="tipo.id">
+                    {{ tipo.nombre }}
+                  </option>
+                </select>
+                <div *ngIf="hasFieldError('idTipoProducto')" class="error-message">
+                  {{ getFieldError('idTipoProducto') }}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sección: Imagen -->
+          <div class="form-section">
+            <h3 class="section-title">
+              <span class="section-icon">🖼️</span>
+              Imagen del Producto
+            </h3>
+            
+            <div class="section-content">
+              <!-- Preview de imagen -->
+              <div class="image-preview-container" *ngIf="imagePreview()">
+                <img [src]="imagePreview()" alt="Preview" class="image-preview">
+                <button type="button" class="remove-image-btn" (click)="removeImage()" title="Remover imagen">
+                  <span class="remove-icon">🗑️</span>
+                </button>
+              </div>
+
+              <!-- Upload de imagen -->
+              <div class="image-upload-area" [class.has-image]="imagePreview()">
+                <input
+                  type="file"
+                  id="image-upload"
+                  accept="image/*"
+                  (change)="onImageFileSelected($event)"
+                  class="file-input">
+                <label for="image-upload" class="file-label">
+                  <span class="upload-icon">📁</span>
+                  <span class="upload-text">
+                    {{ imagePreview() ? 'Cambiar imagen' : 'Seleccionar imagen' }}
+                  </span>
+                  <small class="upload-hint">JPG, PNG hasta 5MB</small>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sección: Estado -->
+          <div class="form-section">
+            <h3 class="section-title">
+              <span class="section-icon">⚙️</span>
+              Estado
+            </h3>
+            
+            <div class="section-content">
+              <!-- Campo Activo -->
+              <div class="form-group">
+                <div class="checkbox-group">
+                  <label class="checkbox-label">
+                    <input
+                      type="checkbox"
+                      class="checkbox-input"
+                      formControlName="activo">
+                    <span class="checkbox-custom"></span>
+                    <span class="checkbox-text">Producto activo</span>
+                  </label>
+                  <small class="help-text">
+                    Si está marcado, el producto será visible para los compradores
+                  </small>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sección: Información del Sistema -->
+          <div class="form-section info-section">
+            <h3 class="section-title">
+              <span class="section-icon">ℹ️</span>
+              Información del Sistema
+            </h3>
+            
+            <div class="section-content">
+              <div class="info-grid">
+                <div class="info-item">
+                  <strong class="info-label">ID del producto:</strong>
+                  <span class="info-value">{{ product.id }}</span>
+                </div>
+                <div class="info-item">
+                  <strong class="info-label">Fecha de creación:</strong>
+                  <span class="info-value">{{ product.fechaCreacion | date:'dd/MM/yyyy HH:mm' }}</span>
+                </div>
+                @if (product.fechaActualizacion) {
+                  <div class="info-item">
+                    <strong class="info-label">Última actualización:</strong>
+                    <span class="info-value">{{ product.fechaActualizacion | date:'dd/MM/yyyy HH:mm' }}</span>
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Botones de acción -->
+        <div class="modal-actions">
+          <button 
+            type="button" 
+            class="btn btn-secondary"
+            (click)="onCancel()"
+            [disabled]="isLoading()">
+            <span class="btn-icon">❌</span>
+            Cancelar
+          </button>
+          <button 
+            type="submit" 
+            class="btn btn-primary"
+            [disabled]="!editForm.valid || isLoading()">
+            <span *ngIf="isLoading()" class="loading-spinner"></span>
+            <span *ngIf="!isLoading()" class="btn-icon">💾</span>
+            {{ isLoading() ? 'Guardando...' : 'Guardar Cambios' }}
+          </button>
+        </div>
+
+        <!-- Indicador de campos obligatorios -->
+        <div class="required-notice">
+          <span class="required">*</span> Campos obligatorios
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>

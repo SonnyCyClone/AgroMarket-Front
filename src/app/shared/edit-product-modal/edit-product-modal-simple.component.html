@@ -1,0 +1,150 @@
+<!--
+  Modal de edición de producto - AgroMarket
+  
+  Template para editar productos de forma simple y rápida
+  con formulario reactivo y validaciones.
+-->
+
+<!-- Backdrop del modal -->
+<div class="modal-backdrop" (click)="onBackdropClick($event)">
+  <!-- Contenedor del modal -->
+  <div class="modal-container">
+    <!-- Header -->
+    <div class="modal-header">
+      <h2 class="modal-title">Editar Producto</h2>
+      <button 
+        type="button" 
+        class="close-button"
+        (click)="onCancel()"
+        aria-label="Cerrar modal">
+        ✕
+      </button>
+    </div>
+
+    <!-- Body con formulario -->
+    <div class="modal-body">
+      <form [formGroup]="editForm" (ngSubmit)="onSubmit()">
+        
+        <!-- Campo Variedad -->
+        <div class="form-group">
+          <label for="variedad-edit" class="form-label">
+            Variedad <span class="required">*</span>
+          </label>
+          <input
+            id="variedad-edit"
+            type="text"
+            class="form-input"
+            [class.error]="hasFieldError('variedad')"
+            formControlName="variedad"
+            placeholder="Ej: Tomate cherry"
+            maxlength="100">
+          <div *ngIf="hasFieldError('variedad')" class="error-message">
+            {{ getFieldError('variedad') }}
+          </div>
+        </div>
+
+        <!-- Campo Descripción -->
+        <div class="form-group">
+          <label for="descripcion-edit" class="form-label">
+            Descripción <span class="required">*</span>
+          </label>
+          <textarea
+            id="descripcion-edit"
+            class="form-textarea"
+            [class.error]="hasFieldError('descripcion')"
+            formControlName="descripcion"
+            placeholder="Describe tu producto..."
+            rows="3"
+            maxlength="500">
+          </textarea>
+          <div *ngIf="hasFieldError('descripcion')" class="error-message">
+            {{ getFieldError('descripcion') }}
+          </div>
+        </div>
+
+        <!-- Campo Precio -->
+        <div class="form-group">
+          <label for="precio-edit" class="form-label">
+            Precio <span class="required">*</span>
+          </label>
+          <input
+            id="precio-edit"
+            type="number"
+            class="form-input"
+            [class.error]="hasFieldError('precio')"
+            formControlName="precio"
+            placeholder="0.00"
+            min="0"
+            step="0.01">
+          <div *ngIf="hasFieldError('precio')" class="error-message">
+            {{ getFieldError('precio') }}
+          </div>
+        </div>
+
+        <!-- Campo Cantidad -->
+        <div class="form-group">
+          <label for="cantidad-edit" class="form-label">
+            Cantidad Disponible <span class="required">*</span>
+          </label>
+          <input
+            id="cantidad-edit"
+            type="number"
+            class="form-input"
+            [class.error]="hasFieldError('cantidadDisponible')"
+            formControlName="cantidadDisponible"
+            placeholder="0"
+            min="0"
+            step="1">
+          <div *ngIf="hasFieldError('cantidadDisponible')" class="error-message">
+            {{ getFieldError('cantidadDisponible') }}
+          </div>
+        </div>
+
+        <!-- Campo Activo -->
+        <div class="form-group checkbox-group">
+          <label class="checkbox-label">
+            <input
+              type="checkbox"
+              class="checkbox-input"
+              formControlName="activo">
+            <span class="checkbox-text">Producto activo</span>
+          </label>
+          <small class="help-text">
+            Si está marcado, el producto será visible para los compradores
+          </small>
+        </div>
+
+        <!-- Información del producto -->
+        <div class="product-info">
+          <h3 class="info-title">Información del Producto</h3>
+          <div class="info-grid">
+            <div class="info-item">
+              <strong>ID del producto:</strong> {{ product.id }}
+            </div>
+            <div class="info-item">
+              <strong>Fecha de creación:</strong> {{ product.fechaCreacion | date:'dd/MM/yyyy HH:mm' }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Botones de acción -->
+        <div class="modal-actions">
+          <button 
+            type="button" 
+            class="btn btn-secondary"
+            (click)="onCancel()"
+            [disabled]="isLoading">
+            Cancelar
+          </button>
+          <button 
+            type="submit" 
+            class="btn btn-primary"
+            [disabled]="!editForm.valid || isLoading">
+            <span *ngIf="isLoading" class="loading-spinner"></span>
+            {{ isLoading ? 'Guardando...' : 'Guardar Cambios' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

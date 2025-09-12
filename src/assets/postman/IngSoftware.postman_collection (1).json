@@ -1,0 +1,1032 @@
+{
+	"info": {
+		"_postman_id": "18ab5a20-0198-4a9b-b25c-74d6cc266569",
+		"name": "IngSoftware",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "47836515",
+		"_collection_link": "https://jer-develop.postman.co/workspace/Personal-Workspace~e37c93b0-f723-412a-9569-f2e4700945bd/collection/14821133-18ab5a20-0198-4a9b-b25c-74d6cc266569?action=share&source=collection_link&creator=47836515"
+	},
+	"item": [
+		{
+			"name": "Prodcutos",
+			"item": [
+				{
+					"name": "AgregarProducto",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "Variedad",
+									"value": "Tomy",
+									"type": "text"
+								},
+								{
+									"key": "Descripcion",
+									"value": "Algo",
+									"type": "text"
+								},
+								{
+									"key": "Precio",
+									"value": "1000",
+									"type": "text"
+								},
+								{
+									"key": "CantidadDisponible",
+									"value": "10",
+									"type": "text"
+								},
+								{
+									"key": "UnidadesId",
+									"value": "3",
+									"type": "text"
+								},
+								{
+									"key": "IdTipoProducto",
+									"value": "3",
+									"type": "text"
+								},
+								{
+									"key": "ImagenUrl",
+									"type": "file",
+									"src": "/C:/Users/ricoj/OneDrive/Escritorio/Componentes.jpg"
+								},
+								{
+									"key": "Activo",
+									"value": "true",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{UrlBaseProduct}}/api/Producto",
+							"host": [
+								"{{UrlBaseProduct}}"
+							],
+							"path": [
+								"api",
+								"Producto"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "AgregarProductoSample",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "Variedad",
+											"value": "Tomytest",
+											"type": "text"
+										},
+										{
+											"key": "Descripcion",
+											"value": "Algo",
+											"type": "text"
+										},
+										{
+											"key": "Precio",
+											"value": "1000",
+											"type": "text"
+										},
+										{
+											"key": "CantidadDisponible",
+											"value": "10",
+											"type": "text"
+										},
+										{
+											"key": "UnidadesId",
+											"value": "3",
+											"type": "text"
+										},
+										{
+											"key": "IdTipoProducto",
+											"value": "3",
+											"type": "text"
+										},
+										{
+											"key": "ImagenUrl",
+											"type": "file",
+											"src": "/C:/Users/ricoj/OneDrive/Escritorio/Componentes.jpg"
+										},
+										{
+											"key": "Activo",
+											"value": "true",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{UrlBaseProduct}}/api/Producto",
+									"host": [
+										"{{UrlBaseProduct}}"
+									],
+									"path": [
+										"api",
+										"Producto"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 12 Sep 2025 14:46:14 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Microsoft-IIS/10.0"
+								},
+								{
+									"key": "Location",
+									"value": "https://az-agromarket-back-product.azurewebsites.net/api/Producto/28"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Request-Context",
+									"value": "appId=cid-v1:2e1c4101-80ee-4028-ba9a-bcd62b95a7d8"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "ASP.NET"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"variedad\": \"Tomytest\",\n    \"descripcion\": \"Algo\",\n    \"precio\": 1000,\n    \"cantidadDisponible\": 10,\n    \"unidadesId\": 3,\n    \"unidades\": null,\n    \"idTipoProducto\": 3,\n    \"tipoProducto\": null,\n    \"imagenUrl\": \"\",\n    \"activo\": true,\n    \"id\": 28,\n    \"fechaCreacion\": \"2025-09-12T14:46:15.4524214+00:00\",\n    \"creadoPor\": \"Sistema\",\n    \"fechaActualizacion\": null,\n    \"modificadoPor\": null\n}"
+						}
+					]
+				},
+				{
+					"name": "ActualizarProducto",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "Variedad",
+									"value": "Tomy",
+									"type": "text"
+								},
+								{
+									"key": "Descripcion",
+									"value": "Mango",
+									"type": "text"
+								},
+								{
+									"key": "Precio",
+									"value": "10000",
+									"type": "text"
+								},
+								{
+									"key": "CantidadDisponible",
+									"value": "100",
+									"type": "text"
+								},
+								{
+									"key": "UnidadesId",
+									"value": "3",
+									"type": "text"
+								},
+								{
+									"key": "IdTipoProducto",
+									"value": "3",
+									"type": "text"
+								},
+								{
+									"key": "ImagenUrl",
+									"type": "file",
+									"src": "/C:/Users/ricoj/OneDrive/Escritorio/Componentes.jpg"
+								},
+								{
+									"key": "Activo",
+									"value": "true",
+									"type": "text"
+								},
+								{
+									"key": "Id",
+									"value": "2",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{UrlBaseProduct}}/api/Producto",
+							"host": [
+								"{{UrlBaseProduct}}"
+							],
+							"path": [
+								"api",
+								"Producto"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "ActualizarProductoSample",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "Variedad",
+											"value": "Tomy",
+											"type": "text"
+										},
+										{
+											"key": "Descripcion",
+											"value": "Algo",
+											"type": "text"
+										},
+										{
+											"key": "Precio",
+											"value": "1000",
+											"type": "text"
+										},
+										{
+											"key": "CantidadDisponible",
+											"value": "10",
+											"type": "text"
+										},
+										{
+											"key": "UnidadesId",
+											"value": "3",
+											"type": "text"
+										},
+										{
+											"key": "IdTipoProducto",
+											"value": "3",
+											"type": "text"
+										},
+										{
+											"key": "ImagenUrl",
+											"value": "foto",
+											"type": "text"
+										},
+										{
+											"key": "Activo",
+											"value": "true",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseURL}}/api/Producto",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"api",
+										"Producto"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 23 Aug 2025 02:08:20 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Microsoft-IIS/10.0"
+								},
+								{
+									"key": "Location",
+									"value": "https://az-webapp-back-yaper.azurewebsites.net/api/Producto/2"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Request-Context",
+									"value": "appId=cid-v1:f8a0e75b-6ad3-4e35-8559-9d2f5789b2d9"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "ASP.NET"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"variedad\": \"Tomy\",\n    \"descripcion\": \"Algo\",\n    \"precio\": 1000,\n    \"cantidadDisponible\": 10,\n    \"unidadesId\": 3,\n    \"unidades\": null,\n    \"idTipoProducto\": 3,\n    \"tipoProducto\": null,\n    \"imagenUrl\": \"foto\",\n    \"activo\": true,\n    \"id\": 2,\n    \"fechaCreacion\": \"2025-08-23T02:08:20.5520195+00:00\",\n    \"creadoPor\": \"Sistema\",\n    \"fechaActualizacion\": null,\n    \"modificadoPor\": null\n}"
+						}
+					]
+				},
+				{
+					"name": "ObtenerProductos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{UrlBaseProduct}}/api/Producto",
+							"host": [
+								"{{UrlBaseProduct}}"
+							],
+							"path": [
+								"api",
+								"Producto"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "ObtenerProductosSample",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{UrlBaseProduct}}/api/Producto",
+									"host": [
+										"{{UrlBaseProduct}}"
+									],
+									"path": [
+										"api",
+										"Producto"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 12 Sep 2025 14:41:22 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Microsoft-IIS/10.0"
+								},
+								{
+									"key": "Content-Encoding",
+									"value": "gzip"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "Request-Context",
+									"value": "appId=cid-v1:2e1c4101-80ee-4028-ba9a-bcd62b95a7d8"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "ASP.NET"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"variedad\": \"Tomy\",\n        \"descripcion\": \"Algo\",\n        \"precio\": 1000,\n        \"cantidadDisponible\": 10,\n        \"unidadesId\": 3,\n        \"unidades\": null,\n        \"idTipoProducto\": 3,\n        \"tipoProducto\": null,\n        \"imagenUrl\": \"foto\",\n        \"activo\": true,\n        \"id\": 1,\n        \"fechaCreacion\": \"2025-08-22T20:41:02.8148317\",\n        \"creadoPor\": \"Sistema\",\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"variedad\": \"Tomy\",\n        \"descripcion\": \"Mango\",\n        \"precio\": 10000,\n        \"cantidadDisponible\": 100,\n        \"unidadesId\": 3,\n        \"unidades\": null,\n        \"idTipoProducto\": 3,\n        \"tipoProducto\": null,\n        \"imagenUrl\": \"https://azstaagromarket.blob.core.windows.net/agromarket/58c42e43-a6f8-467e-a715-4f59a0f9ad21.jpg\",\n        \"activo\": true,\n        \"id\": 2,\n        \"fechaCreacion\": \"2025-08-23T02:08:20.5520195\",\n        \"creadoPor\": \"Sistema\",\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"variedad\": \"Tomate Prueba Azure\",\n        \"descripcion\": \"Tomato Rojo Recien coseña\",\n        \"precio\": 20000,\n        \"cantidadDisponible\": 20,\n        \"unidadesId\": 1,\n        \"unidades\": null,\n        \"idTipoProducto\": 98,\n        \"tipoProducto\": null,\n        \"imagenUrl\": \"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxMTEhUSEhMVFRUXFxUVFRcXGBcXFxUXFxcXFxcXFhcYHSggGBolHRUVITEhJSkrLi4uFx8zODMsNygtLisBCgoKDg0OGxAQGy0lICUtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLf/AABEIAMIBAwMBEQACEQEDEQH/xAAbAAACAwEBAQAAAAAAAAAAAAAEBQIDBgEAB//EADwQAAEDAwMCBAQEBQMCBwAAAAEAAhEDBCEFEjFBUSJhcYEGE5GhMrHR8CNCUsHhFBXxYnIWMzRDorLC/8QAGwEAAgMBAQEAAAAAAAAAAAAAAwQBAgUABgf/xAAzEQACAgICAQMDAwMCBgMAAAABAgADBBESITETIkEFUWEUMnEjM4GRoUKxwdHh8BVDUv/aAAwDAQACEQMRAD8Ad6PpDWEOcJPPn9eiykxtdt/pPZ5OSXGgYx1TUHiGD5Q3dKolrh1AIyD5wmmZT0Zg5IK/t3Ml8N3TGsrD5rDTpODS35TZcTE+J43BvI9ycdaB+K9ncUpDbK6/3hunCqaTS9jtogF0HPA3OnqUgvOxtnxPU1lAoG+49FzTAgGFtLaijUXNbk7MFvKDKn8wn1UOEt+YSp7Kz0Jj9Up7HQVi308G1N7Ht5ruBUr0jwnj8kHUNZWD2I+Zqzn0g0nPU9+xVbrm48YgMRUflKdNt/4zah4bn64/upxl73CZNm6in3nddud9VvkCPpJVrbDbZ/E7EQV1H8zoudzpJ4Ab9ArK2/MjgFHUd2F00MmVq0WgVxC6tmfUKZcgt8ZienVMCwAe6LmshvbANQtWFpLTj16pe2qpl3GqbrFfREyN/QD4aScHBnPpPYrKrY1t+I5lYiXpsjuVUmPpjaYOTnBG2MATJx59+wCYstqYfciYNeJmJb1pQf8AMgysTMAmOfTuUsagexNpbCNB5I38Uw2fP3VSu+oZU224K2pAJVisI7AzN/ElwatUBsnY0ARlauKvFN/eeQ+qPys4j4/5xlY3x2AHBAGClLavcSJ6DAvWyoH5A1GxvvCAlPSO49xglW5wirXqRGekv69oj1KBaeP+ZQV82jundd0GtuMI1XUbM1FobPXstdctQkzmxmLdSNXVaD2lrm/kR/hcc6p14sJwxL0YMpmXvGQTtx1A8lln901UfkvfcWV7k8IypqW9JfMF+aUXUsda1Gmj3nypLY3kRPMDyUC1kPtid9AsGj4gNwCXE5M5Vd/eV8eJ9Ttrt0w1oPcnKbRrHOhMd6lA2TLdUZb1WxWY6WglpYYg+yNlY68OUUWtw3tO/wCYn0n4fptc57nEjBExzAI6ZI/slacbl/c8RkhVO1HZjo1gxvhMDj1nv3T5VK69DxI9Muw5DczeohzeuP5Xf/klIW8v2k/wf+k1scqfA/xE9W8MwSUtzYHRMe9JSNiAXlSc/dSSSe4SscRoRc+opAhoz0itOD0/Y/ug3J1uL3eI5tK2C7qTHsP8oangvXkxRxtpZc6e+WufjdkDqR+yjLjupBbyZyZCkFV+IrvyaVZ7CIzI9CAUS2o1tqM4+rEBkrXUDu/eVyWFTCW0DjNDpel1bg7nO+Wzuefoj1o9x/EysjKrxxpRswyto1Ld8qi+pUccdhKo4YHgsWXOt4+pYABFer/CdSkZcYHnGfRCesr20cx/qldw0sT3tFzcgSO4Mx69kJtE7EeqdW6MWnTzWeNpa3+ongDv6otdgXppWwcBsT6FoHw9Z27N7v49TuR4R7LQrx11yJnnsjJybW4D2j/eU6tTe9xcxgaOgENEeQSmRRYe0HUbx7K61Cu2z+Yv+HNEtXVn1a9APcANv8oJJM7hweB5q+IHYFXPiB+oVLsNXrZ8/P8A6Z7UaAhxa1sAkGA2AewQb6nReQMLg212MU14mbu9Oa/8A2u6QMHyIHHqg02knRmyw0NiK7HRris7bTpOJBgzgCOfX2ThIESfIVf3dR9aaE6kCKlRm6cgBxiPOAk7nU9QlN5+B1GenUKO9vzXOLZzAgD7odfDl3OybLuJ9MCNtWtGz/BHh4jE/YJm+hgPZEcW0j+6e4jubU5BEecZE/lhKcbEILL1HDYrghW7gVyxzi7wuEHEuDi4d5+oyBwUa1eOm+8Hi5HItX17TrqCW+kuqS7aT5cRxJKPWC3iUz8/0tKsGv8ASKjM7SGkCDgT7BHasqNmRiZgs+YJSpAHJQC2/E0zsiWvqNJ5VNGKkET6g2uwCAVvBkUaExeLMe51tNtQRPTCG5Vxrcnus71JUGgAMeeJA9lPEKADOZuRLqJGvsALHdR9u4XOEA0ZKF2YMsyde9Ld1Inc39wQsNnZN1+RN6ukNpx0YlvHGZ6cKobl5jSjjBXVsQVYCWAEEcUUSSYRp9SHH2P3/wAlQ/7SIreNiP8ASK+4x5n7oCoNgGAK+Wmufa/xWl5w1gifJbwpHNST4Ey1uBrPEdkxB8T2wrvaaYhw8JceNvc+iSzLUc9fEew2NIOz/iONB0qlTpu2M3VIje7+yDSnqISPPxFMvJtdxyOh9o2taBa0A89U9jJ6devmJWuGJIi6x1pzXDwsY9znU98OcxrwcMc4HwuMiJieOcIvsB/MzfWut9rjSy27sqt1431Gt5bkkjBg7Y6Y9fJI5GObW2JqYuUmOoATv8RRd6EG/hc90cuhrB6CSSfslXw2XxNSnPZzpgB+PJiu1pUQ6HvqMHdoa4z9QlhxJ90cse4L7FB/mX1tWfQ27HufT3AEkS5oO7MDpIb9fJNUWnRQH+JnZC8dOy6HzK6mq7nV3VIg02sBLWkMkEDYRkEmZHom0uZ01uYWRZXVfvXIEAjXchoGpubUqGC4vAGT4WkbjiO+7p26K6EeBE0zOCvY3ZJ6hGh0A01DVe+qH1S/a0EyTgkHhokemMd1BAc/iPYuU1NW/Dt3ryRDmMaXQGlgngZP2/VZToFfS9zaqstKcn8/maFmqspU9lNmx0ZJME+uEwLxWNamecV7bOTnYmZuKu5xJ69km5DnZmzWnFdCRNtiRlcatDayTfo6Mlqj5ptD3baZDmkyRLthH8rgTEnGct4OI3aB/TH3nkcvMV7CP+HuZTRdbqUP4LYe0g7i7+WJI2tIjsJgEjviCNpupnrlOo2DqG/DNrUeaz3E7fC0bjyck/Sfus/Nr5AAHxN36K52zd6MYgupu3NOR9COxHUeSy0satupvXVJcnFoxvdbp1AHPZDuIHT37LXbOWxfcO5nUYJq2qzL6syk8yxu336pVrdn2ia1JdR2YjfSgogaE5ma+pqEREn99AosyPtBpj/eXM1E8gpZr25bEv8Ap1PUovNYc6JPB59UZsprF0ZNeIimBvv3nlxQjY58mGWhF8CUVnE5Jyq+YZToaEFfWV1WE1AahRgJUyqVbUHyl1HMDjOSOfRQZDVmzqbzRLG0FAv21XPz/NADvYIqUo9XP5EyLjkpdwBGpfT1Lc5m4biCQB3GJHnwqfqnchT8SXxQobXzKrzUH16rhuO0ENYDAAznAAAH3hUd/Us4/EEMcY1Qb/iMb39i+GihUe12BAcSI77JE5IkyMfRaS8UAQTFzbGANky3x5rdzSLKdOqWVGvPzIbtDhhzI67SMkT1XMw5GIC5vT5k97luk6hNOrSH4qr3P3CDAdtnkeXZJnIIBA8zbwMb1KTYx63Nholu4+J1N+2excPLjgeSvQzAnY6lMmxVHEMN/wCklruoBg20wyYiNhH2OJUZF6+FlsLHNh5PvX8zE3p7gT6f3Wcx3PSVD7Rfv5EmOoHPqFw3GWQEeIQdEp1DPzKpaRIgsBJjwky08H380VL+PxPN3/Sqy/Nfaft8T1ppXyvE5/zMRAG2ffP7KIMsDojUzLPoDu21aGWm5+xziWkAzTGGzOD5xx7eai7IB0Fmpg4H6UMG0ST5+ZtdCq0qQkwXHomsWtSN/MUy0ttOh0ID8SH5x3NaBH3XZWKGGxGcAGoaJmcq0HDIBWVZQ69zYV18SDdQc1pE9DBiYMdR16K9N3E6bxAZGLzGx5iHVtSmKZEhjzUbkndiNufUlaaWchqeUycX0LOZG/wYq02o/wCZtjL8vPO0YP6fsIgbiNCZ9lHs9RprravsZtc4hjedmS5x7kA7R+8IJ3robj2JaoUIzcR/78z1YEjcwHaf+tzh93GEjabQdldD+J6THqoZfa2/4MDqgukEAE8dPbmJ/wA+/KUfx0ZztZjnbbZfv8j/ALzP35c1xa7BCZFRXzHab67EDIeoFvRNS/OPDdRgpILsRk1/adp3PmqlJfUhUqypCztalHz4V+Mtqcfck4Vgk7UHc9X1O5SDipAlWaQJVoImWUnKpENWeptPh/VmMZtc0mSiUZC1rxImdmY7O3MHUjVqA1JpmRu4zgevE9MIT1gHn8fEVrzPU/p1jZHk/E5atbvdT3bXtptf4jEvLn7hnlu2mIcJ/H5pmmhWU7mNn5mSbRxOtDX4lo1dj9zDV+W5kguDixzMctJ5ifL0U+jpgyt/iZ9n1GxqylqA7+RM5pVrcXIqOc/ftIh7iSXSYx3xJV363Ex/VIUdbm9+F9MpUvERuf3PT9PRAxEFjciJ6dlaqsVKepobi9dGCVsFwBF0oG+xM1f2Zc4ulZtuPzO5r02qg1EtxSe3zHnlZ7UOpmijI0AgT2KEDrzGACB1HehtY8Fhw4ZHmOqfx6q7Dph3MzMZ6zyHiGX1jTYwuJ9u6tfi11oWgar3sbiBE1Kt2WQOz1NJq/vHujU8SVs4FRA2ZmZTd6jTaOq0CBqJ8oNe1WBhjJS1rLrQhaVcuNxJp+kmq4gwAMmeGj/q/RZK0Hl35j2TlBE6gV/asLj4W44O0A+vGCl3tsVtSUordRzXf8xcdKpSfBzzzn1UjKsHzJOBjsO1Euo2rGZaxoPooGTYDvclsGlhoiGWd7scTtbBAmBExOT9srSrvayrZ70Zl/pEx8nivQYf7iNbxtGrSLmlrXATkDHqOoPuiE02ISPMOvrJZxPiYm+pNJl+YkmMefT8glEtYnuN3UelUeHtH+shRqWpAO6n7lwP0JlFPrb/AGiIDNqH/wBp/wBP/EFfUlDA1PSbEgHqdSvKSNQruIltyBcp1K8pFxUgSjsZXKtAb0Z3co1LcxODJUyBsmar4c0J7/HB8paCD7HBCNTivb34ETy8xK/bPX1sKTi0DaRyRx7Dok7P6b8YRCb125JX7ff+YZ8N2wc6ROSCZ54HTpxwr1r6j6+0pYFqrLBdEx/rmnUqrJIG5ghrwN0CfwnuPJO2WoF4g+Jivii5tN8zF31jUef/ACxIwHNhoPUAtkzyeEgb18ky9f0jh87B+IXoWnupzMbziW9Bzt44nJ/woNzMw4GPU/T6qqyrgEGbG1caQ8ckHO4DAn+oc+/HeFs1pobPmIHa+0dgeIW5+J5HTzRCOpcaMoc4RPuqa1CDroRRqERKBZrUcpLb6mYuHZWPb+6blX7Z6heFhkH3U1synYlbaVcaMlU1NzxBdOVNrs3kytOMqnoSy1q5S46MtYnU0+l3o2wtrFuASYuTQxbcG1LVjlrUrk5pJ0sNj4g8mDWtwYLj6Ce/f2VaWIQu0JbWCeIjrTidnYHPr5lN4yll5GIXgB/4hAs6fUD3RxRX8iCNz66k6mms7BW/T1/aDGU8r/2xn9IUri1/aSct/vM18QWrWOG3wmOizslRS/tj1AGQmrBv/pEbqpGD+/WPdJnR7AmhTWUGid/z5lNUyJ+qhRqMHsaMIo2DHAO2NM9Y69VYvZ8GZzY1W+1EGr0ab2gtMGOe/qFYOVOjG9NFr6ZHP2RgQfEnepDcp1O5ieJwp1Bm0E8Zza7sVGxOIf4ErfPYq41BPyHkTtN0ZXanIwHcKsWAuE8clDY6hQPaZt9Ovqj4a0uPZrMAf9zunsjpfZZ7V7me+Mie46H5ntU07Y3c9p8zP7KWyKWQ8iIbHuFh4qYHpIJHYdUqd/EcyNCP6urPLPksAgRuMduiJ6zlOCiZa4iB/UbzGengbBuY3vMZWji0jh7hFLth+jM9et+VW8pkehSTp6Nw+01KT6tMcVrgEAzhbJsBXczxUQTB6uogCJQjcBCLjljKTqII58lAuUy36crEuoXk4SN132mjRT8mKKqUJ2ZoL11BalRXAl9dQdlSCiEdSqPptQ6jXQGWXYbjC3uyOFXkV8QD1AydMlzgP2B1K6qvm+oOz+mm4Uyq1xAH4Rj2/f5phnDMFHgRbgVUsfJjO+1UM8LU1dkhBxWLU4psO2iepqriZ3JI5Dk73HxiJ41OjXKndWGTYPmUODX9oTR196Mua4itn09Ytv711RxJS91psOzGaaRWNCLK7sqojAlb3Yn6q4E4eYTa3BDRnv8AmragnTZiy2lx2hXfQG5Kty8TQn4ae6kHhp/ufOFcU28Oeuov+rrFnAmKBpL3P2AGfRCDnetdxl/T48t9R/Y/DjQ/5RLdwAdUgyabem48BxJGO0+SaTHZjpz/AOJmvmL0ax0P9zLb+yt2Ya7cfLI+qXvSlOge41RbkP2RoRPXtgeiVD6+Y8O/MW3VgeQEdLh8wFlIPYlVoMq7+JNXibTTNQFFvgjzPUqK8j0hpYjfjm1vdI3WqGsHOqGQ0ENHSTP7+ih7jZ7ml0xhSQqfMq0+uGsJ8seqV5ajFyFmAl9pWjn3R8cgQdqddTWUao2g9IW7tQoMw3U8tRN8TNBa145GD6FZ+eAyhh5EfwCQxUxLTvzthJrkHhxM0mxxvcFublU9QmFWqUNuPNdyIkmsSToXHuUGxAbmr2UKsYUfMDc5FAlyYE+tD/ojhdrMp7+N0NpvQCJqI+xDKVZCZZLS5ldQNgdQRXctFxAwqjc4oD5ldauSeVOiezLKoA0IM+srBZeRbUVuMGZIVVXjKmX0bjPddrUC46lF7VB4CuokVgjzBH1MQiAQk42qp1O6jXTrXYQXNiMHHblCuf3AN1FMdkKE1tvfzNve/E1GkWNBEOAAmRJ7TwtU5TEDgNiefZEVyLW0fMz1/wDEG2tFtSD6kHLvwMLuHOjJ6QMT9lTa1sLDITLa9TVUDr7/ABCNM0vf+J8u/wDcIJJc6S4l3uT6cDhDWtshtt0Jo12LjV8QdnzHL9IYwYbJTX6StB0JAy3c9nqIL1uciFi5A78TWpOx1F1R8JcRsCL7lg5GD+aZQnxK8ddylt0QrFAZHULo3fgI9/y/RV1rqD17twplbwwgFe4Yr3uXisrKdShSMaOpQ2JTZyTx1E2xfduDXV6SIJSzWs3UNXSAdxS6pCjjHRKH1VYLLa1OfNU6lNSD7jCkLI4ykuVwJbcpe5XVdxeyzQi+q3MyUwOhqY1icn5bhdGqhOs0qLdjUKa9CIjwaWU6ioVkiT+ao4zpF1RTxnSsvVgJG5AuU6lNyRq4UalSZD5hU6ldyO5W1OJlNWplXCxayzidTm9dqV5zS3TGtb8xj3ukAloe1rA6M993kA2B+TYCWD3TxWUrYD8qHOj40dysgVaO4w17C14MiOdpkGYguB68eapVWVGh94hk5r5Lg2dnWifvDKF2wD5NKHEnbVrEAOe7aNwYP5G/c94EIV7hWHH5+Z6n6PT6tXJvA8KPH8mbWztababNpAiODz3nvOVqV8FQalLS7OSRDpYcSP1V+QPzB6cfEzPxOxreFlfUAAOps/TmZvMyVy9ZiibggFSoUwBKNA674yjINxK9+HciyuuKSqXgw6hcYQXQbjtbhhDG10ErCLLW1VXUkrIOuO6sFkFYNVf1CuBOEpLlfUtuR3KdSu5EuXalC0gXq2oMvqeba1HcAhXFiJ3FHrss+JP/AGeoc4+6g5CCV/SMfkSp2mVWHABHlz9FIuR+oIUXVNsdj8Tgf0OFBEdW2XMcqERlG2JKVGoTc4XLtShaRLlOpUtIkqZTc5KnUqTOKRI3KrisGiVZFJMVycgVLuDUXE5gkdYn80fhMk5X57lm5V4xxX2O47t2tIBFRrWCYAwZjl058/ZE4nWzPB21hf2nv+JCzeQX43S0NaGlpLyXscODgQ12eigOF2d9SaMOyxwqiFWOnVW+Lb3MCTEmeep6T5LPtf1TpQZ9E+m0rj1cXMIF+9uDI9UHR+DNL0EfsS0aoe8KduPmV/SL9p6vfGoIJUvYz/ulVoWo9RZc1FKCHBgNQo4EHYYHdu8JRqx3MvMb2GL214TBTcx0vKS+hqABzwqNQSI1T9TVG78RtTq4kHCUZNdTfrtDjkviXtqoZWMAyDnqQJxMiainUoWlTnK2oEvqR+Yp1Km2eZLjAyT0U6lOe+o7sdHfy5pHqCPzQ3Vz4EsMipfB2ZprDRW4Lx7JirCU9tE780npZXf6eWkkDwzhLZOKUJK+JanJDDRPcBc2eiRAMZDAGKNSsA7yPcJiq4r0Zd6vU78GCHS3gSCCEX1lMqiFetwaowt5VwQfEuSwlZer6lTZIly7UoXnNynUjlIuqjjr2VghgXyEU63CbdjNj31H7Q3hoEueTMAfRErrVvJiGZntSPHmLLa5LqkOaON0jlgPEd+n1TAArXcwrWuyrOI+29f9Jbdtq5Dnk9s4I6FUNu47jYa8OajR/wCUH3Hsqe2N7cdam2do76vimWszERjzPP0SldljgkDxCWfT8dX0Se4b8PaKA/aOoDiSZ/5XVq2RZxPWoU1V4yF18nqbSlbNaIA91tpUtY0JnNY7HZibWtE+ZkQlcnE9Q7XqaGJnGvozGX1i6m4ggj9/dZTAo3FhN+u8Ou1gJqQu1Llh8y60rHcDu2ydswCBPG4HEY5Ral90QzWHDQXkftvUEvZ3GRE5j1EiPLKsR7oGi1XpDA9alDdLq1XFjRtiNznSGsB7n2MAZMGEetdHuZGfkrw6Pnx+ZdbaBSfMfOIGN5LWBx8qe0lo55dPkusyFSL1YF9g5Ej+Nxrb/DwDHOawAt75JwDz15Q152KW31NGk11v6fEb8E+Ynq0yChBgZrFeI2sh809Qp1uV9Yr5E780LuMn1gZFz1wEqbRKnVlcLAPeolD7kIgrij5SiPtHtYguGfySVz96E1KUKoCfJmp0+qxpzI9ir02Kv74vcjH9uo/oXLD+FwPoR+S0hch8ETNetx5Eu/1Df5lJsXXcGK2+Io1xjA3e3DZAcew7+kxnzSd9alCV8y62sjqX8A9/5Ez1wJWTog6M9DWY2t7IGk0xkhNioenuIvcfUIim9tPJA7UxtLNiZ3ULMgy36JyqwHoxfIpbXJP9Is+a5M6EzxbYDqdJJXDU4l2EBquLXAmeqOuiJg53qKQd9wu3uuS71Eq4UARK2+ywgOYz0ZtKnVdUrGWwPD1O7jaOvA+6GTsfiGxLODFt6MLrncJLNpJcQ3+lpPhafMDnzSVrAv7fE9J9OpsCbb5O4F/pj2U8xND9PufVri220ixnMfVadmOEq4pMmq4vZyaIrW6NJwcfNp/fusmt2pIb/E1bKhcCv+YTca4T1RXzSRApg66it+s1A6Q4+nRAXLtBjgwqyOxF97qBqGXcqttjWHZjFNIq6WLK4C5YVu5TJiJxPHmev259EYdxG1lrOyIbaMLiMSWxtLYcJE4ziMTiE0utbPmeRzr3qsZFJVWmkt6T3U6bHONF0O2xBw8knxR1LnEA/wBTo5RNg635mLdYUs2h2BOu+XSb43Aku2tpsOeY6nng+8nqkvQ0+2M2j9ZDIErX47J+/wCIX/uIewikxpk7TJ6x2aCIAjr9UazIVE4qIz9P53f1Afnez8xbVpW7BDml7zzt4HlJIn2SoNSj3dmb49ezsdD8/wDaJru1pmdrXj1I/RcHX43GBXYf3aiivaEdFdbJSzG32Ivr0j0JCYVhMq+px43AHOM5JRwB8TJZ2B000+gaQMPeJJyAeAP1SF95J4rPQYWEK09Wzsnx+P8AzN9pFkweNxaPIwiY1CL72InZNzn2qDD7mvRcNpe0DyTFz0sNEiKpXap3xi6pprT4qVQGOnBWe2Kvmtu42Mgg6sWDMviPBUBI/wDkPQ/qhrkMvteEajl7k6P+0hc1PDEhzT9D5EKlrsv7TsTq0VyQwiujSM7TJaIgk8DownBJPQ5PTpk9SJf2ej8/mZuTkW/Tl9vY/wCHfx+P4mts3t20xA8QmCRgCP1H1TiqANRb9S9qhtaJgHxBRAPslMsAEETWwnJGjMvcgHlLKZrDqIrmlDpCeRuohfQOW5FluSuL6lFrXUpvdOcRI56eaJVcNxHMwvVX2+YLY+FxDhzggphn66nmrcWwsQRoxpY1JHcuMOJERtmCD2OP2EJzxU9xnBwLTYrEHQMPpjuZWeTPapodCENc3sPuqaMvNV/4i7jC1Bnk/Eyf/j9eDF+q3DXS5nDunZ3+UK7hYuxGsdWTo/H+8Q1LkpEJNTQPc5btc8w3/A9VbiJDMFEfWGi0xmoZ/v6N/VSCPmIW5L+Fj6201rx/DpBo7kSf0Ct6fIdeJnvkMh97dyq70OR+GfZLuhXsS9eYCe4jqWLaRILBB5bwDHBEcEdwuryrE6MjK+nUZw2fP3EFa9tMGCY3Fwzkdkb9QzEETz+X9Ktxj7vcv3/7xRd1HOedsucTyYk5wfLEI2wfcZWnH6AA7Mf6VabG8kk8/oEhY7WN1PTYuKMesJNFYWFItl7J81oY2KpXbQd2RaG0piu804AnbjsEOzHI7WO05JI90T16fQgeqV5ajyEHsRTe2iYrslbqVsH5iy2sg+q0HoZPmAmzbqs6mGMMPkLv48/mapro49Fm6PmbpG/M6C89Y9Sp0TOPBfiXi0qRM/YlSa/kwXr171JMa4fzfmEDevE4lW+J0knn6qCdyAAPEA1C/wDlsOC4kQ0RPiMAe+eExjVB27mZ9Vvsqp5J/rCrguNOnUfTDXFoLx+Eh7WxgDjJny7YhbPBANrPC2ZbvtLGJH57hX+/teGQwNLcHb/NIg7mgQDIB6IVlXLxHcb6kawA3uhL67awJYSS3kREdj5hIZNRUT0v0/NS4dDUVXNkfRKK2vibq2Axe6yh0v48h/ZMpYD0ZTIDMvtj7TtEY9m5hDvy/wCVoV46sNgzAtyLEbTdRdf2O0nGPySNtTVt1H6Lgw1FFWxa48SVy3MBqMNQhPIiTpURGAqsxJjC16EOt6BPAlUAZj1Ku4Udwn/Qu/pV/wBPZAfqV+8Ge6ec/mhhjNQpvxA7hxHBkIqncGya7ggcScdUTUp6mvE1WmW7WMn79z3QSdwFpJOoztaRdnqqonMxa1go1NJZO2Nha1del1Mi4c23OXupbBI5S+RpB1OqxuZmK1O4LySeqxgdnc9Fj1hAAJVo+nOrOMNlokGeOM/Y/dNDkBtZGbbUE4v8/EssdMY6oWABpOB0zn9FSvnZ1uLsldK+oFEjZv2v2u6GCrVgBhuNP705D7TYtpgNEcYXoEUcRqYJck9yqvaB3qoNIaWW4rMtqlttcQsfJqCNNvGs5iJ6w6FAWPwTT6X8Qny/uD/ZMOw49xMrxs5fiOrS3BOUuDsy9j6E12iUaLeGiY6iVrY1SMvUwMx7m+YdrVUupw0QBz/f8lORVpeorioFfZmNrBYTjueiTxByVWFlNckEPGXNMjzxBHrHBTFLaOj4mf8AUcZr6iqwapem5toLNrhV7keEDgHg858gtqtQqaE8BZV6dhGorrBtOBua5wMgg/h+h5VuYHmAVSTGfw1Xf87cXD5YaREZcSfSY65Sd9yL5nqfpuDbvn4E1Va9okQWH1S36ik/E3FpuB2DEV28TjhLNonqaNYOvdKdM1E0asj8DsPb5f1DzH+E5jXGswGbiLenfkTVXPyn0nEETC0bGrZCR5nn61sSwD4mPNOTjz/JYo3PQhgqjc9ToncGkRJU8SdCWNo47mvsbNjGj81uUUJWs89fe1h3DQ1vkm/ZFvdPnbqi8xxnuxIbh1VwNTj3KaDYeD0V2O1ipr/qTQ0KkwOgSnfiUddbM2Gi0ABK3MSkBdzBy3PLUZVWJsLoRMNF17byEnfUGEaps4mZPUmwSsSyvg03cc8huH6RcmnbO28uc7PlAB/JNdig6imTULMkb+It0+sf9Qwj+oIeIu7BHL0AoO/tIa00srEn+o/dWuTjYVlsQh6hH9hqn8MT0ELRpyhwG5mX4vvMu/3dsI36pTAnEYGINTut5JWXkWBzNTGq4CJLtyCgjwjCytQGgnk5XP3AM/cZUqYjCkKNdRZmO+4200mU/i8t9CIZHiH3pLmwE/anJdCK1cVbZiCvp7gJysh8NpqJkKeosqjaUg6FTqOIeUoe5cBC8T8QehYOqMrtaSAW7+JALS3c4DpIwVpU36UhvtPN/Uvpqeqlg62dH/MX2+huaZ3+vhB/uhnMU/E5PoyId73H+k2TGnEg+ZCEpFjdzTO0TQju40pxyIRHwDrawNeWo8xLeWhb+IQljUyeRH67lcdRTXpq6NC7ltG5IxK5gYoaxvcO0La6qQ7jafzH+UziKOXui2cSKxqNb9jCWOHLT9j/AMJ60I2iPiIUu42D8wW91jMAoWRlfCw1GLsbMobrLxhAGY2of9GpiJtInjI79D6Hg+0qhTXkzRT6jW/7ASPuB1PGiemfTp7cqhOvMYS9H8SjdBU6lufcb2NXhLMNNKuNiavT9Qhq1acjSgTFyMfZ3GNXU0ezJ1E0xoHV1MZygfqVhxjzPanWBMrMubm3U18ZSo7japtZatHXaPqclaVyqlAEQrJsySfzM/pb/wCPT9T/APUx94S2D1aJqZg/oEw74xILg4f0/cFFzdeqDFfpf9sxXaXRhJHYjroCZ19dQCZAWDVaykLsy4EGNSSPUImtCSTqPKT5AQCdiAYdw21dwOiNSNmL29dzT0KIa0Qt+pAq9TDssLNLYxJwrHodwZJJ0J5pa4HIK5SvxIbkDMbrjhvO33WHna59T0WDvh3FL6iVAmhoR78OWhIOYBBa4/8AS4QR9FatWZzr+Jl/UHX5/n/Mu1yg1jtrOICHfT6balMN2ZdtFRHYoQj3UY2WqOA2uPoVo4+UdcWiN+KN8lENrXLajCyoAHDLXdD29U4zLYvF/PxFEVq25J4+RMneNgkLL1o6muh5DcDrOAAPsUUDcGQQZ2yuiCSCpYFfEG6B/MtfeHvyqry1IFSykVJXEQgGupMPVOMtCbh7mnwsPuRA+yYdavIJmbRZnABGrXX86g5qu5ggdQf1HRDYL4E1KQbBydeJ/EHrOn1UiFZfz3CLOrgIdi/Msp2I2t7qOqErFTBWVhhL3X09VLuW7gBSBBKlcofcMFEorVJCsg7lhL33pcIRbLGbzKLWqnYi01trwR0KvWSvYjNg5VkGEX1yXtkqCSz7MrQgQECL6FVWZdzlbYl3zVTjJMpfUVwJG5UypDh6hX49QLWdx3RqwlNahiISy4V1bUC67jujq0U/Na65XGvfzMl8Xdn4i661ZxxKQfKdo7XiIIE3UX9yqLkOIdsZD3qVXDsT1Qm77hEldnQLzPQfmeFdE2CZNtvHSzYaW3Y2E/j1cVmNkNzbcG1K2LySqZGOXMLj3Kg1EFwSCR2wssoVOjNRCGG5VuldqSZ7/WGNpyJx5HyRg7a1AtSu+SyqpTLlA7O5HMCLLk4IR08y9miuxBKVSERliqN1LDWUcYTlOtrKOMkMJ2T2UaEnkJ9B1DVabmkZbjAI/uFVmUxGnGdGHzMpWqCcIOprp0IHWYCiKTLsAYMHwUTWxAcip0Ze24PdU4w2wZcy4QykoZYKyjjKSurWUqskSIrwrcJPmUPcrgQhMmanhUAdyAfmCsciERdG1Ld6rqG5Spz1YCCazUFr14zKMib6mbkZK19kx1bV5APlP1SToQdTXRg6hh8iECoh6kkS9tWAr7gSO5TUqyohFEqLl2paRq1pVgDO6Hc0mlWcBreo8TvU8/TA9lppRoATHtv2S0esanAgESLbnv8AUNB2lRyUHUqQxXYmY11m2q4e6xstdWdTawrC1fcVioltRs9yiq5EUTgd9SbbmWjuMK0VK6aL7ipMlFQdy7HSGKm1kyVmQL4RSBPKG3Uar5HuF02oRMZUGWQq7hY71G9LjlL+YSmoKOosfUVwIwBKi9X1O3KK2Qrr1F7gGEHp1uiKUiVeR3qWioqcYyLAZP5qrxk8hIuqKeM7mNTwcu1ODzxcu1LFpLco13J5dQfdlE11E+emky7yKgAS5sOvECursj+Uo6VD5My8nOZToKYsfULjJTSgDxMR7GsO2M0ehVd1OOxj9P35LOyl0256f6TfzoC/IjAOhK6mofEs+au1K6lL6itqW1IPq4UhZMt0xsvBPDSD79AmKlHLZiuVZ7OI8zY2twILloiwDuYzIS2pRc6t2QLcnQ6jNWNvzE9W+JJys43Me4+tIHUpe8uyeUIkue5ccUGhKH4XASd7g1V6IBLL1BXOzExn98IoEHYfmB6hX2sPUnARqU20z/qGR6dJ15MDsmzko1p10Jn4KF/c0b2luXYEYBcZIAAHmfyS+iZs7CAEy6nRKFrfiGLASfyz2VJ3NZZUfCqBG1Mqe6VYS+5USrSjGVuKsIBmi26dDjCaTtZg5TFLSROMuFxScmVrzL21pVCkcXJBEl8xV1LesJ35w7qeBMn9Qo8mQN42YGT5ZVhUYI/UK96U7P4jK1tHO5EJWywLHk5Ee6NqOlwJhLtYx7nB1+JVUthnC5XMudzlLRd2XfRScojoSjVq37pbV0amB+ED2VRlv95UUVf/AJEXm0FMktEDqj+qbBowlVCVnajUm98hV1GB5lG5X1LSBeralSZGZwFIXcGzgCG2eAuJIgGPIxgbwgQoa461KCob3BKldBOzGVWD78qdQhlzK0KuoJhuVV66uBIAgr3IgEkmD1qkIqrvqLW2hPMXV3bj5dEwo4iY1z+s+zC7dqC53NPHTQhlEZCCY6fEe2lGQMJ+mrrxMe7Mr5leXcINt5K/pD7SRcPvEFVyywJvgyG5TqW5SJKmDZpU8qwgHPUW3bsppB1MLKO3lLqZiUXifMVMrUSviRcSpEGxP3lThKuIu4J8TTaHpgaJPJWZk3k9CekwcQUryPk+ZudH0rw7nD/tHfz9FONjchzaWyckA8RCb3ToBcXeuFNuH0WJla8nZAAi+3tJKymOzxWaDPxG5qaGk0mM3OJOFpDCCV8jMZ8u134rM/c05kjg8BZbjua1baGjFV7bYV62IjKtEVdhaU6p3L7lBcr6lS8g5ysBBl52lyDwp3qUJ5Q0VUI9zgupx1VV1CASk1FbjLTzao6ruMhjIPq9lIWRKy9W1I3IlysBKM2oovLiXGPQJytNCeazsv3EiStXTldZoeJOC7WDkRGNJKtN+oahtoMqqjZhLT1NAxp2iPVaqDQEwr663JDCV/6kjGfoD91bcT/Qn4cgfzM8Ssaex3OErpBMjKmVJkHlWUQNjdRXWOSml6EwbTtzPbuiJzPiU0JBzVXcgiQcFIMEwhGm28vBVLn0vUPhY/KwM3xNzpFuC9jTwS0LKT32AGbtrcayRNnc31OkdnWOnTyW1ZkV16WY1VD2jlANTut0AcYPuf8AH5rPz8ja8RH8SniSTCtJsic9P3wl8TF59nxIyb+PXzHFzR3DbMLVsr5rqZ9dnFtxRW0tw6rNfCYR5cxTEN9SLTkJF6yjdzRqsDDqJLyjKNW2ocNEtwyE6hgbl2NwAVS12Tg/ZMcQyzI9ZqbdMfaYwpvwlyJqqQexJ71XUJIFynUtue3LtTtyJKnUoTIlykCVLSDnqdQTWQe4rYgIqJ3Ecm88SFieo5OATzF7b6jOyb4R6Ja3zN/BXVSw9iXabFfiG2H4lyD3SLm6miNWGrT5aEyivJoA66MpY5HcMMcxFKTmtynJXSpaRLlOpQtKaz4CIq7MUyLQq7gLGE9EzxMw/wBQnyZJ1Jw5aR7KNGEW1G8GQJUS+52iySuJ1Orr9Ro1smw4Jaw9TYqUKdTV6VU2va7tn6BI1PwsDfaEtHJCBO3VwXPJd1OVVm5vyMLSgVOI+0PokvcB3ge5VHY22ASCPTQzZU6zKYDesCVvqyVALMBkew8py+1FjGSCCegVbclVXYnU47u2jFY11sHcM9ISwz013HDgtvqIL+oXkuiAVnXMbG5TQqAQaia7qDhQixpe4luTJTidCQ/iLLxuE1We5jZqgrIWtcjHRS67gsW9k6+IeH4nogmsjzNQZCnxOb1Gpb1ROb12pX1JwuMTBjv0VuMGbvgSuSVOoMu08Wrp2t+YLcIqRHI6iuqcptfE89cfdqNbN3hHolLR3PRYLbrENYUAzUQ9Qq2fBXKdGXsGxH9u9rmrQXg47mY/JTOm0Z5qhxkMkXtMwkBNWcUyhkCplDB7rhGq/dMz6h/aM9afiTq+Z52O7QYRGEoSYr1poDsAJazzH8ckjuD2nCXfxNjF8R+9oFOlA6Z+pVbh7IzV/caM7br6f2WSfMakH8hdGK470r8bfX9V2P8A3hAZP9oxuTkrRbzM9f2wC96+iz7j5j1Q6EW1DlBEYMpvHGAjnwJWr9xiW4KKkbaA1EcQDQC74KYr8zJzP2mC0UUxCqaKz/8ATn0ToH9EwFhIuGoqpfiHqs2au5Gt+IqxkEy9p8Ku37ZA8yKXhxIuXS0EuUZJn5UXkZTS+JiuPcYfZcBLW+ZsYP7RDmIBmqkuYqQ8d6fwnafEz7/MPCbic//Z\",\n        \"activo\": true,\n        \"id\": 3,\n        \"fechaCreacion\": \"2025-08-23T02:34:29.1401339\",\n        \"creadoPor\": \"Sistema\",\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"variedad\": \"test\",\n        \"descripcion\": \"test \",\n        \"precio\": 123,\n        \"cantidadDisponible\": 1,\n        \"unidadesId\": 2,\n        \"unidades\": null,\n        \"idTipoProducto\": 77,\n        \"tipoProducto\": null,\n        \"imagenUrl\": \"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxMTEhUSEhMVFRUXFxUVFRcXGBcXFxUXFxcXFxcXFhcYHSggGBolHRUVITEhJSkrLi4uFx8zODMsNygtLisBCgoKDg0OGxAQGy0lICUtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLf/AABEIAMIBAwMBEQACEQEDEQH/xAAbAAACAwEBAQAAAAAAAAAAAAAEBQIDBgEAB//EADwQAAEDAwMCBAQEBQMCBwAAAAEAAhEDBCEFEjFBUSJhcYEGE5GhMrHR8CNCUsHhFBXxYnIWMzRDorLC/8QAGwEAAgMBAQEAAAAAAAAAAAAAAwQBAgUABgf/xAAzEQACAgICAQMDAwMCBgMAAAABAgADBBESITETIkEFUWEUMnEjM4GRoUKxwdHh8BVDUv/aAAwDAQACEQMRAD8Ad6PpDWEOcJPPn9eiykxtdt/pPZ5OSXGgYx1TUHiGD5Q3dKolrh1AIyD5wmmZT0Zg5IK/t3Ml8N3TGsrD5rDTpODS35TZcTE+J43BvI9ycdaB+K9ncUpDbK6/3hunCqaTS9jtogF0HPA3OnqUgvOxtnxPU1lAoG+49FzTAgGFtLaijUXNbk7MFvKDKn8wn1UOEt+YSp7Kz0Jj9Up7HQVi308G1N7Ht5ruBUr0jwnj8kHUNZWD2I+Zqzn0g0nPU9+xVbrm48YgMRUflKdNt/4zah4bn64/upxl73CZNm6in3nddud9VvkCPpJVrbDbZ/E7EQV1H8zoudzpJ4Ab9ArK2/MjgFHUd2F00MmVq0WgVxC6tmfUKZcgt8ZienVMCwAe6LmshvbANQtWFpLTj16pe2qpl3GqbrFfREyN/QD4aScHBnPpPYrKrY1t+I5lYiXpsjuVUmPpjaYOTnBG2MATJx59+wCYstqYfciYNeJmJb1pQf8AMgysTMAmOfTuUsagexNpbCNB5\",\n        \"activo\": true,\n        \"id\": 4,\n        \"fechaCreacion\": \"2025-08-23T02:55:21.134683\",\n        \"creadoPor\": \"Sistema\",\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"variedad\": \"Tomate\",\n        \"descripcion\": null,\n        \"precio\": 1000,\n        \"cantidadDisponible\": 20,\n        \"unidadesId\": 19,\n        \"unidades\": null,\n        \"idTipoProducto\": 100,\n        \"tipoProducto\": null,\n        \"imagenUrl\": null,\n        \"activo\": true,\n        \"id\": 5,\n        \"fechaCreacion\": \"2025-08-23T03:03:05.2197272\",\n        \"creadoPor\": \"Sistema\",\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"variedad\": \"Tomate\",\n        \"descripcion\": \"raer\",\n        \"precio\": 123,\n        \"cantidadDisponible\": 1,\n        \"unidadesId\": 18,\n        \"unidades\": null,\n        \"idTipoProducto\": 129,\n        \"tipoProducto\": null,\n        \"imagenUrl\": \"test\",\n        \"activo\": true,\n        \"id\": 6,\n        \"fechaCreacion\": \"2025-08-23T03:36:40.1264357\",\n        \"creadoPor\": \"Sistema\",\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"variedad\": \"papa\",\n        \"descripcion\": \"papa\",\n        \"precio\": 100000,\n        \"cantidadDisponible\": 4000,\n        \"unidadesId\": 19,\n        \"unidades\": null,\n        \"idTipoProducto\": 5,\n        \"tipoProducto\": null,\n        \"imagenUrl\": \"https://thumbs.dreamstime.com/b/positivo-de-la-prueba-embarazo-con-dos-rayas-y-p%C3%ADldora-anticonceptiva-los-dados-en-fondo-rosado-110844370.jpg\",\n        \"activo\": true,\n        \"id\": 7,\n        \"fechaCreacion\": \"2025-08-23T03:40:03.0323887\",\n        \"creadoPor\": \"Sistema\",\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"variedad\": \"Mango tomy\",\n        \"descripcion\": \"Mango no tan maduro\",\n        \"precio\": 100,\n        \"cantidadDisponible\": 10,\n        \"unidadesId\": 3,\n        \"unidades\": null,\n        \"idTipoProducto\": 23,\n        \"tipoProducto\": null,\n        \"imagenUrl\": \"https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.istockphoto.com%2Fes%2Ffotos%2Fmango&psig=AOvVaw0vUDCOiL0u6UHps_LZi5sp&ust=1756009647908000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCMjcluyLoI8DFQAAAAAdAAAAABAE\",\n        \"activo\": true,\n        \"id\": 8,\n        \"fechaCreacion\": \"2025-08-23T04:27:55.2014985\",\n        \"creadoPor\": \"Sistema\",\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"variedad\": \"tomate cherry\",\n        \"descripcion\": \"Tomate cherry recien recogido\",\n        \"precio\": 12300,\n        \"cantidadDisponible\": 12,\n        \"unidadesId\": 16,\n        \"unidades\": null,\n        \"idTipoProducto\": 99,\n        \"tipoProducto\": null,\n        \"imagenUrl\": \"N/A\",\n        \"activo\": true,\n        \"id\": 9,\n        \"fechaCreacion\": \"2025-08-23T04:58:39.5117604\",\n        \"creadoPor\": \"Sistema\",\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"variedad\": \"tomate cherry\",\n        \"descripcion\": \"Tomate cherry que parece chonto\",\n        \"precio\": 12000,\n        \"cantidadDisponible\": 15,\n        \"unidadesId\": 16,\n        \"unidades\": null,\n        \"idTipoProducto\": 99,\n        \"tipoProducto\": null,\n        \"imagenUrl\": \"N/A\",\n        \"activo\": true,\n        \"id\": 10,\n        \"fechaCreacion\": \"2025-08-23T05:11:05.351976\",\n        \"creadoPor\": \"Sistema\",\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"variedad\": \"sdfsdfsdf\",\n        \"descripcion\": \"werfrefre\",\n        \"precio\": 345345,\n        \"cantidadDisponible\": 1,\n        \"unidadesId\": 9,\n        \"unidades\": null,\n        \"idTipoProducto\": 95,\n        \"tipoProducto\": null,\n        \"imagenUrl\": \"3453wrwefwew\",\n        \"activo\": true,\n        \"id\": 11,\n        \"fechaCreacion\": \"2025-08-23T05:19:23.1763458\",\n        \"creadoPor\": \"Sistema\",\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"variedad\": \"asfac\",\n        \"descripcion\": \"ascascas\",\n        \"precio\": 23424,\n        \"cantidadDisponible\": 1,\n        \"unidadesId\": 15,\n        \"unidades\": null,\n        \"idTipoProducto\": 88,\n        \"tipoProducto\": null,\n        \"imagenUrl\": \"ascascascas\",\n        \"activo\": true,\n        \"id\": 12,\n        \"fechaCreacion\": \"2025-08-23T05:22:13.2696312\",\n        \"creadoPor\": \"Sistema\",\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"variedad\": \"fweffwe\",\n        \"descripcion\": null,\n        \"precio\": 324,\n        \"cantidadDisponible\": 1,\n        \"unidadesId\": 12,\n        \"unidades\": null,\n        \"idTipoProducto\": 101,\n        \"tipoProducto\": null,\n        \"imagenUrl\": null,\n        \"activo\": true,\n        \"id\": 13,\n        \"fechaCreacion\": \"2025-08-23T05:22:33.4453213\",\n        \"creadoPor\": \"Sistema\",\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"variedad\": \"Fresa\",\n        \"descripcion\": \"fresas frescas\",\n        \"precio\": 50000,\n        \"cantidadDisponible\": 30,\n        \"unidadesId\": 11,\n        \"unidades\": null,\n        \"idTipoProducto\": 30,\n        \"tipoProducto\": null,\n        \"imagenUrl\": \"https://img.freepik.com/foto-gratis/fresa-aislada-fondo-blanco_1232-1974.jpg\",\n        \"activo\": true,\n        \"id\": 14,\n        \"fechaCreacion\": \"2025-08-24T16:24:50.776104\",\n        \"creadoPor\": \"Sistema\",\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"variedad\": \"Fresa\",\n        \"descripcion\": null,\n        \"precio\": 10000,\n        \"cantidadDisponible\": 22,\n        \"unidadesId\": 16,\n        \"unidades\": null,\n        \"idTipoProducto\": 46,\n        \"tipoProducto\": null,\n        \"imagenUrl\": \"https://t3.ftcdn.net/jpg/02/62/75/34/360_F_262753400_PHaDAJmWzy705tK8Pzv87IKC0HrCG8zW.jpg\",\n        \"activo\": true,\n        \"id\": 15,\n        \"fechaCreacion\": \"2025-08-25T23:35:23.0639732\",\n        \"creadoPor\": \"Sistema\",\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"variedad\": \"Fresa\",\n        \"descripcion\": \"test\",\n        \"precio\": 100,\n        \"cantidadDisponible\": 1,\n        \"unidadesId\": 1,\n        \"unidades\": null,\n        \"idTipoProducto\": 14,\n        \"tipoProducto\": null,\n        \"imagenUrl\": \"https://img.freepik.com/foto-gratis/fresa-aislada-fondo-blanco_1232-1974.jpg\",\n        \"activo\": true,\n        \"id\": 16,\n        \"fechaCreacion\": \"2025-08-25T23:43:07.6456339\",\n        \"creadoPor\": \"Sistema\",\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"variedad\": \"Tomate\",\n        \"descripcion\": null,\n        \"precio\": 141,\n        \"cantidadDisponible\": 1,\n        \"unidadesId\": 17,\n        \"unidades\": null,\n        \"idTipoProducto\": 127,\n        \"tipoProducto\": null,\n        \"imagenUrl\": null,\n        \"activo\": true,\n        \"id\": 17,\n        \"fechaCreacion\": \"2025-08-26T00:02:55.0268039\",\n        \"creadoPor\": \"Sistema\",\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"variedad\": \"Fresa\",\n        \"descripcion\": \"fdsg\",\n        \"precio\": 10000,\n        \"cantidadDisponible\": 1,\n        \"unidadesId\": 2,\n        \"unidades\": null,\n        \"idTipoProducto\": 125,\n        \"tipoProducto\": null,\n        \"imagenUrl\": \"https://img.freepik.com/foto-gratis/fresa-aislada-fondo-blanco_1232-1974.jpg\",\n        \"activo\": true,\n        \"id\": 18,\n        \"fechaCreacion\": \"2025-08-26T00:23:23.6995658\",\n        \"creadoPor\": \"Sistema\",\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"variedad\": \"Fresa\",\n        \"descripcion\": null,\n        \"precio\": 1000,\n        \"cantidadDisponible\": 1,\n        \"unidadesId\": 1,\n        \"unidades\": null,\n        \"idTipoProducto\": 127,\n        \"tipoProducto\": null,\n        \"imagenUrl\": \"https://img.freepik.com/foto-gratis/fresa-aislada-fondo-blanco_1232-1974.jpg\",\n        \"activo\": true,\n        \"id\": 19,\n        \"fechaCreacion\": \"2025-08-26T00:42:11.0388395\",\n        \"creadoPor\": \"Sistema\",\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"variedad\": \"Fresa\",\n        \"descripcion\": \"reastr\",\n        \"precio\": 1,\n        \"cantidadDisponible\": 1,\n        \"unidadesId\": 4,\n        \"unidades\": null,\n        \"idTipoProducto\": 132,\n        \"tipoProducto\": null,\n        \"imagenUrl\": \"https://img.freepik.com/foto-gratis/fresa-aislada-fondo-blanco_1232-1974.jpg\",\n        \"activo\": true,\n        \"id\": 20,\n        \"fechaCreacion\": \"2025-08-26T00:44:12.450915\",\n        \"creadoPor\": \"Sistema\",\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"variedad\": \"Fresa\",\n        \"descripcion\": \"ewwerwqer\",\n        \"precio\": 1000,\n        \"cantidadDisponible\": 1,\n        \"unidadesId\": 1,\n        \"unidades\": null,\n        \"idTipoProducto\": 126,\n        \"tipoProducto\": null,\n        \"imagenUrl\": \"https://img.freepik.com/foto-gratis/fresa-aislada-fondo-blanco_1232-1974.jpg\",\n        \"activo\": true,\n        \"id\": 21,\n        \"fechaCreacion\": \"2025-08-26T00:47:51.3233556\",\n        \"creadoPor\": \"Sistema\",\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"variedad\": \"Fresa\",\n        \"descripcion\": \"fresa fresca\",\n        \"precio\": 10000,\n        \"cantidadDisponible\": 1,\n        \"unidadesId\": 18,\n        \"unidades\": null,\n        \"idTipoProducto\": 128,\n        \"tipoProducto\": null,\n        \"imagenUrl\": \"https://img.freepik.com/foto-gratis/fresa-aislada-fondo-blanco_1232-1974.jpg\",\n        \"activo\": true,\n        \"id\": 22,\n        \"fechaCreacion\": \"2025-08-28T23:51:00.0397577\",\n        \"creadoPor\": \"Sistema\",\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"variedad\": \"<Fresa>\",\n        \"descripcion\": \"<fresa fresca>\",\n        \"precio\": 10000,\n        \"cantidadDisponible\": 22,\n        \"unidadesId\": 16,\n        \"unidades\": null,\n        \"idTipoProducto\": 46,\n        \"tipoProducto\": null,\n        \"imagenUrl\": \"<https://t3.ftcdn.net/jpg/02/62/75/34/360_F_262753400_PHaDAJmWzy705tK8Pzv87IKC0HrCG8zW.jpg>\",\n        \"activo\": true,\n        \"id\": 23,\n        \"fechaCreacion\": \"2025-08-28T23:59:15.7003664\",\n        \"creadoPor\": \"Sistema\",\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"variedad\": \"<Fresa>\",\n        \"descripcion\": \"<fresa fresca>\",\n        \"precio\": 10000,\n        \"cantidadDisponible\": 22,\n        \"unidadesId\": 16,\n        \"unidades\": null,\n        \"idTipoProducto\": 46,\n        \"tipoProducto\": null,\n        \"imagenUrl\": \"<https://t3.ftcdn.net/jpg/02/62/75/34/360_F_262753400_PHaDAJmWzy705tK8Pzv87IKC0HrCG8zW.jpg>\",\n        \"activo\": true,\n        \"id\": 24,\n        \"fechaCreacion\": \"2025-08-29T00:07:08.1304883\",\n        \"creadoPor\": \"Sistema\",\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"variedad\": \"Fresa\",\n        \"descripcion\": \"<Fresa fresca>\",\n        \"precio\": 1000,\n        \"cantidadDisponible\": 100,\n        \"unidadesId\": 1,\n        \"unidades\": null,\n        \"idTipoProducto\": 46,\n        \"tipoProducto\": null,\n        \"imagenUrl\": \"<https://img.freepik.com/foto-gratis/fresa-aislada-fondo-blanco_1232-1974.jpg>\",\n        \"activo\": true,\n        \"id\": 25,\n        \"fechaCreacion\": \"2025-09-10T00:09:33.3384354\",\n        \"creadoPor\": \"Sistema\",\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    }\n]"
+						}
+					]
+				},
+				{
+					"name": "ObtenerTipoProducto",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{UrlBaseProduct}}/api/TipoProducto/Categoria/2",
+							"host": [
+								"{{UrlBaseProduct}}"
+							],
+							"path": [
+								"api",
+								"TipoProducto",
+								"Categoria",
+								"2"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "ObtenerTipoProductoSample",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{UrlBaseProduct}}/api/TipoProducto/Categoria/2",
+									"host": [
+										"{{UrlBaseProduct}}"
+									],
+									"path": [
+										"api",
+										"TipoProducto",
+										"Categoria",
+										"2"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 12 Sep 2025 14:40:37 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Microsoft-IIS/10.0"
+								},
+								{
+									"key": "Content-Encoding",
+									"value": "gzip"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "Request-Context",
+									"value": "appId=cid-v1:2e1c4101-80ee-4028-ba9a-bcd62b95a7d8"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "ASP.NET"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"nombre\": \"Acelga\",\n        \"descripcion\": \"\",\n        \"activo\": true,\n        \"categoriaId\": 2,\n        \"categoria\": {\n            \"nombre\": null,\n            \"descripcion\": null,\n            \"activo\": false,\n            \"id\": 0,\n            \"fechaCreacion\": \"2025-09-12T14:40:38.4575891+00:00\",\n            \"creadoPor\": \"System\",\n            \"fechaActualizacion\": null,\n            \"modificadoPor\": null\n        },\n        \"id\": 14,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"nombre\": \"Albahaca\",\n        \"descripcion\": \"\",\n        \"activo\": true,\n        \"categoriaId\": 2,\n        \"categoria\": {\n            \"nombre\": null,\n            \"descripcion\": null,\n            \"activo\": false,\n            \"id\": 0,\n            \"fechaCreacion\": \"2025-09-12T14:40:38.4939223+00:00\",\n            \"creadoPor\": \"System\",\n            \"fechaActualizacion\": null,\n            \"modificadoPor\": null\n        },\n        \"id\": 21,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"nombre\": \"Brócoli\",\n        \"descripcion\": \"\",\n        \"activo\": true,\n        \"categoriaId\": 2,\n        \"categoria\": {\n            \"nombre\": null,\n            \"descripcion\": null,\n            \"activo\": false,\n            \"id\": 0,\n            \"fechaCreacion\": \"2025-09-12T14:40:38.4939754+00:00\",\n            \"creadoPor\": \"System\",\n            \"fechaActualizacion\": null,\n            \"modificadoPor\": null\n        },\n        \"id\": 17,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"nombre\": \"Cilantro\",\n        \"descripcion\": \"\",\n        \"activo\": true,\n        \"categoriaId\": 2,\n        \"categoria\": {\n            \"nombre\": null,\n            \"descripcion\": null,\n            \"activo\": false,\n            \"id\": 0,\n            \"fechaCreacion\": \"2025-09-12T14:40:38.4939875+00:00\",\n            \"creadoPor\": \"System\",\n            \"fechaActualizacion\": null,\n            \"modificadoPor\": null\n        },\n        \"id\": 20,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"nombre\": \"Col China\",\n        \"descripcion\": \"\",\n        \"activo\": true,\n        \"categoriaId\": 2,\n        \"categoria\": {\n            \"nombre\": null,\n            \"descripcion\": null,\n            \"activo\": false,\n            \"id\": 0,\n            \"fechaCreacion\": \"2025-09-12T14:40:38.4940028+00:00\",\n            \"creadoPor\": \"System\",\n            \"fechaActualizacion\": null,\n            \"modificadoPor\": null\n        },\n        \"id\": 18,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"nombre\": \"Coliflor\",\n        \"descripcion\": \"\",\n        \"activo\": true,\n        \"categoriaId\": 2,\n        \"categoria\": {\n            \"nombre\": null,\n            \"descripcion\": null,\n            \"activo\": false,\n            \"id\": 0,\n            \"fechaCreacion\": \"2025-09-12T14:40:38.4940119+00:00\",\n            \"creadoPor\": \"System\",\n            \"fechaActualizacion\": null,\n            \"modificadoPor\": null\n        },\n        \"id\": 16,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"nombre\": \"Espinaca\",\n        \"descripcion\": \"\",\n        \"activo\": true,\n        \"categoriaId\": 2,\n        \"categoria\": {\n            \"nombre\": null,\n            \"descripcion\": null,\n            \"activo\": false,\n            \"id\": 0,\n            \"fechaCreacion\": \"2025-09-12T14:40:38.4940196+00:00\",\n            \"creadoPor\": \"System\",\n            \"fechaActualizacion\": null,\n            \"modificadoPor\": null\n        },\n        \"id\": 13,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"nombre\": \"Lechuga\",\n        \"descripcion\": \"\",\n        \"activo\": true,\n        \"categoriaId\": 2,\n        \"categoria\": {\n            \"nombre\": null,\n            \"descripcion\": null,\n            \"activo\": false,\n            \"id\": 0,\n            \"fechaCreacion\": \"2025-09-12T14:40:38.4940266+00:00\",\n            \"creadoPor\": \"System\",\n            \"fechaActualizacion\": null,\n            \"modificadoPor\": null\n        },\n        \"id\": 12,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"nombre\": \"Menta\",\n        \"descripcion\": \"\",\n        \"activo\": true,\n        \"categoriaId\": 2,\n        \"categoria\": {\n            \"nombre\": null,\n            \"descripcion\": null,\n            \"activo\": false,\n            \"id\": 0,\n            \"fechaCreacion\": \"2025-09-12T14:40:38.494051+00:00\",\n            \"creadoPor\": \"System\",\n            \"fechaActualizacion\": null,\n            \"modificadoPor\": null\n        },\n        \"id\": 22,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"nombre\": \"Perejil\",\n        \"descripcion\": \"\",\n        \"activo\": true,\n        \"categoriaId\": 2,\n        \"categoria\": {\n            \"nombre\": null,\n            \"descripcion\": null,\n            \"activo\": false,\n            \"id\": 0,\n            \"fechaCreacion\": \"2025-09-12T14:40:38.4940652+00:00\",\n            \"creadoPor\": \"System\",\n            \"fechaActualizacion\": null,\n            \"modificadoPor\": null\n        },\n        \"id\": 19,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"nombre\": \"Repollo\",\n        \"descripcion\": \"\",\n        \"activo\": true,\n        \"categoriaId\": 2,\n        \"categoria\": {\n            \"nombre\": null,\n            \"descripcion\": null,\n            \"activo\": false,\n            \"id\": 0,\n            \"fechaCreacion\": \"2025-09-12T14:40:38.4941006+00:00\",\n            \"creadoPor\": \"System\",\n            \"fechaActualizacion\": null,\n            \"modificadoPor\": null\n        },\n        \"id\": 15,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    }\n]"
+						}
+					]
+				},
+				{
+					"name": "ObtenerCategoria",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{UrlBaseProduct}}/api/Categoria",
+							"host": [
+								"{{UrlBaseProduct}}"
+							],
+							"path": [
+								"api",
+								"Categoria"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "ObtenerCategoriaSample",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{UrlBaseProduct}}/api/Categoria",
+									"host": [
+										"{{UrlBaseProduct}}"
+									],
+									"path": [
+										"api",
+										"Categoria"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 12 Sep 2025 14:39:35 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Microsoft-IIS/10.0"
+								},
+								{
+									"key": "Content-Encoding",
+									"value": "gzip"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "Request-Context",
+									"value": "appId=cid-v1:2e1c4101-80ee-4028-ba9a-bcd62b95a7d8"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "ASP.NET"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"nombre\": \"Hortalizas\",\n        \"descripcion\": \"\",\n        \"activo\": true,\n        \"id\": 1,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"nombre\": \"Verduras y Vegetales de Hoja\",\n        \"descripcion\": \"\",\n        \"activo\": true,\n        \"id\": 2,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"nombre\": \"Frutas Tropicales\",\n        \"descripcion\": \"\",\n        \"activo\": true,\n        \"id\": 3,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"nombre\": \"Frutas Cítricas\",\n        \"descripcion\": \"\",\n        \"activo\": true,\n        \"id\": 4,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"nombre\": \"Frutas de Clima Frío\",\n        \"descripcion\": \"\",\n        \"activo\": true,\n        \"id\": 5,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"nombre\": \"Leguminosas\",\n        \"descripcion\": \"\",\n        \"activo\": true,\n        \"id\": 6,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"nombre\": \"Cereales\",\n        \"descripcion\": \"\",\n        \"activo\": true,\n        \"id\": 7,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"nombre\": \"Tubérculos\",\n        \"descripcion\": \"\",\n        \"activo\": true,\n        \"id\": 8,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"nombre\": \"Plátanos y Bananos\",\n        \"descripcion\": \"\",\n        \"activo\": true,\n        \"id\": 9,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"nombre\": \"Condimentos y Especias\",\n        \"descripcion\": \"\",\n        \"activo\": true,\n        \"id\": 10,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"nombre\": \"Frutas Secas y Nueces\",\n        \"descripcion\": \"\",\n        \"activo\": true,\n        \"id\": 11,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"nombre\": \"Plantas Medicinales\",\n        \"descripcion\": \"\",\n        \"activo\": true,\n        \"id\": 12,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"nombre\": \"Tomates\",\n        \"descripcion\": \"\",\n        \"activo\": true,\n        \"id\": 13,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"nombre\": \"Pimientos y Ajíes\",\n        \"descripcion\": \"\",\n        \"activo\": true,\n        \"id\": 14,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"nombre\": \"Calabazas y Ahuyamas\",\n        \"descripcion\": \"\",\n        \"activo\": true,\n        \"id\": 15,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"nombre\": \"Flores y Plantas Ornamentales\",\n        \"descripcion\": \"\",\n        \"activo\": true,\n        \"id\": 16,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"nombre\": \"Café y Cacao\",\n        \"descripcion\": \"\",\n        \"activo\": true,\n        \"id\": 17,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"nombre\": \"Caña de Azúcar y Panela\",\n        \"descripcion\": \"\",\n        \"activo\": true,\n        \"id\": 18,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"nombre\": \"Productos Forestales\",\n        \"descripcion\": \"\",\n        \"activo\": true,\n        \"id\": 19,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"nombre\": \"Plantas Aromáticas\",\n        \"descripcion\": \"\",\n        \"activo\": true,\n        \"id\": 20,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    }\n]"
+						}
+					]
+				},
+				{
+					"name": "ObtenerUnidades",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{UrlBaseProduct}}/api/Uniodades",
+							"host": [
+								"{{UrlBaseProduct}}"
+							],
+							"path": [
+								"api",
+								"Uniodades"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "ObtenerUnidadesSample",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{UrlBaseProduct}}/api/Uniodades",
+									"host": [
+										"{{UrlBaseProduct}}"
+									],
+									"path": [
+										"api",
+										"Uniodades"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 12 Sep 2025 14:38:24 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Microsoft-IIS/10.0"
+								},
+								{
+									"key": "Content-Encoding",
+									"value": "gzip"
+								},
+								{
+									"key": "Set-Cookie",
+									"value": "ARRAffinity=01bbe5bef8be6b3bd48667c5ac539b6a4ffc62f6464dd0bd98adcd189e77ef8e;Path=/;HttpOnly;Secure;Domain=az-agromarket-back-product.azurewebsites.net"
+								},
+								{
+									"key": "Set-Cookie",
+									"value": "ARRAffinitySameSite=01bbe5bef8be6b3bd48667c5ac539b6a4ffc62f6464dd0bd98adcd189e77ef8e;Path=/;HttpOnly;SameSite=None;Secure;Domain=az-agromarket-back-product.azurewebsites.net"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "Request-Context",
+									"value": "appId=cid-v1:2e1c4101-80ee-4028-ba9a-bcd62b95a7d8"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "ASP.NET"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"nombre\": \"Kilogramo\",\n        \"abreviatura\": \"Kg\",\n        \"activo\": true,\n        \"id\": 1,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"nombre\": \"Gramo\",\n        \"abreviatura\": \"g\",\n        \"activo\": true,\n        \"id\": 2,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"nombre\": \"Libra\",\n        \"abreviatura\": \"lb\",\n        \"activo\": true,\n        \"id\": 3,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"nombre\": \"Onza\",\n        \"abreviatura\": \"oz\",\n        \"activo\": true,\n        \"id\": 4,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"nombre\": \"Tonelada\",\n        \"abreviatura\": \"t\",\n        \"activo\": true,\n        \"id\": 5,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"nombre\": \"Arroba\",\n        \"abreviatura\": \"@\",\n        \"activo\": true,\n        \"id\": 6,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"nombre\": \"Quintal\",\n        \"abreviatura\": \"qq\",\n        \"activo\": true,\n        \"id\": 7,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"nombre\": \"Litro\",\n        \"abreviatura\": \"L\",\n        \"activo\": true,\n        \"id\": 8,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"nombre\": \"Mililitro\",\n        \"abreviatura\": \"mL\",\n        \"activo\": true,\n        \"id\": 9,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"nombre\": \"Galón\",\n        \"abreviatura\": \"gal\",\n        \"activo\": true,\n        \"id\": 10,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"nombre\": \"Unidad\",\n        \"abreviatura\": \"und\",\n        \"activo\": true,\n        \"id\": 11,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"nombre\": \"Docena\",\n        \"abreviatura\": \"doc\",\n        \"activo\": true,\n        \"id\": 12,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"nombre\": \"Ciento\",\n        \"abreviatura\": \"cto\",\n        \"activo\": true,\n        \"id\": 13,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"nombre\": \"Metro\",\n        \"abreviatura\": \"m\",\n        \"activo\": true,\n        \"id\": 14,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"nombre\": \"Centímetro\",\n        \"abreviatura\": \"cm\",\n        \"activo\": true,\n        \"id\": 15,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"nombre\": \"Paquete\",\n        \"abreviatura\": \"paq\",\n        \"activo\": true,\n        \"id\": 16,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"nombre\": \"Bolsa\",\n        \"abreviatura\": \"bls\",\n        \"activo\": true,\n        \"id\": 17,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"nombre\": \"Saco\",\n        \"abreviatura\": \"sco\",\n        \"activo\": true,\n        \"id\": 18,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"nombre\": \"Bulto\",\n        \"abreviatura\": \"bto\",\n        \"activo\": true,\n        \"id\": 19,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"nombre\": \"Caja\",\n        \"abreviatura\": \"cja\",\n        \"activo\": true,\n        \"id\": 20,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"nombre\": \"Canastilla\",\n        \"abreviatura\": \"cnt\",\n        \"activo\": true,\n        \"id\": 21,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"nombre\": \"Bandeja\",\n        \"abreviatura\": \"bdj\",\n        \"activo\": true,\n        \"id\": 22,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"nombre\": \"Atado\",\n        \"abreviatura\": \"atd\",\n        \"activo\": true,\n        \"id\": 23,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"nombre\": \"Manojo\",\n        \"abreviatura\": \"mnj\",\n        \"activo\": true,\n        \"id\": 24,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"nombre\": \"Racimo\",\n        \"abreviatura\": \"rcm\",\n        \"activo\": true,\n        \"id\": 25,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"nombre\": \"Ramo\",\n        \"abreviatura\": \"rmo\",\n        \"activo\": true,\n        \"id\": 26,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"nombre\": \"Mata\",\n        \"abreviatura\": \"mta\",\n        \"activo\": true,\n        \"id\": 27,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"nombre\": \"Planta\",\n        \"abreviatura\": \"plt\",\n        \"activo\": true,\n        \"id\": 28,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"nombre\": \"Vara\",\n        \"abreviatura\": \"vr\",\n        \"activo\": true,\n        \"id\": 29,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"nombre\": \"Metro Cúbico\",\n        \"abreviatura\": \"m³\",\n        \"activo\": true,\n        \"id\": 30,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    }\n]"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Usuarios",
+			"item": [
+				{
+					"name": "CrearUsuario",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Email\": \"ricojorge@gmail.com\",\r\n    \"Nombre\": \"Jorge\",\r\n    \"Apellido\": \"Rico\",\r\n    \"Telefono\": \"3134040736\",\r\n    \"Direccion\": \"bogota\",\r\n    \"Documento\": \"123456789\",\r\n    \"Password\":\"Jave1234#\",\r\n    \"TipoDocumento\": 2,\r\n    \"Rol\":\"AGRICULTOR\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{UrlBaseAuth}}/api/Usuario",
+							"host": [
+								"{{UrlBaseAuth}}"
+							],
+							"path": [
+								"api",
+								"Usuario"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "CrearUsuarioSample",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"Email\": \"oscarmedina675@gmail.com\",\r\n    \"Nombre\": \"Oscar\",\r\n    \"Apellido\": \"Medina\",\r\n    \"Telefono\": \"3143150292\",\r\n    \"Direccion\": \"bogota\",\r\n    \"Documento\": \"1013687839\",\r\n    \"Password\":\"Javeriana2025*\",\r\n    \"TipoDocumento\": 2,\r\n    \"Rol\":\"AGRICULTOR\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{UrlBaseAuth}}/api/Usuario",
+									"host": [
+										"{{UrlBaseAuth}}"
+									],
+									"path": [
+										"api",
+										"Usuario"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 12 Sep 2025 14:29:24 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Microsoft-IIS/10.0"
+								},
+								{
+									"key": "Content-Encoding",
+									"value": "gzip"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "Request-Context",
+									"value": "appId=cid-v1:2e1c4101-80ee-4028-ba9a-bcd62b95a7d8"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "ASP.NET"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"email\": \"oscarmedina675@gmail.com\",\n    \"username\": \"oscarmedina675@gmail.com\",\n    \"nombre\": \"Oscar\",\n    \"apellido\": \"Medina\",\n    \"role\": \"AGRICULTOR\",\n    \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6WyJvc2Nhcm1lZGluYTY3NUBnbWFpbC5jb20iLCJvc2Nhcm1lZGluYTY3NUBnbWFpbC5jb20iXSwibmFtZSI6Ik9zY2FyIiwiZmFtaWx5X25hbWUiOiJNZWRpbmEiLCJ1c2VybmFtZSI6Im9zY2FybWVkaW5hNjc1QGdtYWlsLmNvbSIsIm5iZiI6MTc1NzY4NzM2NCwiZXhwIjoxNzYyODcxMzY0LCJpYXQiOjE3NTc2ODczNjQsImlzcyI6IioifQ.FVLQjEkX0kVzxrMdUXTjm4Mu332JlljDE1jN998xz50\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Email\": \"jorge-ricom@javeriana.edu.co\",\r\n    \"Password\":\"Admin12345\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{UrlBaseAuth}}/api/Usuario/login",
+							"host": [
+								"{{UrlBaseAuth}}"
+							],
+							"path": [
+								"api",
+								"Usuario",
+								"login"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "LoginSample",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"Email\": \"oscarmedina675@gmail.com\",\r\n    \"Password\":\"Javeriana2025*\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{UrlBaseAuth}}/api/Usuario/login",
+									"host": [
+										"{{UrlBaseAuth}}"
+									],
+									"path": [
+										"api",
+										"Usuario",
+										"login"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 12 Sep 2025 14:30:09 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Microsoft-IIS/10.0"
+								},
+								{
+									"key": "Content-Encoding",
+									"value": "gzip"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "Request-Context",
+									"value": "appId=cid-v1:2e1c4101-80ee-4028-ba9a-bcd62b95a7d8"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "ASP.NET"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"email\": \"oscarmedina675@gmail.com\",\n    \"username\": \"oscarmedina675@gmail.com\",\n    \"nombre\": \"Oscar\",\n    \"apellido\": \"Medina\",\n    \"role\": \"AGRICULTOR\",\n    \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6WyJvc2Nhcm1lZGluYTY3NUBnbWFpbC5jb20iLCJvc2Nhcm1lZGluYTY3NUBnbWFpbC5jb20iXSwibmFtZSI6Ik9zY2FyIiwiZmFtaWx5X25hbWUiOiJNZWRpbmEiLCJ1c2VybmFtZSI6Im9zY2FybWVkaW5hNjc1QGdtYWlsLmNvbSIsIm5iZiI6MTc1NzY4NzQxMCwiZXhwIjoxNzYyODcxNDEwLCJpYXQiOjE3NTc2ODc0MTAsImlzcyI6IioifQ.28RoSkcSb-80VgVUXQ1yWfvimFHW109YQV8KXBHy5iw\"\n}"
+						}
+					]
+				},
+				{
+					"name": "ObtenerLista Roles",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{UrlBaseAuth}}/api/Usuario/roles",
+							"host": [
+								"{{UrlBaseAuth}}"
+							],
+							"path": [
+								"api",
+								"Usuario",
+								"roles"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Lista de rolesSample",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{UrlBaseAuth}}/api/Usuario/roles",
+									"host": [
+										"{{UrlBaseAuth}}"
+									],
+									"path": [
+										"api",
+										"Usuario",
+										"roles"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 12 Sep 2025 14:25:14 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Microsoft-IIS/10.0"
+								},
+								{
+									"key": "Content-Encoding",
+									"value": "gzip"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "Request-Context",
+									"value": "appId=cid-v1:2e1c4101-80ee-4028-ba9a-bcd62b95a7d8"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "ASP.NET"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"id\": \"25ce3075-6634-463b-a07c-fb77c856a8c9\",\n        \"name\": \"AGRICULTOR\",\n        \"normalizedName\": \"AGRICULTOR\",\n        \"concurrencyStamp\": null\n    },\n    {\n        \"id\": \"ad131cb0-52f0-4bf6-8e95-e3eab598f383\",\n        \"name\": \"USUARIO\",\n        \"normalizedName\": \"USUARIO\",\n        \"concurrencyStamp\": null\n    }\n]"
+						}
+					]
+				},
+				{
+					"name": "ObtenerTipoDocumentos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{UrlBaseAuth}}/api/TipoDocumento",
+							"host": [
+								"{{UrlBaseAuth}}"
+							],
+							"path": [
+								"api",
+								"TipoDocumento"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "ObtenerTipoDocumentosSample",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseURL}}/api/TipoDocumento",
+									"host": [
+										"{{baseURL}}"
+									],
+									"path": [
+										"api",
+										"TipoDocumento"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 27 Aug 2025 04:36:24 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "Microsoft-IIS/10.0"
+								},
+								{
+									"key": "Content-Encoding",
+									"value": "gzip"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "Request-Context",
+									"value": "appId="
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "ASP.NET"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"descripcion\": \"Cédula de ciudadanía\",\n        \"sigla\": \"CC\",\n        \"id\": 1,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"descripcion\": \"Cédula de extranjería\",\n        \"sigla\": \"CE\",\n        \"id\": 2,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    },\n    {\n        \"descripcion\": \"NIT\",\n        \"sigla\": \"NIT\",\n        \"id\": 3,\n        \"fechaCreacion\": null,\n        \"creadoPor\": null,\n        \"fechaActualizacion\": null,\n        \"modificadoPor\": null\n    }\n]"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Compras",
+			"item": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseURL",
+			"value": "http://localhost:5207/"
+		}
+	]
+}
