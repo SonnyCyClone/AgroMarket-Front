@@ -43,8 +43,8 @@ export class HttpService {
    * @param {HttpClient} http - Cliente HTTP de Angular para realizar peticiones
    */
   constructor(private http: HttpClient) {
-    // Verificar override en localStorage primero, luego usar environment
-    this.baseUrl = localStorage.getItem('agromarket_apiBaseUrl') || environment.apiBaseUrl;
+    // Verificar override en localStorage primero, luego usar environment (default a productos)
+    this.baseUrl = localStorage.getItem('agromarket_apiBaseUrl') || environment.getProductApiUrl();
   }
 
   /**

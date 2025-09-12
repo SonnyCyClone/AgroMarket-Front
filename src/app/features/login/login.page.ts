@@ -3,6 +3,28 @@
  * 
  * @description Componente que maneja el formulario de login con autenticación
  * real contra el API. Incluye manejo de errores 401 y persistencia de sesión.
+ * Agregada funcionalidad de recuperación de contraseña mock.
+ * 
+ * Funcionalidades implementadas:
+ * - Formulario reactivo de login con validaciones
+ * - Autenticación real contra API de autenticación
+ * - Manejo específico de errores 401 (credenciales incorrectas)
+ * - Modal de recuperación de contraseña con simulación de envío de email
+ * - Validación de formato de email para recuperación
+ * - Mensajes de error y éxito contextuales
+ * - Redirección automática tras login exitoso
+ * - Navegación a página de registro
+ * 
+ * Elementos QA identificados:
+ * - #login-email: Campo de email para autenticación
+ * - #login-password: Campo de contraseña
+ * - #forgot-password-button: Enlace para abrir modal de recuperación
+ * - #login-submit-button: Botón principal de login
+ * - #login-register-link-button: Enlace para crear cuenta nueva
+ * - #close-forgot-password-modal: Botón para cerrar modal de recuperación
+ * - #recovery-email: Campo de email en modal de recuperación
+ * - #cancel-recovery-button: Botón cancelar en modal
+ * - #send-recovery-button: Botón enviar recuperación
  * 
  * @author AgroMarket Team
  * @since 1.0.0
@@ -38,6 +60,18 @@ export class LoginPage {
   
   /** Controla la visibilidad del mensaje de error 401 */
   showUnauthorizedError = false;
+
+  /** Controla la visibilidad del modal de recuperación de contraseña */
+  showForgotPasswordDialog = false;
+  
+  /** Email para recuperación de contraseña */
+  forgotPasswordEmail = '';
+  
+  /** Estado del envío de recuperación */
+  isSendingRecovery = false;
+  
+  /** Mensaje de éxito para recuperación */
+  recoverySuccessMessage = '';
 
   constructor(
     private fb: FormBuilder,
@@ -123,5 +157,60 @@ export class LoginPage {
   hideUnauthorizedError(): void {
     this.showUnauthorizedError = false;
     this.errorMessage = '';
+  }
+
+  /**
+   * Abre el diálogo de recuperación de contraseña
+   */
+  openForgotPasswordDialog(): void {
+    this.showForgotPasswordDialog = true;
+    this.forgotPasswordEmail = this.loginForm.get('email')?.value || '';
+    this.recoverySuccessMessage = '';
+    this.errorMessage = '';
+  }
+
+  /**
+   * Cierra el diálogo de recuperación de contraseña
+   */
+  closeForgotPasswordDialog(): void {
+    this.showForgotPasswordDialog = false;
+    this.forgotPasswordEmail = '';
+    this.recoverySuccessMessage = '';
+    this.isSendingRecovery = false;
+  }
+
+  /**
+   * Simula el envío de email de recuperación
+   * @description Implementación mock que simula el proceso de recuperación
+   */
+  sendPasswordRecovery(): void {
+    if (!this.forgotPasswordEmail || !this.isValidEmail(this.forgotPasswordEmail)) {
+      this.errorMessage = 'Por favor ingresa un email válido.';
+      return;
+    }
+
+    this.isSendingRecovery = true;
+    this.errorMessage = '';
+
+    // Simular llamada al API con delay
+    setTimeout(() => {
+      this.isSendingRecovery = false;
+      this.recoverySuccessMessage = `Se ha enviado un enlace de recuperación a ${this.forgotPasswordEmail}. Revisa tu bandeja de entrada y spam.`;
+      
+      // Auto-cerrar después de mostrar el mensaje
+      setTimeout(() => {
+        this.closeForgotPasswordDialog();
+      }, 3000);
+    }, 2000);
+  }
+
+  /**
+   * Valida si un email tiene formato correcto
+   * @param email Email a validar
+   * @returns true si el email es válido
+   */
+  private isValidEmail(email: string): boolean {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
   }
 }

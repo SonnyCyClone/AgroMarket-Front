@@ -1,3 +1,10 @@
+<!-- 
+  Página principal de AgroMarket - Catálogo de productos
+  
+  Muestra el catálogo de productos obtenidos desde el API real con funcionalidades
+  de filtrado, ordenamiento y estados de carga/error. Compatible con productos
+  tanto del formato API nuevo como legacy.
+-->
 <div class="home-page">
   <div class="home-container">
     <aside class="sidebar-section">
@@ -5,38 +12,72 @@
     </aside>
     
     <main class="content-section">
-      <div class="toolbar">
-        <div class="results-info">
-          <h2>Productos ({{ products.length }})</h2>
+      <!-- Mensaje informativo -->
+      <div *ngIf="showInfoMessage" class="info-message">
+        <div class="info-content">
+          <span class="info-icon">ℹ️</span>
+          <span class="info-text">{{ infoMessage }}</span>
+          <button class="close-info-button" (click)="closeInfoMessage()" aria-label="Cerrar mensaje">
+            ✕
+          </button>
+        </div>
+      </div>
+      
+      <!-- Estado de carga -->
+      <div *ngIf="loading" class="loading-state">
+        <p>Cargando productos...</p>
+      </div>
+      
+      <!-- Estado de error -->
+      <div *ngIf="errorMessage && !loading" class="error-state">
+        <p>{{ errorMessage }}</p>
+        <button class="retry-button" (click)="retryLoadProducts()">
+          Reintentar
+        </button>
+      </div>
+      
+      <!-- Contenido principal -->
+      <div *ngIf="!loading && !errorMessage">
+        <!-- Controles superiores -->
+        <div class="products-controls" id="products-controls-home">
+          <!-- Selector de ordenamiento -->
+          <div class="sort-control">
+            <label for="sort-select-home" class="sort-label">Ordenar por:</label>
+            <select 
+              id="sort-select-home" 
+              class="sort-select"
+              [value]="sortOption" 
+              (change)="onSortChange($event)"
+            >
+              <option 
+                *ngFor="let option of sortOptions" 
+                [value]="option.value"
+              >
+                {{ option.label }}
+              </option>
+            </select>
+          </div>
+
+          <!-- Contador de productos -->
+          <div class="products-count" id="products-count-home">
+            <span class="count-text count-pill">
+              {{ products.length }} 
+              {{ products.length === 1 ? 'producto' : 'productos' }}
+            </span>
+          </div>
         </div>
         
-        <div class="sort-section">
-          <label for="sort-select">Ordenar por:</label>
-          <select 
-            id="sort-select" 
-            [value]="sortOption" 
-            (change)="onSortChange($event)"
-            class="sort-select"
-          >
-            <option 
-              *ngFor="let option of sortOptions" 
-              [value]="option.value"
-            >
-              {{ option.label }}
-            </option>
-          </select>
+        <div class="product-grid" *ngIf="products.length > 0">
+          <app-product-card 
+            *ngFor="let product of products; trackBy: trackByProductId" 
+            [product]="product"
+          ></app-product-card>
         </div>
-      </div>
-      
-      <div class="product-grid">
-        <app-product-card 
-          *ngFor="let product of products" 
-          [product]="product"
-        ></app-product-card>
-      </div>
-      
-      <div *ngIf="products.length === 0" class="no-products">
-        <p>No se encontraron productos.</p>
+        
+        <div *ngIf="products.length === 0" class="no-products">
+          <p>No se encontraron productos activos.</p>
+          <p>Todos los productos pueden estar inactivos o no hay productos registrados.</p>
+        </div>
       </div>
     </main>
   </div>

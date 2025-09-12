@@ -39,6 +39,16 @@
           <div id="password-error" class="error-message" *ngIf="getFieldError('password')">
             {{ getFieldError('password') }}
           </div>
+          <div class="forgot-password-link">
+            <button 
+              id="forgot-password-button"
+              type="button" 
+              class="link-button small" 
+              (click)="openForgotPasswordDialog()"
+            >
+              ¿Olvidaste tu contraseña?
+            </button>
+          </div>
         </div>
 
         <div class="error-message global-error" *ngIf="errorMessage" (click)="clearError()">
@@ -73,6 +83,72 @@
             Crear Cuenta
           </button>
         </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Recuperación de Contraseña -->
+  <div *ngIf="showForgotPasswordDialog" class="modal-overlay" (click)="closeForgotPasswordDialog()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Recuperar Contraseña</h2>
+        <button 
+          id="close-forgot-password-modal"
+          class="close-button" 
+          (click)="closeForgotPasswordDialog()"
+          aria-label="Cerrar modal"
+        >
+          ✕
+        </button>
+      </div>
+      
+      <div class="modal-body">
+        <p class="modal-description">
+          Ingresa tu dirección de correo electrónico y te enviaremos un enlace para restablecer tu contraseña.
+        </p>
+        
+        <div class="form-group">
+          <label for="recovery-email">Correo Electrónico</label>
+          <input
+            type="email"
+            id="recovery-email"
+            [(ngModel)]="forgotPasswordEmail"
+            class="form-input"
+            placeholder="correo@ejemplo.com"
+            [disabled]="isSendingRecovery"
+            autocomplete="email"
+          >
+        </div>
+        
+        <div class="error-message" *ngIf="errorMessage">
+          {{ errorMessage }}
+        </div>
+        
+        <div class="success-message" *ngIf="recoverySuccessMessage">
+          {{ recoverySuccessMessage }}
+        </div>
+      </div>
+      
+      <div class="modal-footer">
+        <button 
+          id="cancel-recovery-button"
+          type="button" 
+          class="secondary-button"
+          (click)="closeForgotPasswordDialog()"
+          [disabled]="isSendingRecovery"
+        >
+          Cancelar
+        </button>
+        <button 
+          id="send-recovery-button"
+          type="button" 
+          class="primary-button"
+          (click)="sendPasswordRecovery()"
+          [disabled]="isSendingRecovery || !forgotPasswordEmail"
+        >
+          <span *ngIf="!isSendingRecovery">Enviar Enlace</span>
+          <span *ngIf="isSendingRecovery">Enviando...</span>
+        </button>
       </div>
     </div>
   </div>

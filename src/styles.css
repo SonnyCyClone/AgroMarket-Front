@@ -1,1 +1,22 @@
 /* You can add global styles to this file, and also import other style files */
+
+html, body { 
+  height: 100%; 
+  overflow-x: hidden; /* Evitar scroll horizontal innecesario */
+}
+
+body { 
+  margin: 0; 
+  font-family: Roboto, "Helvetica Neue", sans-serif; 
+}
+
+/* Asegurar que el header sticky funcione correctamente */
+* {
+  box-sizing: border-box;
+}
+
+/* Mejoras para el comportamiento del sticky header */
+.app-shell {
+  position: relative;
+  min-height: 100vh;
+}

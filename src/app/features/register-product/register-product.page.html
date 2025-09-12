@@ -1,213 +1,297 @@
-<div class="register-product-page">
-  <div class="register-container">
-    <!-- Loading State -->
-    <div *ngIf="isLoading" class="loading-container">
-      <div class="loading-spinner"></div>
-      <p>Cargando formulario...</p>
+<!-- Mensajes de éxito y error -->
+<div class="message-container">
+  <!-- Mensaje de éxito -->
+  <div *ngIf="showSuccessMessage" class="success-message" role="alert">
+    <div class="message-content">
+      <div class="message-icon">✅</div>
+      <div class="message-text">{{ successMessage }}</div>
+      <button 
+        type="button" 
+        class="message-close"
+        (click)="dismissSuccessMessage()"
+        aria-label="Cerrar mensaje de éxito">
+        ✕
+      </button>
     </div>
+  </div>
 
-    <!-- Main Form -->
-    <div *ngIf="!isLoading" class="register-card">
-      <div class="register-header">
-        <h1>Registrar Nuevo Producto</h1>
-        <p>Agregar un nuevo producto al catálogo de AgroMarket</p>
-      </div>
+  <!-- Banner de error -->
+  <div *ngIf="showErrorMessage" class="error-message-banner" role="alert">
+    <div class="message-content">
+      <div class="message-icon">⚠️</div>
+      <div class="message-text">{{ errorMessage }}</div>
+      <button 
+        type="button" 
+        class="message-close"
+        (click)="dismissErrorMessage()"
+        aria-label="Cerrar mensaje de error">
+        ✕
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Contenedor principal -->
+<div class="register-product-container">
+  <header class="page-header">
+    <h1>Registrar Nuevo Producto</h1>
+    <p>Complete el formulario para agregar un producto a su inventario</p>
+  </header>
+
+  <!-- Indicador de carga -->
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Cargando datos del formulario...</p>
+  </div>
+
+  <!-- Formulario -->
+  <form *ngIf="!isLoading" [formGroup]="productForm" (ngSubmit)="onSubmit()" class="product-form">
+    
+    <!-- Información básica -->
+    <section class="form-section">
+      <h2>Información Básica</h2>
       
-      <form [formGroup]="productForm" (ngSubmit)="onSubmit()" class="register-form">
-        <div class="form-row">
-          <div class="form-group">
-            <label for="variedad">Variedad *</label>
-            <input
-              type="text"
-              id="variedad"
-              formControlName="variedad"
-              class="form-input"
-              [class.error]="getFieldError('variedad')"
-              placeholder="Ej: Tomate Cherry, Lechuga Romana"
-            >
-            <div class="error-message" *ngIf="getFieldError('variedad')">
-              {{ getFieldError('variedad') }}
-            </div>
-          </div>
-          
-          <div class="form-group">
-            <label for="precio">Precio (COP) *</label>
-            <input
-              type="number"
-              id="precio"
-              formControlName="precio"
-              class="form-input"
-              [class.error]="getFieldError('precio')"
-              placeholder="0"
-              min="1"
-            >
-            <div class="price-preview" *ngIf="productForm.get('precio')?.value > 0">
-              {{ formatPrice(productForm.get('precio')?.value) }}
-            </div>
-            <div class="error-message" *ngIf="getFieldError('precio')">
-              {{ getFieldError('precio') }}
-            </div>
-          </div>
+      <!-- Variedad -->
+      <div class="form-group">
+        <label for="variedad">Variedad del Producto *</label>
+        <input
+          id="variedad"
+          type="text"
+          formControlName="variedad"
+          placeholder="Ej: Tomate Cherry, Maíz Amarillo, Yuca Criolla"
+          [class.error]="getFieldError('variedad')"
+          maxlength="100">
+        <small class="helper-text">Especifica la variedad específica de tu producto (máximo 100 caracteres)</small>
+        <div *ngIf="getFieldError('variedad')" class="error-message">
+          {{ getFieldError('variedad') }}
         </div>
+      </div>
 
-        <div class="form-row">
-          <div class="form-group">
-            <label for="cantidadDisponible">Cantidad Disponible *</label>
-            <input
-              type="number"
-              id="cantidadDisponible"
-              formControlName="cantidadDisponible"
-              class="form-input"
-              [class.error]="getFieldError('cantidadDisponible')"
-              placeholder="1"
-              min="1"
-            >
-            <div class="error-message" *ngIf="getFieldError('cantidadDisponible')">
-              {{ getFieldError('cantidadDisponible') }}
-            </div>
-          </div>
-          
-          <div class="form-group">
-            <label for="unidadesId">Unidad *</label>
-            <select
-              id="unidadesId"
-              formControlName="unidadesId"
-              class="form-input"
-              [class.error]="getFieldError('unidadesId')"
-            >
-              <option value="">Seleccione una unidad</option>
-              <option *ngFor="let unidad of unidades" [value]="unidad.id">
-                {{ unidad.nombre }} ({{ unidad.abreviatura }})
+      <!-- Descripción -->
+      <div class="form-group">
+        <label for="descripcion">Descripción *</label>
+        <textarea
+          id="descripcion"
+          formControlName="descripcion"
+          placeholder="Describe las características del producto: calidad, método de cultivo, origen, etc."
+          [class.error]="getFieldError('descripcion')"
+          maxlength="500"
+          rows="4">
+        </textarea>
+        <small class="helper-text">Incluye información sobre calidad, método de cultivo, origen (máximo 500 caracteres)</small>
+        <div *ngIf="getFieldError('descripcion')" class="error-message">
+          {{ getFieldError('descripcion') }}
+        </div>
+      </div>
+    </section>
+
+    <!-- Precio y cantidades -->
+    <section class="form-section">
+      <h2>Precio y Disponibilidad</h2>
+      
+      <div class="form-row">
+        <!-- Precio con selector de moneda embebido -->
+        <div class="form-group">
+          <label for="precio">Precio de Venta *</label>
+          <div class="price-input-group">
+            <select 
+              id="moneda-selector"
+              formControlName="moneda" 
+              class="currency-selector"
+              aria-label="Selector de moneda">
+              <option *ngFor="let moneda of monedas" [value]="moneda.codigo">
+                {{ moneda.codigo }}
               </option>
             </select>
-            <div class="error-message" *ngIf="getFieldError('unidadesId')">
-              {{ getFieldError('unidadesId') }}
-            </div>
+            <input
+              id="precio"
+              type="number"
+              formControlName="precio"
+              class="price-input"
+              placeholder="0.00"
+              [class.error]="getFieldError('precio')"
+              min="0.01"
+              step="0.01"
+              aria-describedby="precio-help precio-preview">
+          </div>
+          <small id="precio-help" class="helper-text">Precio por unidad de medida en la moneda seleccionada</small>
+          <div *ngIf="getFieldError('precio')" class="error-message">
+            {{ getFieldError('precio') }}
+          </div>
+          <div *ngIf="productForm.get('precio')?.value > 0" id="precio-preview" class="price-preview">
+            Vista previa: {{ formatPrice(productForm.get('precio')?.value) }}
           </div>
         </div>
-        
-        <div class="form-row">
-          <div class="form-group">
-            <label for="categoriaId">Categoría *</label>
+
+        <!-- Cantidad disponible -->
+        <div class="form-group">
+          <label for="cantidad-disponible">Cantidad Disponible *</label>
+          <input
+            id="cantidad-disponible"
+            type="number"
+            formControlName="cantidadDisponible"
+            placeholder="0"
+            [class.error]="getFieldError('cantidadDisponible')"
+            min="1">
+          <small class="helper-text">Cantidad que tienes disponible para vender</small>
+          <div *ngIf="getFieldError('cantidadDisponible')" class="error-message">
+            {{ getFieldError('cantidadDisponible') }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Unidad de medida -->
+      <div class="form-group">
+        <label for="unidades-select">Unidad de Medida *</label>
+        <select
+          id="unidades-select"
+          formControlName="unidadesId"
+          [class.error]="getFieldError('unidadesId')">
+          <option value="">Selecciona una unidad de medida</option>
+          <option *ngFor="let unidad of unidades" [value]="unidad.id">
+            {{ formatUnidadOption(unidad) }}
+          </option>
+        </select>
+        <small class="helper-text">Cómo se mide tu producto (kilogramos, libras, unidades, etc.)</small>
+        <div *ngIf="getFieldError('unidadesId')" class="error-message">
+          {{ getFieldError('unidadesId') }}
+        </div>
+      </div>
+    </section>
+
+    <!-- Categorización -->
+    <section class="form-section">
+      <h2>Categorización</h2>
+      
+      <div class="form-row">
+        <!-- Categoría -->
+        <div class="form-group">
+          <label for="categoria-select">Categoría *</label>
+          <div class="select-with-action">
             <select
-              id="categoriaId"
+              id="categoria-select"
               formControlName="categoriaId"
-              class="form-input"
-              [class.error]="getFieldError('categoriaId')"
-            >
-              <option value="">Seleccione una categoría</option>
+              [class.error]="getFieldError('categoriaId')">
+              <option value="">Selecciona una categoría</option>
               <option *ngFor="let categoria of categorias" [value]="categoria.id">
                 {{ categoria.nombre }}
               </option>
             </select>
-            <div class="error-message" *ngIf="getFieldError('categoriaId')">
-              {{ getFieldError('categoriaId') }}
-            </div>
+          </div>
+          <small class="helper-text">Tipo general de producto (frutas, verduras, granos, etc.)</small>
+          <div *ngIf="getFieldError('categoriaId')" class="error-message">
+            {{ getFieldError('categoriaId') }}
+          </div>
+        </div>
+
+        <!-- Tipo de producto -->
+        <div class="form-group">
+          <label for="tipo-producto-select">Tipo de Producto *</label>
+          <select
+            id="tipo-producto-select"
+            formControlName="idTipoProducto"
+            [class.error]="getFieldError('idTipoProducto')"
+            [disabled]="!productForm.get('categoriaId')?.value || isLoadingTipos">
+            <option value="">
+              {{ !productForm.get('categoriaId')?.value ? 'Primero selecciona una categoría' : 
+                 isLoadingTipos ? 'Cargando...' : 'Selecciona un tipo de producto' }}
+            </option>
+            <option *ngFor="let tipo of tiposProducto" [value]="tipo.id">
+              {{ tipo.nombre }}
+            </option>
+          </select>
+          <small class="helper-text">Tipo específico dentro de la categoría seleccionada</small>
+          <div *ngIf="getFieldError('idTipoProducto')" class="error-message">
+            {{ getFieldError('idTipoProducto') }}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Imagen del producto -->
+    <section class="form-section">
+      <h2>Imagen del Producto</h2>
+      
+      <div class="image-upload-container">
+        <!-- Área de drag & drop -->
+        <div 
+          class="image-drop-area"
+          [class.has-image]="imagePreviewUrl"
+          (dragover)="onDragOver($event)"
+          (dragleave)="onDragLeave($event)"
+          (drop)="onImageDrop($event)">
+          
+          <!-- Preview de imagen -->
+          <div *ngIf="imagePreviewUrl" class="image-preview">
+            <img [src]="imagePreviewUrl" alt="Vista previa del producto">
+            <button 
+              id="remove-image-btn"
+              type="button" 
+              class="remove-image-btn"
+              (click)="onImageRemoved()"
+              aria-label="Eliminar imagen">
+              ✕
+            </button>
           </div>
           
-          <div class="form-group">
-            <label for="idTipoProducto">Tipo de Producto *</label>
-            <select
-              id="idTipoProducto"
-              formControlName="idTipoProducto"
-              class="form-input"
-              [class.error]="getFieldError('idTipoProducto')"
-              [disabled]="!productForm.get('categoriaId')?.value"
-            >
-              <option value="">Seleccione un tipo</option>
-              <option *ngFor="let tipo of tiposProducto" [value]="tipo.id">
-                {{ tipo.nombre }}
-              </option>
-            </select>
-            <div class="error-message" *ngIf="getFieldError('idTipoProducto')">
-              {{ getFieldError('idTipoProducto') }}
-            </div>
+          <!-- Área de carga -->
+          <div *ngIf="!imagePreviewUrl" class="upload-placeholder">
+            <div class="upload-icon">📷</div>
+            <p class="upload-text">Arrastra una imagen aquí o</p>
+            <label for="image-input" class="upload-button">
+              Seleccionar Imagen
+            </label>
+            <input 
+              id="image-input"
+              type="file"
+              accept="image/*"
+              (change)="onImageSelected($event)"
+              style="display: none;">
           </div>
         </div>
         
-        <div class="form-group">
-          <label for="imagenUrl">URL de la Imagen *</label>
-          <input
-            type="url"
-            id="imagenUrl"
-            formControlName="imagenUrl"
-            class="form-input"
-            [class.error]="getFieldError('imagenUrl')"
-            placeholder="https://ejemplo.com/imagen-producto.jpg"
-          >
-          <div class="error-message" *ngIf="getFieldError('imagenUrl')">
-            {{ getFieldError('imagenUrl') }}
-          </div>
-        </div>
-        
-        <div class="form-group">
-          <label for="descripcion">Descripción *</label>
-          <textarea
-            id="descripcion"
-            formControlName="descripcion"
-            class="form-textarea"
-            [class.error]="getFieldError('descripcion')"
-            placeholder="Ingrese una descripción detallada del producto"
-            rows="4"
-          ></textarea>
-          <div class="error-message" *ngIf="getFieldError('descripcion')">
-            {{ getFieldError('descripcion') }}
-          </div>
-        </div>
+        <small class="helper-text">
+          Formatos aceptados: JPG, PNG, GIF. Tamaño máximo: 5MB
+        </small>
+      </div>
+    </section>
 
-        <div class="form-group checkbox-group">
-          <label class="checkbox-label">
-            <input
-              id="activo"
-              type="checkbox"
-              formControlName="activo"
-              class="checkbox-input"
-            >
-            <span class="checkbox-text">Producto activo</span>
-          </label>
-        </div>
-        
-        <div class="form-actions">
-          <button 
-            id="reset"
-            type="button" 
-            class="secondary-button"
-            [disabled]="isSubmitting"
-            (click)="productForm.reset()"
-          >
-            Limpiar
-          </button>
-          <button 
-            id="submitproduct"
-            type="submit" 
-            class="primary-button"
-            [disabled]="!productForm.valid || isSubmitting"
-          >
-            <span *ngIf="!isSubmitting">Registrar Producto</span>
-            <span *ngIf="isSubmitting">Registrando...</span>
-          </button>
-        </div>
-      </form>
+    <!-- Configuración adicional -->
+    <section class="form-section">
+      <h2>Configuración</h2>
+      
+      <div class="form-group checkbox-group">
+        <label class="checkbox-label">
+          <input 
+            id="producto-activo"
+            type="checkbox" 
+            formControlName="activo"
+            class="checkbox-input">
+          <span class="checkbox-custom"></span>
+          Producto activo y disponible para venta
+        </label>
+        <small class="helper-text">Los productos inactivos no aparecerán en el catálogo público</small>
+      </div>
+    </section>
+
+    <!-- Botones de acción -->
+    <div class="form-actions">
+      <button 
+        id="cancel-btn"
+        type="button" 
+        class="btn btn-secondary"
+        (click)="router.navigate(['/products/manage'])">
+        Cancelar
+      </button>
+      
+      <button 
+        id="submit-btn"
+        type="submit" 
+        class="btn btn-primary"
+        [disabled]="productForm.invalid || isSubmitting">
+        <span *ngIf="isSubmitting" class="spinner-small"></span>
+        {{ isSubmitting ? 'Registrando...' : 'Registrar Producto' }}
+      </button>
     </div>
-  </div>
-  
-  <!-- Success Dialog -->
-  <app-confirm-dialog
-    [isVisible]="showConfirmDialog"
-    title="Éxito"
-    message="Producto registrado exitosamente"
-    confirmText="Aceptar"
-    (confirmed)="onConfirmDialogClose()"
-    (closed)="onConfirmDialogClose()"
-  ></app-confirm-dialog>
-
-  <!-- Error Dialog -->
-  <app-confirm-dialog
-    [isVisible]="showError"
-    title="Error"
-    [message]="errorMessage"
-    confirmText="Cerrar"
-    (confirmed)="onErrorDialogClose()"
-    (closed)="onErrorDialogClose()"
-  ></app-confirm-dialog>
+  </form>
 </div>

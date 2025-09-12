@@ -1,40 +1,58 @@
+<!-- 
+  Tarjeta de producto para AgroMarket
+  
+  Componente reutilizable que muestra información de producto en formato tarjeta.
+  Compatible con productos API (nuevo formato) y legacy (formato anterior).
+  Incluye manejo robusto de imágenes con fallback a placeholder.
+-->
 <div class="product-card">
   <div class="product-image-container">
     <img 
-      *ngIf="!imageError"
-      [src]="product.imageUrl" 
-      [alt]="product.name"
+      *ngIf="!imageError && getImageUrl()"
+      [src]="getImageUrl()" 
+      [alt]="getName()"
       class="product-image"
       (error)="onImageError($event)"
     >
-    <div *ngIf="imageError" class="placeholder-image">
+    <div *ngIf="imageError || !getImageUrl()" class="placeholder-image">
       <span>Imagen no disponible</span>
     </div>
     <div *ngIf="hasDiscount" class="discount-badge">
-      -{{ product.discountPercent }}%
+      -{{ getDiscountPercent() }}%
     </div>
+    
+    <!-- Botón de edición SOLO para modo administración -->
+    <button 
+      *ngIf="canEdit"
+      [id]="'product-edit-button-' + getProductId()"
+      class="edit-button"
+      (click)="onEditProduct($event)"
+      title="Editar producto"
+      aria-label="Editar producto"
+    >
+      ⚙️
+    </button>
   </div>
   
   <div class="product-info">
-    <h3 class="product-name">{{ product.name }}</h3>
-    <p class="product-brand">{{ product.brand }}</p>
-    <p class="product-category">{{ product.category }}</p>
+    <!-- Línea 1: Variedad -->
+    <h3 class="product-name" [title]="getName()">{{ getName() }}</h3>
     
+    <!-- Línea 2: Disponible N unidades -->
+    <p class="product-availability">Disponible: {{ getQuantity() }} {{ getUnitName() }}</p>
+    
+    <!-- Línea 3: Descripción (máx 1-2 líneas con ellipsis) -->
+    <p class="product-description" [title]="getDescription()">{{ getDescription() }}</p>
+    
+    <!-- Línea 4: Precio COP formateado -->
     <div class="price-section">
       <div *ngIf="hasDiscount" class="price-container">
         <span class="current-price">{{ formatPrice(discountedPrice) }}</span>
-        <span class="original-price">{{ formatPrice(product.price) }}</span>
+        <span class="original-price">{{ formatPrice(getPrice()) }}</span>
       </div>
       <div *ngIf="!hasDiscount" class="price-container">
-        <span class="current-price">{{ formatPrice(product.price) }}</span>
+        <span class="current-price">{{ formatPrice(getPrice()) }}</span>
       </div>
     </div>
-    
-    <button 
-      id="product-card-add-to-cart-button-{{ product.id }}"
-      class="add-to-cart-button"
-    >
-      Agregar al Carrito
-    </button>
   </div>
 </div>

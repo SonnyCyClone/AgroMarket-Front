@@ -65,6 +65,9 @@ export interface LoginResponse {
   /** Apellido del usuario */
   apellido: string;
   
+  /** Rol del usuario en el sistema */
+  role: string; // Cambiado de 'rol' a 'role' para coincidir con el API
+  
   /** Token JWT para autenticación */
   token: string;
 }
@@ -112,4 +115,7 @@ export interface User {
   
   /** Dirección de correo electrónico */
   email: string;
+  
+  /** Rol del usuario (AGRICULTOR, USUARIO, etc.) */
+  rol?: string;
 }

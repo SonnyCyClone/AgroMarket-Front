@@ -2,9 +2,13 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  position: relative; /* Crear contexto de stacking para sticky header */
+  overflow-x: hidden; /* Evitar scroll horizontal */
 }
 
 .main-content {
   flex: 1;
   background: #f8f9fa;
+  padding-top: 20px; /* Espaciado adicional para contenido después del header sticky */
+  min-height: calc(100vh - 80px); /* Asegurar altura mínima para scroll */
 }

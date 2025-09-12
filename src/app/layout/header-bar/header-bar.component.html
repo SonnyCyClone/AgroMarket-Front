@@ -1,14 +1,25 @@
 <header class="header">
   <div class="header-container">
     <div class="logo-section">
-      <img 
-        id="header-logo" 
-        [src]="'https://fv5-3.files.fm/thumb_show.php?i=b4pe5cj5nf&view&v=1&PHPSESSID=1f0e1a250256472c187f6bea04f6f371df64194d'" 
-        alt="Logo AgroMarket" 
-        (error)="onHeaderLogoError($event)"
-        class="logo-icon"
-      />
-      <h1 class="logo" (click)="onLogoClick()">AgroMarket</h1>
+      <div 
+        id="header-logo-wrapper"
+        class="logo-wrapper"
+        (click)="onLogoClick()"
+        role="button"
+        tabindex="0"
+        (keydown.enter)="onLogoClick()"
+        (keydown.space)="onLogoClick()"
+        aria-label="Ir al inicio"
+      >
+        <img 
+          id="header-logo" 
+          [src]="logoUrl" 
+          alt="Logo AgroMarket" 
+          (error)="onHeaderLogoError($event)"
+          class="logo-icon"
+        />
+        <h1 class="logo">AgroMarket</h1>
+      </div>
     </div>
     
     <div class="search-section">
@@ -16,14 +27,47 @@
     </div>
     
     <div class="actions-section">
-      <button 
-        id="header-register-product-button"
-        *ngIf="isLoggedIn" 
-        class="register-button" 
-        (click)="onRegisterProductClick()"
-      >
-        Registrar Producto
-      </button>
+      <!-- Admin Dropdown for Product Management -->
+      <div *ngIf="canManageProducts" class="admin-dropdown-container">
+        <button 
+          id="header-admin-dropdown-button"
+          class="admin-button"
+          (click)="onAdminDropdownToggle($event)"
+          aria-label="Administración de productos"
+          aria-expanded="{{showAdminDropdown}}"
+          aria-haspopup="menu"
+        >
+          <span class="icon">⚙️</span>
+          <span class="label">Administración</span>
+          <span class="dropdown-arrow">▼</span>
+        </button>
+        
+        <div 
+          *ngIf="showAdminDropdown" 
+          class="admin-dropdown"
+          role="menu"
+          aria-label="Menú de administración de productos"
+        >
+          <button 
+            id="header-register-product-dropdown-button"
+            class="dropdown-item" 
+            (click)="onRegisterProductClick()"
+            role="menuitem"
+          >
+            <span class="dropdown-icon">➕</span>
+            Registrar Producto
+          </button>
+          <button 
+            id="header-manage-products-dropdown-button"
+            class="dropdown-item" 
+            (click)="onManageProductsClick()"
+            role="menuitem"
+          >
+            <span class="dropdown-icon">📝</span>
+            Actualizar Productos
+          </button>
+        </div>
+      </div>
       
       <button 
         id="header-cart-button"
