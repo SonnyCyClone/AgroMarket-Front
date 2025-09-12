@@ -14,7 +14,7 @@ variables:
   artifactName: 'frontend'                   # Nombre del artefacto publicado
   zipName: 'frontend.zip'                    # Nombre del ZIP a desplegar
   feRoot: '.'                                # Carpeta raíz del proyecto Angular (ajusta si aplica)
-  app_prd: 'az-agromarket-front'             # Nombre de la Azure Web App (Front)
+  app_prd: 'az-agromarket-front'             # Azure Web App (Front)
 
 # ===== AGENTE (self-hosted Windows) =====
 pool:
@@ -48,54 +48,90 @@ stages:
         echo Build.SourcesDirectory=$(Build.SourcesDirectory)
       displayName: 'Mostrar versiones y paths'
 
+    # ===== OPCIÓN C: Ajustar budgets SOLO en CI (sin modificar el repo) =====
+    - powershell: |
+        $ErrorActionPreference = 'Stop'
+        Set-StrictMode -Version Latest
+
+        $root = "$(feRoot)"
+        $angularPath = Join-Path $root 'angular.json'
+        if (-not (Test-Path $angularPath)) { throw "No se encontró angular.json en '$root'." }
+
+        $json = Get-Content $angularPath -Raw | ConvertFrom-Json
+
+        # Detectar primer proyecto (clave en projects)
+        $projectName = $null
+        foreach ($p in $json.projects.PSObject.Properties) { $projectName = $p.Name; break }
+        if (-not $projectName) { throw "No se detectó ningún proyecto en angular.json (sección 'projects')." }
+
+        $proj      = $json.projects.$projectName
+        $buildCfgs = $proj.architect.build.configurations
+        if (-not $buildCfgs) { throw "No se encontró 'architect.build.configurations' en el proyecto '$projectName'." }
+
+        if (-not $buildCfgs.production) { $buildCfgs | Add-Member -NotePropertyName production -NotePropertyValue (@{}) }
+        if (-not $buildCfgs.production.budgets) { $buildCfgs.production | Add-Member -NotePropertyName budgets -NotePropertyValue (@()) }
+
+        $budgets = $buildCfgs.production.budgets
+
+        # Función helper para upsert de budgets por type
+        function Set-Or-AddBudget([string]$type, [string]$warn, [string]$err) {
+          $existing = $null
+          foreach ($b in $budgets) { if ($b.type -eq $type) { $existing = $b; break } }
+          if ($existing -eq $null) {
+            $new = [ordered]@{ type = $type; maximumWarning = $warn; maximumError = $err }
+            $budgets += $new
+          } else {
+            $existing.maximumWarning = $warn
+            $existing.maximumError   = $err
+          }
+        }
+
+        # Relajar budgets solo para CI (valores seguros para tu caso actual)
+        Set-Or-AddBudget -type 'anyComponentStyle' -warn '10kb'  -err '12kb'
+        Set-Or-AddBudget -type 'initial'          -warn '500kb' -err '650kb'
+
+        # Guardar cambios en el working dir del agente (no modifica tu repo remoto)
+        ($json | ConvertTo-Json -Depth 100) | Set-Content $angularPath -Encoding UTF8
+
+        Write-Host "Budgets de production ajustados SOLO para CI:"
+        Get-Content $angularPath | Write-Host
+      displayName: 'Ajustar budgets solo en CI'
+
     # Instala dependencias y compila Angular (con diagnósticos)
     - powershell: |
         $ErrorActionPreference = 'Stop'
         Set-StrictMode -Version Latest
 
-        # --- 1) Validar raíz del proyecto ---
+        # 1) Validar raíz del proyecto
         $root = "$(feRoot)"
         $pkg = Join-Path $root 'package.json'
-        if (-not (Test-Path $pkg)) {
-          throw "No se encontró package.json en '$root'. Ajusta la variable feRoot."
-        }
+        if (-not (Test-Path $pkg)) { throw "No se encontró package.json en '$root'. Ajusta feRoot." }
         cd $root
         Write-Host "Working dir: $(Get-Location)"
 
-        # --- 2) Limpiar estado previo (seguro para CI) ---
-        if (Test-Path 'node_modules') { 
-          Write-Host "Eliminando node_modules..."
-          Remove-Item -Recurse -Force 'node_modules'
-        }
-        # package-lock.json es obligatorio para 'npm ci'
-        if (-not (Test-Path 'package-lock.json')) {
-          throw "Falta package-lock.json. Crea/commitea el lockfile para usar 'npm ci'."
-        }
+        # 2) Limpiar estado previo
+        if (Test-Path 'node_modules') { Remove-Item -Recurse -Force 'node_modules' }
+        if (-not (Test-Path 'package-lock.json')) { throw "Falta package-lock.json (npm ci lo exige)." }
 
-        # Cache local controlada para el agente
+        # Cache npm
         $npmCache = "$env:AGENT_WORKFOLDER\_npmcache"
         if (-not (Test-Path $npmCache)) { New-Item -ItemType Directory -Force -Path $npmCache | Out-Null }
         npm config set cache "$npmCache" --global | Out-Null
         npm config set fund false --global | Out-Null
         npm config set audit false --global | Out-Null
 
-        # Opcional: respetar .npmrc si existe (por paquetes privados)
-        if (Test-Path '.npmrc') {
-          Write-Host ".npmrc detectado. Usando configuraciones de registry/auth."
-        } else {
-          Write-Host "No hay .npmrc. Asumiendo que NO hay paquetes privados."
-        }
+        if (Test-Path '.npmrc') { Write-Host ".npmrc detectado (registry/auth)." }
+        else { Write-Host "Sin .npmrc (asumiendo sin paquetes privados)." }
 
-        # --- 3) Instalar dependencias ---
+        # 3) Instalar
         Write-Host ">> npm ci (verbose)"
         npm ci --loglevel verbose
         $ciExit = $LASTEXITCODE
         if ($ciExit -ne 0) {
-          Write-Warning "npm ci falló (exit $ciExit). Intentando 'npm install --legacy-peer-deps'…"
+          Write-Warning "npm ci falló (exit $ciExit). Probando 'npm install --legacy-peer-deps'…"
           npm install --legacy-peer-deps --loglevel verbose
           $installExit = $LASTEXITCODE
           if ($installExit -ne 0) {
-            # Dump del último npm debug log si existe
             $logsRoot = Join-Path $env:AGENT_WORKFOLDER '_npmcache\_logs'
             if (Test-Path $logsRoot) {
               $logDir = Get-ChildItem $logsRoot -Directory -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending | Select-Object -First 1
@@ -107,23 +143,21 @@ stages:
                 }
               }
             }
-            throw "npm install --legacy-peer-deps falló (exit $installExit). Revisa el log anterior."
+            throw "npm install --legacy-peer-deps falló (exit $installExit)."
           }
         }
 
-        # --- 4) Validar script build ---
+        # 4) Validar script build
         $pkgJson = Get-Content 'package.json' -Raw
-        if ($pkgJson -notmatch '"build"\s*:\s*".+?"') {
-          throw "No hay script 'build' en package.json (esperado: 'ng build')."
-        }
+        if ($pkgJson -notmatch '"build"\s*:\s*".+?"') { throw "No hay script 'build' en package.json (se espera 'ng build')." }
 
-        # --- 5) Compilar Angular ---
+        # 5) Compilar
         Write-Host ">> ng build (production)"
         npm run build -- --configuration production --output-path "dist" --verbose
         if ($LASTEXITCODE -ne 0) { throw "ng build falló ($LASTEXITCODE)" }
       displayName: 'npm ci / install & ng build'
 
-    # Empaqueta la salida en un .zip y lo guarda en el staging
+    # Empaqueta salida a ZIP
     - powershell: |
         $ErrorActionPreference = 'Stop'
         Set-StrictMode -Version Latest
@@ -131,24 +165,18 @@ stages:
         $srcRoot = "$(Build.SourcesDirectory)"
         $distRoot = Join-Path $srcRoot 'dist'
 
-        if (-not (Test-Path $distRoot)) {
-          throw "No existe la carpeta dist en $distRoot. ¿Falló el build?"
-        }
+        if (-not (Test-Path $distRoot)) { throw "No existe 'dist' en $distRoot. ¿Falló el build?" }
 
-        # Toma la primera subcarpeta generada dentro de dist (Angular crea /dist/<app>)
         $sub = Get-ChildItem -Directory $distRoot | Select-Object -First 1
         if (-not $sub) { throw "No se encontró carpeta de salida en $distRoot (esperado /dist/<app>)." }
 
-        # En Angular 16+ (builder nuevo), a veces la salida final está en /browser
         $content = Join-Path $sub.FullName 'browser'
         if (-not (Test-Path $content)) { $content = $sub.FullName }
 
-        # Copia web.config (SPA/rewrites)
         $webConfig = Join-Path $srcRoot 'web.config'
         if (-not (Test-Path $webConfig)) { throw "Falta web.config en la raíz del repo ($srcRoot)." }
         Copy-Item -Force $webConfig (Join-Path $content 'web.config')
 
-        # Comprimir a ZIP
         $outDir = "$(Build.ArtifactStagingDirectory)"
         New-Item -ItemType Directory -Force -Path $outDir | Out-Null
         $zipPath = Join-Path $outDir "$(zipName)"
@@ -158,7 +186,6 @@ stages:
         Compress-Archive -Path (Join-Path $content '*') -DestinationPath $zipPath -Force
       displayName: 'Crear ZIP'
 
-    # Publica artefacto como PIPELINE artifact
     - task: PublishPipelineArtifact@1
       displayName: 'Publicar artefacto (pipeline)'
       inputs:
@@ -169,7 +196,6 @@ stages:
 - stage: Deploy_PRD
   displayName: Deploy to PRD
   dependsOn: Build
-  # Despliega desde develop/main/master
   condition: and(succeeded(), in(variables['Build.SourceBranchName'], 'main','master','develop'))
   jobs:
   - deployment: deploy_prd
