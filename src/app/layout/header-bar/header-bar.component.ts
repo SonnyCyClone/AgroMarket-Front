@@ -38,7 +38,7 @@ export class HeaderBarComponent implements OnDestroy {
   currentUser: User | null = null;
   
   /** URL del logo principal - usando Blob URL específico */
-  logoUrl = 'https://azstaagromarket.blob.core.windows.net/productos?sp=r&st=2025-09-12T22:25:12Z&se=2025-12-31T06:40:12Z&spr=https&sv=2024-11-04&sr=c&sig=9Z8yTQYXsBePoAs50WcOMBusYafTexW0nTgXVnVHfe0%3D';
+  logoUrl = 'https://azstaagromarket.blob.core.windows.net/productos/Logo/Icono.png?sp=r&st=2025-09-12T22:25:12Z&se=2025-12-31T06:40:12Z&spr=https&sv=2024-11-04&sr=c&sig=9Z8yTQYXsBePoAs50WcOMBusYafTexW0nTgXVnVHfe0%3D';
   
   /** Suscripción al observable del usuario actual */
   private userSubscription: Subscription;
