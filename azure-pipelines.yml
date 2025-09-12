@@ -10,11 +10,11 @@ pr:
 
 # ===== VARIABLES =====
 variables:
-  azureSubscription: 'sc-azure-agromarket'   # Nombre EXACTO del Service Connection ARM
-  artifactName: 'frontend'                   # Nombre del artefacto
-  zipName: 'frontend.zip'                    # Archivo que generamos para desplegar
-  feRoot: '.'                                # Raíz del proyecto Angular (ajusta si tu app está en otra carpeta)
-  app_prd: 'az-agromarket-front'             # Nombre de la WebApp en Azure
+  azureSubscription: 'sc-azure-agromarket'   # Service Connection ARM (nombre exacto)
+  artifactName: 'frontend'                   # Nombre del artefacto publicado
+  zipName: 'frontend.zip'                    # Nombre del ZIP a desplegar
+  feRoot: '.'                                # Carpeta raíz del proyecto Angular (ajusta si aplica)
+  app_prd: 'az-agromarket-front'             # Nombre de la Azure Web App (Front)
 
 # ===== AGENTE (self-hosted Windows) =====
 pool:
@@ -24,12 +24,18 @@ pool:
 
 # ============== STAGES ==============
 stages:
+
 # ------------ BUILD ------------
 - stage: Build
   displayName: Build Angular
   jobs:
   - job: build
+    displayName: Build job
     steps:
+    - checkout: self
+      clean: true
+      fetchDepth: 0
+
     - task: NodeTool@0
       displayName: 'Use Node 20.x'
       inputs:
@@ -38,29 +44,81 @@ stages:
     - script: |
         node -v
         npm -v
-      displayName: 'Mostrar versiones'
+        echo AGENT_WORKFOLDER=%AGENT_WORKFOLDER%
+        echo Build.SourcesDirectory=$(Build.SourcesDirectory)
+      displayName: 'Mostrar versiones y paths'
 
-    # Instala dependencias y compila Angular
+    # Instala dependencias y compila Angular (con diagnósticos)
     - powershell: |
         $ErrorActionPreference = 'Stop'
         Set-StrictMode -Version Latest
 
-        cd "$(feRoot)"
+        # --- 1) Validar raíz del proyecto ---
+        $root = "$(feRoot)"
+        $pkg = Join-Path $root 'package.json'
+        if (-not (Test-Path $pkg)) {
+          throw "No se encontró package.json en '$root'. Ajusta la variable feRoot."
+        }
+        cd $root
+        Write-Host "Working dir: $(Get-Location)"
 
-        # Caché local opcional para acelerar npm en tu agente
+        # --- 2) Limpiar estado previo (seguro para CI) ---
+        if (Test-Path 'node_modules') { 
+          Write-Host "Eliminando node_modules..."
+          Remove-Item -Recurse -Force 'node_modules'
+        }
+        # package-lock.json es obligatorio para 'npm ci'
+        if (-not (Test-Path 'package-lock.json')) {
+          throw "Falta package-lock.json. Crea/commitea el lockfile para usar 'npm ci'."
+        }
+
+        # Cache local controlada para el agente
         $npmCache = "$env:AGENT_WORKFOLDER\_npmcache"
         if (-not (Test-Path $npmCache)) { New-Item -ItemType Directory -Force -Path $npmCache | Out-Null }
         npm config set cache "$npmCache" --global | Out-Null
+        npm config set fund false --global | Out-Null
+        npm config set audit false --global | Out-Null
 
-        Write-Host ">> npm ci"
-        npm ci --verbose
-        if ($LASTEXITCODE -ne 0) {
-          Write-Host "npm ci falló. Probando npm install --legacy-peer-deps..."
-          npm install --legacy-peer-deps --verbose
-          if ($LASTEXITCODE -ne 0) { throw "npm install falló ($LASTEXITCODE)" }
+        # Opcional: respetar .npmrc si existe (por paquetes privados)
+        if (Test-Path '.npmrc') {
+          Write-Host ".npmrc detectado. Usando configuraciones de registry/auth."
+        } else {
+          Write-Host "No hay .npmrc. Asumiendo que NO hay paquetes privados."
         }
 
-        Write-Host ">> ng build (prod)"
+        # --- 3) Instalar dependencias ---
+        Write-Host ">> npm ci (verbose)"
+        npm ci --loglevel verbose
+        $ciExit = $LASTEXITCODE
+        if ($ciExit -ne 0) {
+          Write-Warning "npm ci falló (exit $ciExit). Intentando 'npm install --legacy-peer-deps'…"
+          npm install --legacy-peer-deps --loglevel verbose
+          $installExit = $LASTEXITCODE
+          if ($installExit -ne 0) {
+            # Dump del último npm debug log si existe
+            $logsRoot = Join-Path $env:AGENT_WORKFOLDER '_npmcache\_logs'
+            if (Test-Path $logsRoot) {
+              $logDir = Get-ChildItem $logsRoot -Directory -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+              if ($logDir) {
+                $log = Get-ChildItem $logDir.FullName -Filter *.log | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+                if ($log) {
+                  Write-Host "===== npm debug log (${log.Name}) ====="
+                  Get-Content $log.FullName -Raw | Write-Host
+                }
+              }
+            }
+            throw "npm install --legacy-peer-deps falló (exit $installExit). Revisa el log anterior."
+          }
+        }
+
+        # --- 4) Validar script build ---
+        $pkgJson = Get-Content 'package.json' -Raw
+        if ($pkgJson -notmatch '"build"\s*:\s*".+?"') {
+          throw "No hay script 'build' en package.json (esperado: 'ng build')."
+        }
+
+        # --- 5) Compilar Angular ---
+        Write-Host ">> ng build (production)"
         npm run build -- --configuration production --output-path "dist" --verbose
         if ($LASTEXITCODE -ne 0) { throw "ng build falló ($LASTEXITCODE)" }
       displayName: 'npm ci / install & ng build'
@@ -73,17 +131,21 @@ stages:
         $srcRoot = "$(Build.SourcesDirectory)"
         $distRoot = Join-Path $srcRoot 'dist'
 
-        # Toma la primera carpeta generada dentro de dist (Angular crea /dist/<app>)
-        $sub = Get-ChildItem -Directory $distRoot | Select-Object -First 1
-        if (-not $sub) { throw "No se encontró carpeta de salida en $distRoot" }
+        if (-not (Test-Path $distRoot)) {
+          throw "No existe la carpeta dist en $distRoot. ¿Falló el build?"
+        }
 
-        # Para Angular 16+, a veces queda /browser
+        # Toma la primera subcarpeta generada dentro de dist (Angular crea /dist/<app>)
+        $sub = Get-ChildItem -Directory $distRoot | Select-Object -First 1
+        if (-not $sub) { throw "No se encontró carpeta de salida en $distRoot (esperado /dist/<app>)." }
+
+        # En Angular 16+ (builder nuevo), a veces la salida final está en /browser
         $content = Join-Path $sub.FullName 'browser'
         if (-not (Test-Path $content)) { $content = $sub.FullName }
 
-        # Copia web.config para SPA/rewrites
+        # Copia web.config (SPA/rewrites)
         $webConfig = Join-Path $srcRoot 'web.config'
-        if (-not (Test-Path $webConfig)) { throw "Falta web.config en la raíz del repo." }
+        if (-not (Test-Path $webConfig)) { throw "Falta web.config en la raíz del repo ($srcRoot)." }
         Copy-Item -Force $webConfig (Join-Path $content 'web.config')
 
         # Comprimir a ZIP
@@ -91,10 +153,12 @@ stages:
         New-Item -ItemType Directory -Force -Path $outDir | Out-Null
         $zipPath = Join-Path $outDir "$(zipName)"
         if (Test-Path $zipPath) { Remove-Item -Force $zipPath }
+
+        Write-Host "Creando ZIP en: $zipPath"
         Compress-Archive -Path (Join-Path $content '*') -DestinationPath $zipPath -Force
       displayName: 'Crear ZIP'
 
-    # Publica artefacto como PIPELINE artifact (pareja de DownloadPipelineArtifact@2)
+    # Publica artefacto como PIPELINE artifact
     - task: PublishPipelineArtifact@1
       displayName: 'Publicar artefacto (pipeline)'
       inputs:
@@ -105,15 +169,16 @@ stages:
 - stage: Deploy_PRD
   displayName: Deploy to PRD
   dependsOn: Build
+  # Despliega desde develop/main/master
   condition: and(succeeded(), in(variables['Build.SourceBranchName'], 'main','master','develop'))
   jobs:
   - deployment: deploy_prd
+    displayName: Deploy to Web App
     environment: 'front-prd'
     strategy:
       runOnce:
         deploy:
           steps:
-          # Descarga el PIPELINE artifact al workspace de este stage
           - task: DownloadPipelineArtifact@2
             displayName: 'Descargar artefacto de pipeline'
             inputs:
@@ -121,7 +186,6 @@ stages:
               artifactName: '$(artifactName)'
               targetPath: '$(Pipeline.Workspace)/$(artifactName)'
 
-          # Despliegue a Azure Web App con el ZIP descargado
           - task: AzureWebApp@1
             displayName: 'Deploy to $(app_prd)'
             inputs:
