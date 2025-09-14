@@ -53,7 +53,7 @@ export class SearchBarComponent {
    */
   onSearch(): void {
     // TODO: Implement search functionality
-    console.log('Searching for:', this.searchQuery);
+    // Perform the search
   }
 
   /**

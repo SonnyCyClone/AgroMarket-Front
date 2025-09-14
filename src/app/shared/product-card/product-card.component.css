@@ -167,7 +167,7 @@
 .current-price {
   font-size: 18px;
   font-weight: 700;
-  color: #007bff;
+  color: var(--am-primary, #28a745);
 }
 
 .original-price {
@@ -176,19 +176,77 @@
   text-decoration: line-through;
 }
 
-.add-to-cart-button {
-  width: 100%;
-  padding: 10px;
-  background: #007bff;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.2s;
+/* Sección de botones de acción */
+.action-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 8px;
 }
 
-.add-to-cart-button:hover {
-  background: #0056b3;
+.add-to-cart-button,
+.buy-button {
+  padding: 10px 8px;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  text-align: center;
+}
+
+.add-to-cart-button {
+  background: var(--am-primary-gradient, linear-gradient(135deg, #28a745, #20c997));
+  color: white;
+  border: 2px solid transparent;
+}
+
+.add-to-cart-button:hover:not(:disabled) {
+  background: var(--am-primary-gradient-hover, linear-gradient(135deg, #218838, #1ea085));
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+.buy-button {
+  background: white;
+  color: var(--am-primary, #28a745);
+  border: 2px solid var(--am-primary, #28a745);
+}
+
+.buy-button:hover:not(:disabled) {
+  background: var(--am-primary, #28a745);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+.add-to-cart-button:disabled,
+.buy-button:disabled {
+  background: var(--am-gray-400, #ced4da);
+  color: #6c757d;
+  border-color: var(--am-gray-400, #ced4da);
+  cursor: not-allowed;
+  opacity: 0.6;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Responsive para botones */
+@media (max-width: 480px) {
+  .action-buttons {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+  
+  .add-to-cart-button,
+  .buy-button {
+    padding: 8px;
+    font-size: 12px;
+  }
 }

@@ -11,14 +11,17 @@
 
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { ViewChild } from '@angular/core';
 import { SidebarFilterComponent } from '../../shared/sidebar-filter/sidebar-filter.component';
 import { ProductCardComponent } from '../../shared/product-card/product-card.component';
+import { FloatingCartComponent } from '../../shared/floating-cart/floating-cart.component';
 import { EditProductModalComponent, EditProductModalResult } from '../../shared/edit-product-modal/edit-product-modal.component';
 import { ProductService } from '../../core/services/product/product.service';
 import { AuthService } from '../../core/services/auth/auth.service';
+import { CartService } from '../../core/services/cart/cart.service';
 import { Product, LegacyProduct } from '../../core/models/product.model';
 
 /**
@@ -31,7 +34,7 @@ import { Product, LegacyProduct } from '../../core/models/product.model';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, SidebarFilterComponent, ProductCardComponent],
+  imports: [CommonModule, SidebarFilterComponent, ProductCardComponent, FloatingCartComponent],
   templateUrl: './home.page.html',
   styleUrl: './home.page.css'
 })
@@ -54,6 +57,9 @@ export class HomePage implements OnInit {
   /** Indica si mostrar el mensaje informativo */
   showInfoMessage = false;
 
+  /** Referencia al componente de carrito flotante */
+  @ViewChild(FloatingCartComponent) floatingCart?: FloatingCartComponent;
+
   /** Opciones disponibles para ordenamiento de productos */
   sortOptions = [
     { value: 'name', label: 'Nombre A-Z' },
@@ -70,13 +76,17 @@ export class HomePage implements OnInit {
    * @param {ActivatedRoute} route - Ruta activa para obtener query parameters
    * @param {MatDialog} dialog - Servicio de dialogs de Angular Material
    * @param {MatSnackBar} snackBar - Servicio de notificaciones de Angular Material
+   * @param {Router} router - Router para navegación
+   * @param {CartService} cartService - Servicio del carrito de compras
    */
   constructor(
     private productService: ProductService,
     private authService: AuthService,
     private route: ActivatedRoute,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private router: Router,
+    private cartService: CartService
   ) {}
 
   /**
@@ -225,7 +235,7 @@ export class HomePage implements OnInit {
    * @param {Product | LegacyProduct} product - Producto a editar
    */
   onEditProduct(product: Product | LegacyProduct): void {
-    console.log('Editando producto:', product);
+    // Navigate to edit product page
     
     // Verificar si es un Product (nuevo formato) para abrir el modal
     if ('variedad' in product) {
@@ -281,7 +291,7 @@ export class HomePage implements OnInit {
 
     this.productService.updateProduct(updatedProduct).subscribe({
       next: (response) => {
-        console.log('Producto actualizado exitosamente:', response);
+        // Product updated successfully
         
         // Actualizar el producto en la lista local
         const index = this.products.findIndex(p => p.id === updatedProduct.id);
@@ -304,5 +314,126 @@ export class HomePage implements OnInit {
         );
       }
     });
+  }
+
+  /**
+   * Maneja la adición de un producto al carrito
+   * 
+   * @param {Object} event - Evento que contiene producto y cantidad
+   */
+  onAddToCart(event: {product: Product | LegacyProduct, quantity: number}): void {
+    try {
+      const result = this.cartService.addToCart(event.product, {
+        quantity: event.quantity
+      });
+      
+      if (result.success) {
+        // Obtener nombre del producto según su formato
+        const productName = this.getProductName(event.product);
+        
+        this.snackBar.open(
+          `"${productName}" agregado al carrito`,
+          'Ver carrito',
+          { duration: 3000 }
+        ).onAction().subscribe(() => {
+          this.router.navigate(['/cart']);
+        });
+
+        // TODO: Trigger fly-to-FAB animation here
+        this.triggerFlyToCartAnimation();
+      } else {
+        this.snackBar.open(
+          result.message || 'No se pudo agregar el producto al carrito',
+          'Cerrar',
+          { duration: 3000 }
+        );
+      }
+    } catch (error) {
+      console.error('Error al agregar producto al carrito:', error);
+      this.snackBar.open(
+        'Error inesperado al agregar el producto',
+        'Cerrar',
+        { duration: 3000 }
+      );
+    }
+  }
+
+  /**
+   * Maneja la compra inmediata de un producto
+   * 
+   * @param {Object} event - Evento que contiene producto y cantidad
+   */
+  onBuyNow(event: {product: Product | LegacyProduct, quantity: number}): void {
+    try {
+      const result = this.cartService.addToCart(event.product, {
+        quantity: event.quantity
+      });
+      
+      if (result.success) {
+        // Navegar inmediatamente al carrito
+        this.router.navigate(['/cart']);
+      } else {
+        this.snackBar.open(
+          result.message || 'No se pudo agregar el producto al carrito',
+          'Cerrar',
+          { duration: 3000 }
+        );
+      }
+    } catch (error) {
+      console.error('Error al comprar producto:', error);
+      this.snackBar.open(
+        'Error inesperado al procesar la compra',
+        'Cerrar',
+        { duration: 3000 }
+      );
+    }
+  }
+
+  /**
+   * Placeholder para la animación de volar al carrito
+   * TODO: Implementar animación real
+   */
+  private triggerFlyToCartAnimation(): void {
+    // Activar la animación del FAB
+    if (this.floatingCart) {
+      this.floatingCart.triggerAddAnimation();
+    }
+  }
+
+  /**
+   * Abre la vista previa del producto
+   * 
+   * @param {Product | LegacyProduct} product - Producto a mostrar
+   */
+  openProductPreview(product: Product | LegacyProduct): void {
+    this.router.navigate(['/products', this.getProductId(product)]);
+  }
+
+  /**
+   * Obtiene el nombre del producto según su formato
+   * 
+   * @param {Product | LegacyProduct} product - Producto
+   * @returns {string} Nombre del producto
+   * @private
+   */
+  private getProductName(product: Product | LegacyProduct): string {
+    if ('name' in product) {
+      return product.name;
+    }
+    return product.variedad;
+  }
+
+  /**
+   * Obtiene el ID del producto según su formato
+   * 
+   * @param {Product | LegacyProduct} product - Producto
+   * @returns {string} ID del producto
+   * @private
+   */
+  private getProductId(product: Product | LegacyProduct): string {
+    if ('name' in product) {
+      return product.id;
+    }
+    return product.id.toString();
   }
 }

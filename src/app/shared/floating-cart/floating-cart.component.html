@@ -1,0 +1,58 @@
+<!--
+  Botón flotante de carrito (FAB) - AgroMarket
+  
+  Componente que muestra un botón flotante con contador de items del carrito
+  y animaciones de feedback visual.
+-->
+
+<div 
+  id="fab-cart"
+  class="floating-cart-fab"
+  [class.is-animating]="isAnimating()"
+  [class.show-pulse]="showPulse()"
+  [class.is-empty]="isEmpty()"
+  (click)="onCartClick()"
+  [attr.aria-label]="'Carrito de compras: ' + itemCount() + ' items'"
+  role="button"
+  tabindex="0"
+  (keydown.enter)="onCartClick()"
+  (keydown.space)="onCartClick()"
+>
+  <!-- Icono del carrito -->
+  <div class="cart-icon">
+    🛒
+  </div>
+
+  <!-- Badge contador de items -->
+  <div 
+    id="badge-cart-count"
+    class="cart-badge"
+    [class.visible]="!isEmpty()"
+    [attr.aria-label]="itemCount() + ' items en el carrito'"
+  >
+    {{ itemCount() }}
+  </div>
+
+  <!-- Tooltip con total -->
+  <div class="cart-tooltip" [class.visible]="!isEmpty()">
+    <div class="tooltip-content">
+      <div class="tooltip-text">
+        {{ itemCount() }} {{ itemCount() === 1 ? 'producto' : 'productos' }}
+      </div>
+      <div class="tooltip-total">
+        Total: {{ formattedTotal() }}
+      </div>
+    </div>
+  </div>
+
+  <!-- Efectos de animación -->
+  <div class="ripple-effect" [class.active]="isAnimating()"></div>
+  <div class="pulse-effect" [class.active]="showPulse()"></div>
+</div>
+
+<!-- Overlay para accesibilidad en mobile -->
+<div 
+  class="fab-overlay"
+  [class.visible]="isAnimating()"
+  aria-hidden="true"
+></div>
