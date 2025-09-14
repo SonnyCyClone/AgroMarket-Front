@@ -48,16 +48,34 @@ stages:
         echo Build.SourcesDirectory=$(Build.SourcesDirectory)
       displayName: 'Mostrar versiones y paths'
 
-    # ===== SIN LÍMITES: eliminar budgets SOLO en CI (robusto) =====
+    # ===== SIN LÍMITES: eliminar budgets SOLO en CI (robusto y sin accesos inseguros) =====
     - powershell: |
         $ErrorActionPreference = 'Stop'
         Set-StrictMode -Version Latest
 
-        function Remove-PropIfExists([object]$obj, [string]$propName) {
-          if ($null -ne $obj) {
-            $prop = $obj.PSObject.Properties.Match($propName)
-            if ($prop -and $prop.Count -gt 0) {
-              $obj.PSObject.Properties.Remove($propName) | Out-Null
+        function Get-Prop($obj, [string]$name) {
+          if ($null -eq $obj) { return $null }
+          $p = $obj.PSObject.Properties.Match($name)
+          if ($p -and $p.Count -gt 0) { return $p[0].Value }
+          return $null
+        }
+
+        function Remove-PropIfExists($obj, [string]$name) {
+          if ($null -eq $obj) { return }
+          $p = $obj.PSObject.Properties.Match($name)
+          if ($p -and $p.Count -gt 0) { $obj.PSObject.Properties.Remove($name) | Out-Null }
+        }
+
+        function Remove-Budgets-FromBuild($build) {
+          if ($null -eq $build) { return }
+          # eliminar budgets a nivel base
+          Remove-PropIfExists $build 'budgets'
+          # eliminar budgets en cada configuración
+          $cfgs = Get-Prop $build 'configurations'
+          if ($null -ne $cfgs) {
+            foreach ($cfgProp in $cfgs.PSObject.Properties) {
+              $cfg = $cfgProp.Value
+              Remove-PropIfExists $cfg 'budgets'
             }
           }
         }
@@ -67,41 +85,29 @@ stages:
         if (-not (Test-Path $angularPath)) { throw "No se encontró angular.json en '$root'." }
 
         $json = Get-Content $angularPath -Raw | ConvertFrom-Json
-        if (-not $json.projects) { throw "No se encontró la sección 'projects' en angular.json." }
+        $projects = Get-Prop $json 'projects'
+        if ($null -eq $projects) { throw "No se encontró la sección 'projects' en angular.json." }
 
-        foreach ($projProp in $json.projects.PSObject.Properties) {
-          $projName = $projProp.Name
-          $proj     = $projProp.Value
+        foreach ($projProp in $projects.PSObject.Properties) {
+          $proj = $projProp.Value
           if ($null -eq $proj) { continue }
 
-          # Soportar esquemas nuevos y antiguos: targets.build o architect.build
-          $build = $null
-          if ($proj.targets -and $proj.targets.build) {
-            $build = $proj.targets.build
-          } elseif ($proj.architect -and $proj.architect.build) {
-            $build = $proj.architect.build
+          # Esquema antiguo: architect.build
+          $architect = Get-Prop $proj 'architect'
+          if ($null -ne $architect) {
+            $archBuild = Get-Prop $architect 'build'
+            Remove-Budgets-FromBuild $archBuild
           }
 
-          if ($null -eq $build) { continue }
-
-          # Eliminar budgets al nivel base
-          Remove-PropIfExists -obj $build -propName 'budgets'
-
-          # Eliminar budgets en cada configuración (production, development, etc.)
-          $cfgs = $null
-          if ($build.configurations) { $cfgs = $build.configurations }
-          elseif ($build.options -and $build.options.configurations) { $cfgs = $build.options.configurations } # por si acaso
-
-          if ($cfgs) {
-            foreach ($cfgProp in $cfgs.PSObject.Properties) {
-              $cfg = $cfgProp.Value
-              Remove-PropIfExists -obj $cfg -propName 'budgets'
-            }
+          # Esquema nuevo: targets.build
+          $targets = Get-Prop $proj 'targets'
+          if ($null -ne $targets) {
+            $tBuild = Get-Prop $targets 'build'
+            Remove-Budgets-FromBuild $tBuild
           }
         }
 
         ($json | ConvertTo-Json -Depth 100) | Set-Content $angularPath -Encoding UTF8
-
         Write-Host "Budgets ELIMINADOS de angular.json SOLO para CI (sin errores si no existían)."
       displayName: 'Eliminar budgets (sin límites) solo en CI'
 
