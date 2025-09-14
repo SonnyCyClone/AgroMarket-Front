@@ -14,7 +14,7 @@
  * 
  * @description Interface que define los campos obligatorios para el registro
  * de un nuevo usuario en el sistema. Todos los campos son requeridos
- * según la especificación de la API.
+ * según la especificación de la API del endpoint POST /api/Usuario.
  * 
  * @interface CrearUsuarioRequest
  */
@@ -39,36 +39,39 @@ export interface CrearUsuarioRequest {
   
   /** Contraseña para acceder al sistema */
   Password: string;
+  
+  /** ID del tipo de documento (referencia a TipoDocumento.id) */
+  TipoDocumento: number;
+  
+  /** Rol del usuario en el sistema (ej: "AGRICULTOR", "COMPRADOR") */
+  Rol: string;
 }
 
 /**
  * Respuesta del servidor al crear un usuario exitosamente
  * 
  * @description Interface que define la estructura de datos que retorna
- * el servidor cuando se crea un usuario correctamente. Todos los campos
- * son opcionales ya que pueden variar según la implementación del backend.
+ * el servidor cuando se crea un usuario correctamente. Basado en el
+ * sample response del endpoint POST /api/Usuario que incluye token JWT.
  * 
  * @interface CrearUsuarioResponse
  */
 export interface CrearUsuarioResponse {
   /** Correo electrónico del usuario creado */
-  email?: string;
+  email: string;
   
-  /** Nombre de usuario asignado */
-  username?: string;
+  /** Nombre de usuario asignado (generalmente igual al email) */
+  username: string;
   
   /** Nombre del usuario */
-  nombre?: string;
+  nombre: string;
   
   /** Apellido del usuario */
-  apellido?: string;
+  apellido: string;
   
-  /** ID único del usuario en el sistema */
-  id?: number;
+  /** Rol asignado al usuario en el sistema */
+  role: string;
   
-  /** Fecha de creación del usuario */
-  fechaCreacion?: string;
-  
-  /** Estado del usuario (activo, inactivo, etc.) */
-  estado?: string;
+  /** Token JWT para autenticación */
+  token: string;
 }

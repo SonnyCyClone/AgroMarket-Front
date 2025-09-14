@@ -1,0 +1,131 @@
+<!--
+  Componente de carga de imágenes con drag & drop
+  
+  Template que proporciona una interfaz moderna para cargar imágenes
+  con soporte para arrastrar y soltar archivos, validaciones automáticas
+  y preview de imagen.
+-->
+
+<div class="image-upload-container">
+  <!-- Área de drag & drop / click para seleccionar -->
+  <div 
+    class="upload-area"
+    [class.drag-over]="isDragOver"
+    [class.disabled]="disabled"
+    [class.has-file]="selectedFile"
+    [class.loading]="isLoading"
+    (dragover)="onDragOver($event)"
+    (dragleave)="onDragLeave($event)"
+    (drop)="onDrop($event)"
+    (click)="openFileSelector()"
+    [attr.tabindex]="disabled ? -1 : 0"
+    [attr.role]="'button'"
+    [attr.aria-label]="effectiveConfig.placeholder"
+    (keydown.enter)="openFileSelector()"
+    (keydown.space)="openFileSelector()">
+    
+    <!-- Input de archivo oculto -->
+    <input
+      #fileInput
+      type="file"
+      [id]="inputId"
+      [accept]="effectiveConfig.acceptedTypes.join(',')"
+      [disabled]="disabled || isLoading"
+      (change)="onFileSelected($event)"
+      class="file-input-hidden"
+      aria-hidden="true">
+    
+    <!-- Estado de carga -->
+    @if (isLoading) {
+      <div class="upload-loading">
+        <div class="loading-spinner"></div>
+        <p class="loading-text">Procesando imagen...</p>
+      </div>
+    }
+    
+    <!-- Preview de imagen -->
+    @else if (selectedFile && previewUrl && effectiveConfig.showPreview) {
+      <div class="image-preview">
+        <img 
+          [src]="previewUrl" 
+          [alt]="'Preview de ' + selectedFile.name"
+          class="preview-image">
+        <div class="preview-overlay">
+          <div class="file-info">
+            <p class="file-name">{{ selectedFile.name }}</p>
+            <p class="file-size">{{ formatFileSize(selectedFile.size) }}</p>
+          </div>
+          <button
+            type="button"
+            class="remove-button"
+            (click)="clearFile(); $event.stopPropagation()"
+            [attr.aria-label]="'Remover imagen ' + selectedFile.name"
+            title="Remover imagen">
+            <span class="remove-icon">✕</span>
+          </button>
+        </div>
+      </div>
+    }
+    
+    <!-- Información del archivo sin preview -->
+    @else if (selectedFile && !effectiveConfig.showPreview) {
+      <div class="file-info-no-preview">
+        <div class="file-icon">📄</div>
+        <div class="file-details">
+          <p class="file-name">{{ selectedFile.name }}</p>
+          <p class="file-size">{{ formatFileSize(selectedFile.size) }}</p>
+        </div>
+        <button
+          type="button"
+          class="remove-button"
+          (click)="clearFile(); $event.stopPropagation()"
+          [attr.aria-label]="'Remover archivo ' + selectedFile.name"
+          title="Remover archivo">
+          <span class="remove-icon">✕</span>
+        </button>
+      </div>
+    }
+    
+    <!-- Estado inicial / placeholder -->
+    @else {
+      <div class="upload-placeholder">
+        <div class="upload-icon">
+          @if (effectiveConfig.dragDropEnabled) {
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7,10 12,15 17,10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+          } @else {
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              <circle cx="8.5" cy="8.5" r="1.5"></circle>
+              <polyline points="21,15 16,10 5,21"></polyline>
+            </svg>
+          }
+        </div>
+        
+        <div class="upload-text">
+          <p class="primary-text">{{ effectiveConfig.placeholder }}</p>
+          @if (effectiveConfig.dragDropEnabled) {
+            <p class="secondary-text">o haz clic para seleccionar</p>
+          }
+        </div>
+        
+        <div class="upload-hints">
+          <p class="hint-text">
+            Formatos: {{ getFormattedFileTypes() }}
+          </p>
+          <p class="hint-text">
+            Máximo: {{ formatFileSize(effectiveConfig.maxFileSize) }}
+          </p>
+          @if (effectiveConfig.minWidth && effectiveConfig.minHeight) {
+            <p class="hint-text">
+              Mínimo: {{ effectiveConfig.minWidth }}x{{ effectiveConfig.minHeight }}px
+            </p>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</div>

@@ -1,119 +1,162 @@
 <div class="register-container">
   <div class="register-card">
-    <h1 class="register-title">Crear Cuenta</h1>
-    <p class="register-subtitle">Únete a AgroMarket y accede a los mejores productos agrícolas</p>
+    <!-- Header con estilo similar al login -->
+    <div class="register-header">
+      <h1 class="register-title">Crear Cuenta</h1>
+      <p class="register-subtitle">Únete a AgroMarket y accede a los mejores productos agrícolas</p>
+    </div>
 
-    <!-- Información de tipos de documento (dropdown seleccionable) -->
+    <!-- Información de tipos de documento (dropdown obligatorio) -->
     <div class="info-section">
-      <h2 class="info-title">Tipo de Documento</h2>
-      <div class="tipos-documento">
-        @if (cargandoTipos()) {
-          <p class="loading-text">Cargando tipos de documento...</p>
-        } @else {
-          @if (tiposDocumento().length > 0) {
-            <div class="form-group">
-              <label for="tipo-documento-select" class="form-label">Seleccionar tipo de documento (opcional)</label>
+      <h2 class="info-title">Información Requerida</h2>
+      <div class="form-row">
+        <!-- Tipo de documento (obligatorio) -->
+        <div class="form-group">
+          <label for="tipo-documento-select" class="form-label">Tipo de documento *</label>
+          @if (cargandoTipos()) {
+            <p class="loading-text">Cargando tipos de documento...</p>
+          } @else {
+            @if (tiposDocumento().length > 0) {
               <select
                 id="tipo-documento-select"
                 formControlName="TipoDocumento"
                 class="form-input"
+                required
               >
-                <option value="">-- Seleccionar tipo --</option>
+                <option value="">-- Seleccionar tipo de documento --</option>
                 @for (tipo of tiposDocumento(); track tipo.id) {
                   <option [value]="tipo.id">{{ formatearTipoDocumento(tipo) }}</option>
                 }
               </select>
-            </div>
-          } @else {
-            <p class="no-tipos">No se pudieron cargar los tipos de documento</p>
+            } @else {
+              <p class="no-tipos">No se pudieron cargar los tipos de documento</p>
+            }
           }
-        }
+        </div>
+
+        <!-- Rol (obligatorio) -->
+        <div class="form-group">
+          <label for="rol-select" class="form-label">Rol en el sistema *</label>
+          @if (cargandoRoles()) {
+            <p class="loading-text">Cargando roles...</p>
+          } @else {
+            @if (rolesDisponibles().length > 0) {
+              <select
+                id="rol-select"
+                formControlName="Rol"
+                class="form-input"
+                required
+              >
+                <option value="">-- Seleccionar rol --</option>
+                @for (rol of rolesDisponibles(); track rol.id) {
+                  <option [value]="rol.name">{{ rol.name }}</option>
+                }
+              </select>
+            } @else {
+              <!-- Fallback a roles estáticos si no se pueden cargar dinámicamente -->
+              <select
+                id="rol-select"
+                formControlName="Rol"
+                class="form-input"
+                required
+              >
+                <option value="">-- Seleccionar rol --</option>
+                @for (rol of tiposRolDisponibles; track rol) {
+                  <option [value]="rol">{{ rol }}</option>
+                }
+              </select>
+            }
+          }
+        </div>
       </div>
     </div>
 
     <!-- Formulario de registro -->
     <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-form">
       
-      <!-- Email -->
-      <div class="form-group">
-        <label for="email-input" class="form-label">Correo electrónico</label>
-        <input
-          id="email-input"
-          type="email"
-          formControlName="Email"
-          class="form-input"
-          placeholder="ejemplo@correo.com"
-          autocomplete="email"
-        />
+      <!-- Primera fila: Email y Nombre -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="email-input" class="form-label">Correo electrónico</label>
+          <input
+            id="email-input"
+            type="email"
+            formControlName="Email"
+            class="form-input"
+            placeholder="ejemplo@correo.com"
+            autocomplete="email"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="nombre-input" class="form-label">Nombre</label>
+          <input
+            id="nombre-input"
+            type="text"
+            formControlName="Nombre"
+            class="form-input"
+            placeholder="Ingrese su nombre"
+            autocomplete="given-name"
+          />
+        </div>
       </div>
 
-      <!-- Nombre -->
-      <div class="form-group">
-        <label for="nombre-input" class="form-label">Nombre</label>
-        <input
-          id="nombre-input"
-          type="text"
-          formControlName="Nombre"
-          class="form-input"
-          placeholder="Ingrese su nombre"
-          autocomplete="given-name"
-        />
+      <!-- Segunda fila: Apellido y Teléfono -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="apellido-input" class="form-label">Apellido</label>
+          <input
+            id="apellido-input"
+            type="text"
+            formControlName="Apellido"
+            class="form-input"
+            placeholder="Ingrese su apellido"
+            autocomplete="family-name"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="telefono-input" class="form-label">Teléfono</label>
+          <input
+            id="telefono-input"
+            type="tel"
+            formControlName="Telefono"
+            class="form-input"
+            placeholder="3001234567"
+            autocomplete="tel"
+          />
+        </div>
       </div>
 
-      <!-- Apellido -->
-      <div class="form-group">
-        <label for="apellido-input" class="form-label">Apellido</label>
-        <input
-          id="apellido-input"
-          type="text"
-          formControlName="Apellido"
-          class="form-input"
-          placeholder="Ingrese su apellido"
-          autocomplete="family-name"
-        />
+      <!-- Tercera fila: Documento y Dirección -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="documento-input" class="form-label">Documento</label>
+          <input
+            id="documento-input"
+            type="text"
+            formControlName="Documento"
+            class="form-input"
+            placeholder="123456789"
+            autocomplete="off"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="direccion-input" class="form-label">Dirección</label>
+          <input
+            id="direccion-input"
+            type="text"
+            formControlName="Direccion"
+            class="form-input"
+            placeholder="Calle 123 #45-67"
+            autocomplete="street-address"
+          />
+        </div>
       </div>
 
-      <!-- Teléfono -->
-      <div class="form-group">
-        <label for="telefono-input" class="form-label">Teléfono</label>
-        <input
-          id="telefono-input"
-          type="tel"
-          formControlName="Telefono"
-          class="form-input"
-          placeholder="3001234567"
-          autocomplete="tel"
-        />
-      </div>
-
-      <!-- Dirección -->
-      <div class="form-group">
-        <label for="direccion-input" class="form-label">Dirección</label>
-        <input
-          id="direccion-input"
-          type="text"
-          formControlName="Direccion"
-          class="form-input"
-          placeholder="Calle 123 #45-67"
-          autocomplete="street-address"
-        />
-      </div>
-
-      <!-- Documento -->
-      <div class="form-group">
-        <label for="documento-input" class="form-label">Documento</label>
-        <input
-          id="documento-input"
-          type="text"
-          formControlName="Documento"
-          class="form-input"
-          placeholder="123456789"
-          autocomplete="off"
-        />
-      </div>
-
-      <!-- Contraseña -->
-      <div class="form-group">
+      <!-- Cuarta fila: Contraseña (campo completo) -->
+      <div class="form-group full-width">
         <label for="password-input" class="form-label">Contraseña</label>
         <input
           id="password-input"
@@ -150,8 +193,11 @@
           Cancelar
         </button>
       </div>
+    </form>
 
-      <p class="login-link">
+    <!-- Footer similar al login -->
+    <div class="login-link">
+      <p>
         ¿Ya tienes cuenta? 
         <button 
           id="login-link-button"
@@ -163,7 +209,7 @@
           Inicia sesión aquí
         </button>
       </p>
-    </form>
+    </div>
   </div>
 </div>
 

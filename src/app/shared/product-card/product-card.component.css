@@ -59,23 +59,84 @@
   font-weight: bold;
 }
 
+/* Botón de edición para usuarios AGRICULTOR */
+.edit-button {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: rgba(40, 167, 69, 0.9);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+}
+
+.edit-button:hover {
+  background: rgba(33, 136, 56, 0.95);
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.edit-button:active {
+  transform: scale(0.95);
+}
+
+/* Asegurar que el botón sea visible en hover de la tarjeta */
+.product-card:hover .edit-button {
+  background: rgba(40, 167, 69, 1);
+}
+
 .product-info {
-  padding: 16px;
+  padding: 12px;
   flex: 1;
   display: flex;
   flex-direction: column;
+  gap: 6px; /* Espacio compacto entre elementos */
 }
 
 .product-name {
-  margin: 0 0 8px 0;
+  margin: 0;
   font-size: 16px;
   font-weight: 600;
   color: #333;
-  line-height: 1.4;
+  line-height: 1.3;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+.product-availability {
+  margin: 0;
+  font-size: 13px;
+  color: #28a745;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.product-description {
+  margin: 0;
+  font-size: 13px;
+  color: #666;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-height: 34px; /* Altura fija para 2 líneas */
 }
 
 .product-brand {
@@ -94,7 +155,7 @@
 
 .price-section {
   margin-top: auto;
-  margin-bottom: 16px;
+  padding-top: 8px;
 }
 
 .price-container {

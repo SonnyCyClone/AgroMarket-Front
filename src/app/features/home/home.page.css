@@ -20,7 +20,8 @@
   min-width: 0;
 }
 
-.toolbar {
+/* Controles de productos - consistentes con Gestión de Productos */
+.products-controls {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -29,34 +30,64 @@
   background: white;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid #e0e0e0;
+  flex-wrap: wrap;
+  gap: 16px;
 }
 
-.results-info h2 {
-  margin: 0;
-  font-size: 20px;
-  font-weight: 600;
-  color: #333;
-}
-
-.sort-section {
+.sort-control {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
 }
 
-.sort-section label {
-  font-size: 14px;
+.sort-label {
+  font-weight: 500;
+  color: #333;
+  font-size: 0.95rem;
+}
+
+.sort-select {
+  padding: 8px 16px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  background: white;
+  font-size: 0.95rem;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 200px;
+}
+
+.sort-select:hover {
+  border-color: #2e7d32;
+}
+
+.sort-select:focus {
+  outline: none;
+  border-color: #2e7d32;
+  box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+}
+
+.products-count {
+  font-size: 0.9rem;
   color: #666;
   font-weight: 500;
 }
 
-.sort-select {
+.count-text {
+  background: #f1f8e9;
   padding: 6px 12px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 14px;
-  background: white;
-  cursor: pointer;
+  border-radius: 16px;
+  color: #2e7d32;
+}
+
+.count-pill {
+  background: #f1f8e9;
+  padding: 6px 12px;
+  border-radius: 16px;
+  color: #2e7d32;
+  font-weight: 500;
 }
 
 .product-grid {
@@ -86,14 +117,20 @@
     padding: 0 12px;
   }
   
-  .toolbar {
+  .products-controls {
     flex-direction: column;
-    gap: 16px;
     align-items: stretch;
+    gap: 12px;
   }
   
-  .sort-section {
-    justify-content: space-between;
+  .sort-control {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  
+  .sort-select {
+    min-width: auto;
   }
   
   .product-grid {
@@ -110,5 +147,62 @@
   .product-grid {
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     gap: 12px;
+  }
+}
+
+/* Estilos para mensaje informativo */
+.info-message {
+  margin-bottom: 20px;
+  padding: 0;
+  background: #e3f2fd;
+  border: 1px solid #2196f3;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  animation: slideIn 0.3s ease-out;
+}
+
+.info-content {
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.info-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.info-text {
+  flex: 1;
+  font-size: 14px;
+  color: #1976d2;
+  line-height: 1.4;
+}
+
+.close-info-button {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #1976d2;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+  flex-shrink: 0;
+}
+
+.close-info-button:hover {
+  background-color: rgba(25, 118, 210, 0.1);
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

@@ -4,6 +4,7 @@
  * @description Componente que maneja el formulario de registro de nuevos usuarios
  * en el sistema. Incluye validación reactiva, consumo del endpoint de tipos de
  * documento para información visual, y llamada al API de creación de usuarios.
+ * Layout optimizado con diseño multi-columna para reducir scrolling.
  * 
  * Funcionalidades principales:
  * - Formulario reactivo con validaciones básicas
@@ -11,12 +12,29 @@
  * - Envío POST /api/CrearUsuario con los datos del formulario
  * - Dialogs de confirmación y error en español
  * - Navegación automática al login tras registro exitoso
+ * - Layout optimizado en 4 filas: Email+Nombre, Apellido+Teléfono, Documento+Dirección, Contraseña
+ * - Diseño responsivo que mantiene usabilidad en diferentes pantallas
  * 
  * Consideraciones importantes:
  * - Los tipos de documento son solo informativos, no se envían en el POST
  * - Cada input tiene id único y label asociado para accesibilidad
  * - El formulario se deshabilita durante el envío
  * - Todos los mensajes están en español
+ * - Layout de dos columnas en desktop, una columna en móviles pequeños
+ * 
+ * Elementos QA identificados (conservados de versión anterior):
+ * - #tipo-documento-select: Dropdown de tipos de documento
+ * - #rol-select: Dropdown de rol del usuario
+ * - #email-input: Campo de correo electrónico
+ * - #nombre-input: Campo de nombre
+ * - #apellido-input: Campo de apellido
+ * - #telefono-input: Campo de teléfono
+ * - #documento-input: Campo de número de documento
+ * - #direccion-input: Campo de dirección
+ * - #password-input: Campo de contraseña
+ * - #submit-register-button: Botón principal de registro
+ * - #cancel-register-button: Botón de cancelar
+ * - #login-link-button: Enlace para ir al login
  * 
  * @author AgroMarket Team
  * @since 1.0.0
@@ -31,6 +49,7 @@ import { finalize } from 'rxjs/operators';
 import { UserApiService } from '../../core/services/user/user.api';
 import { CrearUsuarioRequest } from '../../core/models/crear-usuario.model';
 import { TipoDocumento } from '../../core/models/tipo-documento.model';
+import { TipoRol, TIPOS_ROL_DISPONIBLES } from '../../core/models/rol.model';
 import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dialog.component';
 
 /**
@@ -57,8 +76,17 @@ export class RegisterUserPage implements OnInit {
   /** Lista de tipos de documento disponibles (solo visual) */
   tiposDocumento = signal<TipoDocumento[]>([]);
   
+  /** Lista de roles disponibles en el sistema */
+  rolesDisponibles = signal<any[]>([]);
+  
   /** Indica si se están cargando los tipos de documento */
   cargandoTipos = signal<boolean>(true);
+  
+  /** Indica si se están cargando los roles */
+  cargandoRoles = signal<boolean>(true);
+  
+  /** Lista de tipos de rol disponibles (fallback) */
+  readonly tiposRolDisponibles = TIPOS_ROL_DISPONIBLES;
   
   /** Indica si el formulario se está enviando */
   enviandoFormulario = signal<boolean>(false);
@@ -76,18 +104,20 @@ export class RegisterUserPage implements OnInit {
    * Inicializa el componente
    * 
    * @description Se ejecuta al cargar el componente. Inicializa el formulario
-   * reactivo y carga la lista de tipos de documento desde la API.
+   * reactivo y carga la lista de tipos de documento y roles desde la API.
    */
   ngOnInit(): void {
     this.inicializarFormulario();
     this.cargarTiposDocumento();
+    this.cargarRoles();
   }
 
   /**
-   * Configura el formulario reactivo sin validaciones
+   * Configura el formulario reactivo con todos los campos requeridos
    * 
    * @description Crea el FormGroup con todos los campos requeridos para el registro
-   * de usuario, sin aplicar validaciones para permitir envío en cualquier estado.
+   * de usuario según el formato del endpoint POST /api/Usuario del Postman collection.
+   * Incluye validación para campos obligatorios TipoDocumento y Rol.
    * 
    * @private
    */
@@ -100,7 +130,8 @@ export class RegisterUserPage implements OnInit {
       Direccion: [''],
       Documento: [''],
       Password: [''],
-      TipoDocumento: [''] // Nuevo campo para el dropdown (opcional, no se envía en POST)
+      TipoDocumento: [null], // Campo obligatorio - ID numérico del tipo de documento
+      Rol: [TipoRol.AGRICULTOR] // Campo obligatorio - Valor string del rol (default AGRICULTOR)
     });
   }
 
@@ -122,7 +153,9 @@ export class RegisterUserPage implements OnInit {
       )
       .subscribe({
         next: (tipos) => {
-          this.tiposDocumento.set(tipos);
+          // Filtrar solo tipos de documento activos
+          const tiposActivos = tipos.filter(tipo => tipo.activo !== false);
+          this.tiposDocumento.set(tiposActivos);
         },
         error: (error) => {
           console.error('Error al cargar tipos de documento:', error);
@@ -132,20 +165,58 @@ export class RegisterUserPage implements OnInit {
   }
 
   /**
+   * Carga los roles disponibles desde la API
+   * 
+   * @description Realiza una petición GET al endpoint /api/Usuario/roles para
+   * obtener la lista de roles disponibles en el sistema. Esta información
+   * se usa para poblar el dropdown de selección de rol.
+   * 
+   * @private
+   */
+  private cargarRoles(): void {
+    this.cargandoRoles.set(true);
+    
+    this.userApiService.listarRoles()
+      .pipe(
+        finalize(() => this.cargandoRoles.set(false))
+      )
+      .subscribe({
+        next: (roles) => {
+          this.rolesDisponibles.set(roles);
+          console.log('Roles cargados desde API:', roles);
+        },
+        error: (error) => {
+          console.error('Error al cargar roles:', error);
+          // En caso de error, usar roles por defecto
+          this.rolesDisponibles.set([]);
+        }
+      });
+  }
+
+  /**
    * Maneja el envío del formulario de registro
    * 
    * @description Envía los datos del formulario al endpoint de creación
-   * de usuario. El botón está siempre habilitado para permitir envío
-   * sin validaciones previas.
+   * de usuario. Los campos TipoDocumento y Rol son obligatorios según
+   * la especificación del Postman collection.
    * 
    * @returns {void}
    */
   onSubmit(): void {
     this.enviandoFormulario.set(true);
     
-    // Extraer solo los campos que van en el POST (sin TipoDocumento)
-    const { TipoDocumento, ...userData } = this.registerForm.value;
-    const crearUsuarioData: CrearUsuarioRequest = userData;
+    // Todos los campos del formulario van en el POST según la especificación de Postman
+    const crearUsuarioData: CrearUsuarioRequest = {
+      Email: this.registerForm.value.Email,
+      Nombre: this.registerForm.value.Nombre,
+      Apellido: this.registerForm.value.Apellido,
+      Telefono: this.registerForm.value.Telefono,
+      Direccion: this.registerForm.value.Direccion,
+      Documento: this.registerForm.value.Documento,
+      Password: this.registerForm.value.Password,
+      TipoDocumento: this.registerForm.value.TipoDocumento,
+      Rol: this.registerForm.value.Rol
+    };
 
     this.userApiService.crearUsuario(crearUsuarioData)
       .pipe(

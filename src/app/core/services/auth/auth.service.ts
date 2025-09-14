@@ -21,6 +21,7 @@ import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, tap, catchError, of } from 'rxjs';
 import { AuthApiService } from './auth.api';
 import { LoginRequest, RegisterRequest, AuthResponse, User, LoginResponse } from '../../models/auth.model';
+import { environment } from '../../../../environments/environment';
 
 /**
  * Servicio para gestionar la autenticación de usuarios
@@ -41,6 +42,9 @@ export class AuthService {
   
   /** Clave para almacenar el apellido del usuario en localStorage */
   private readonly userApellidoKey = 'agromarket_user_apellido';
+  
+  /** Clave para almacenar el rol del usuario en localStorage */
+  private readonly userRolKey = 'agromarket_user_rol';
   
   /** Clave para almacenar datos del usuario en localStorage (legacy) */
   private readonly userKey = 'agromarket_user';
@@ -80,12 +84,14 @@ export class AuthService {
     const token = localStorage.getItem(this.tokenKey);
     const nombre = localStorage.getItem(this.userNombreKey);
     const apellido = localStorage.getItem(this.userApellidoKey);
+    const rol = localStorage.getItem(this.userRolKey);
     
     if (token && nombre && apellido) {
       const user: User = {
         id: 1, // Mock ID since real API doesn't provide it
         nombre: `${nombre} ${apellido}`,
-        email: '' // We don't store email separately
+        email: '', // We don't store email separately
+        rol: rol || undefined
       };
       this.currentUserSubject.next(user);
     } else {
@@ -110,7 +116,7 @@ export class AuthService {
    * 
    * @param {string} email - Email del usuario
    * @param {string} password - Contraseña del usuario
-   * @returns {Observable<LoginResponse>} Observable con la respuesta de login
+   * @returns {Observable<any>} Observable con la respuesta de login
    * 
    * @example
    * ```typescript
@@ -125,9 +131,9 @@ export class AuthService {
    *   });
    * ```
    */
-  loginReal(email: string, password: string): Observable<LoginResponse> {
+  loginReal(email: string, password: string): Observable<any> {
     return this.authApiService.loginReal(email, password).pipe(
-      tap(response => {
+      tap((response: any) => {
         this.setRealAuthData(response);
       }),
       catchError(error => {
@@ -144,7 +150,7 @@ export class AuthService {
    * Si la autenticación es exitosa, almacena el token y datos del usuario.
    * 
    * @param {LoginRequest} credentials - Credenciales de login (email y password)
-   * @returns {Observable<AuthResponse>} Observable con la respuesta de autenticación
+   * @returns {Observable<any>} Observable con la respuesta de autenticación
    * 
    * @example
    * ```typescript
@@ -155,9 +161,9 @@ export class AuthService {
    *   });
    * ```
    */
-  login(credentials: LoginRequest): Observable<AuthResponse> {
+  login(credentials: LoginRequest): Observable<any> {
     return this.authApiService.login(credentials).pipe(
-      tap(response => {
+      tap((response: any) => {
         this.setAuthData(response);
       }),
       catchError(error => {
@@ -174,13 +180,13 @@ export class AuthService {
    * Si el registro es exitoso, autentica automáticamente al usuario.
    * 
    * @param {RegisterRequest} userData - Datos del usuario a registrar
-   * @returns {Observable<AuthResponse>} Observable con la respuesta de registro
+   * @returns {Observable<any>} Observable con la respuesta de registro
    * 
    * @deprecated Este método usa la estructura legacy. Para nuevos registros usar UserApiService.crearUsuario()
    */
-  register(userData: RegisterRequest): Observable<AuthResponse> {
+  register(userData: RegisterRequest): Observable<any> {
     return this.authApiService.register(userData).pipe(
-      tap(response => {
+      tap((response: any) => {
         this.setAuthData(response);
       }),
       catchError(error => {
@@ -232,21 +238,32 @@ export class AuthService {
   /**
    * Almacena los datos de autenticación real en localStorage
    * 
-   * @description Guarda el token JWT y los datos del usuario (nombre y apellido)
+   * @description Guarda el token JWT y los datos del usuario (nombre, apellido y rol)
    * en localStorage y actualiza el estado reactivo del usuario actual.
    * 
-   * @param {LoginResponse} response - Respuesta de autenticación del API real
+   * @param {any} response - Respuesta de autenticación del API real
    * @private
    */
-  private setRealAuthData(response: LoginResponse): void {
+  private setRealAuthData(response: any): void {
+    // Guardar token
     localStorage.setItem(this.tokenKey, response.token);
+    
+    // Guardar nombre
     localStorage.setItem(this.userNombreKey, response.nombre);
+    
+    // Guardar apellido
     localStorage.setItem(this.userApellidoKey, response.apellido);
+    
+    // Guardar rol si existe en la respuesta
+    if (response.role) {
+      localStorage.setItem(this.userRolKey, response.role);
+    }
     
     const user: User = {
       id: 1, // Mock ID since real API doesn't provide it
       nombre: `${response.nombre} ${response.apellido}`,
-      email: response.email
+      email: response.email || '',
+      rol: response.role // Usar response.role aquí también
     };
     
     this.currentUserSubject.next(user);
@@ -258,13 +275,13 @@ export class AuthService {
    * @description Guarda el token JWT y los datos del usuario en localStorage
    * y actualiza el estado reactivo del usuario actual.
    * 
-   * @param {AuthResponse} response - Respuesta de autenticación del servidor
+   * @param {any} response - Respuesta de autenticación del servidor
    * @private
    */
-  private setAuthData(response: AuthResponse): void {
+  private setAuthData(response: any): void {
     localStorage.setItem(this.tokenKey, response.token);
-    localStorage.setItem(this.userKey, JSON.stringify(response.usuario));
-    this.currentUserSubject.next(response.usuario);
+    localStorage.setItem(this.userKey, JSON.stringify(response.usuario || response.user));
+    this.currentUserSubject.next(response.usuario || response.user);
   }
 
   /**
@@ -281,9 +298,11 @@ export class AuthService {
     localStorage.removeItem(this.userKey);
     localStorage.removeItem(this.userNombreKey);
     localStorage.removeItem(this.userApellidoKey);
+    localStorage.removeItem(this.userRolKey);
     localStorage.removeItem('agromarket_token');
     localStorage.removeItem('agromarket_user_nombre');
     localStorage.removeItem('agromarket_user_apellido');
+    localStorage.removeItem('agromarket_user_rol');
     
     // Limpiar completamente localStorage para asegurar que no queden datos
     localStorage.clear();
@@ -325,7 +344,7 @@ export class AuthService {
         // Recargar la página para asegurar un estado completamente fresco
         window.location.reload();
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Error en logout:', error);
         // Limpiar datos locales aunque falle la llamada al API
         this.clearAuthData();
@@ -376,5 +395,93 @@ export class AuthService {
    */
   getUserApellido(): string | null {
     return localStorage.getItem('agromarket_user_apellido');
+  }
+
+  /**
+   * Obtiene el rol del usuario almacenado
+   * 
+   * @returns {string | null} Rol del usuario o null si no existe
+   */
+  getUserRol(): string | null {
+    return localStorage.getItem('agromarket_user_rol');
+  }
+
+  /**
+   * Verifica si el usuario tiene un rol específico
+   * 
+   * @param {string} requiredRole - Rol requerido para verificar
+   * @returns {boolean} True si el usuario tiene el rol especificado
+   */
+  hasRole(requiredRole: string): boolean {
+    const userRole = this.getUserRol();
+    return userRole === requiredRole;
+  }
+
+  /**
+   * Verifica si el usuario es agricultor
+   * 
+   * @returns {boolean} True si el usuario tiene rol de AGRICULTOR
+   */
+  isAgricultor(): boolean {
+    const currentRole = this.hasRole('AGRICULTOR');
+    console.log('isAgricultor - hasRole result:', currentRole); // DEBUG
+    console.log('isAgricultor - checking role AGRICULTOR against:', localStorage.getItem(this.userRolKey)); // DEBUG
+    return currentRole;
+  }
+
+  /**
+   * Verifica si el usuario puede gestionar productos
+   * 
+   * @description Determina si el usuario tiene permisos para crear/editar productos.
+   * Solo los usuarios con rol AGRICULTOR pueden gestionar productos.
+   * 
+   * @returns {boolean} True si el usuario puede gestionar productos
+   */
+  canManageProducts(): boolean {
+    const isLoggedIn = this.isLoggedIn();
+    const isAgricultor = this.isAgricultor();
+    const currentUser = this.currentUserSubject.value;
+    
+    console.log('canManageProducts - isLoggedIn:', isLoggedIn); // DEBUG
+    console.log('canManageProducts - isAgricultor:', isAgricultor); // DEBUG
+    console.log('canManageProducts - currentUser:', currentUser); // DEBUG
+    console.log('canManageProducts - localStorage rol:', localStorage.getItem(this.userRolKey)); // DEBUG
+    
+    return isLoggedIn && isAgricultor;
+  }
+
+  /**
+   * Obtiene la configuración actual de URLs de servicios
+   * 
+   * @returns {object} Configuración de URLs para autenticación y productos
+   */
+  getServiceConfiguration() {
+    return {
+      authBaseUrl: environment.getAuthApiUrl(),
+      productBaseUrl: environment.getProductApiUrl(),
+      overrideAuthUrl: localStorage.getItem('overrideAuthUrl'),
+      overrideProductUrl: localStorage.getItem('overrideProductUrl'),
+      isProduction: environment.production
+    };
+  }
+
+  /**
+   * Establece URLs de override para desarrollo
+   * 
+   * @param {string | null} authUrl - URL override para autenticación
+   * @param {string | null} productUrl - URL override para productos
+   */
+  setServiceOverrides(authUrl: string | null, productUrl: string | null) {
+    if (authUrl) {
+      localStorage.setItem('overrideAuthUrl', authUrl);
+    } else {
+      localStorage.removeItem('overrideAuthUrl');
+    }
+
+    if (productUrl) {
+      localStorage.setItem('overrideProductUrl', productUrl);
+    } else {
+      localStorage.removeItem('overrideProductUrl');
+    }
   }
 }

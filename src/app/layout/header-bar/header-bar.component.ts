@@ -4,15 +4,7 @@
  * @description Componente que renderiza la barra de navegación principal de la aplicación,
  * incluyendo logo, barra de búsqueda, botones de acción y menú de usuario con dropdown.
  * Maneja el estado de autenticación y proporciona navegación hacia diferentes secciones.
- * 
- * Funcionalidades principales:
- * - Logo clickeable que navega al inicio
- * - Barra de búsqueda integrada
- * - Botón de carrito de compras
- * - Dropdown de usuario con opciones de login/registro
- * - Menú de usuario autenticado con logout
- * - Botón "Registrar Producto" para usuarios logueados
- * - Cierre automático de dropdown al hacer clic fuera
+ * Actualizado con logo desde Azure Blob Storage, posicionamiento sticky y Material Design.
  * 
  * @author AgroMarket Team
  * @since 1.0.0
@@ -28,10 +20,6 @@ import { User } from '../../core/models/auth.model';
 
 /**
  * Componente standalone para la barra de navegación superior
- * 
- * @description Maneja la navegación principal, estado de autenticación
- * y dropdown de opciones de usuario. Se suscribe al estado de usuario
- * para mostrar información personalizada.
  */
 @Component({
   selector: 'app-header-bar',
@@ -43,20 +31,20 @@ export class HeaderBarComponent implements OnDestroy {
   /** Controla la visibilidad del dropdown de usuario */
   showUserDropdown = false;
   
+  /** Controla la visibilidad del dropdown de administración */
+  showAdminDropdown = false;
+  
   /** Información del usuario actualmente autenticado */
   currentUser: User | null = null;
+  
+  /** URL del logo principal - usando Blob URL específico */
+  logoUrl = 'https://azstaagromarket.blob.core.windows.net/productos/Logo/Icono.png?sp=r&st=2025-09-12T22:25:12Z&se=2025-12-31T06:40:12Z&spr=https&sv=2024-11-04&sr=c&sig=9Z8yTQYXsBePoAs50WcOMBusYafTexW0nTgXVnVHfe0%3D';
   
   /** Suscripción al observable del usuario actual */
   private userSubscription: Subscription;
 
   /**
    * Constructor del componente header
-   * 
-   * @description Inicializa el componente y se suscribe al estado del usuario
-   * para mantener actualizada la información de autenticación.
-   * 
-   * @param {AuthService} authService - Servicio de autenticación
-   * @param {Router} router - Router de Angular para navegación
    */
   constructor(
     private authService: AuthService,
@@ -69,9 +57,6 @@ export class HeaderBarComponent implements OnDestroy {
 
   /**
    * Limpia las suscripciones al destruir el componente
-   * 
-   * @description Se ejecuta cuando el componente se destruye para evitar
-   * memory leaks cancelando la suscripción al observable de usuario.
    */
   ngOnDestroy(): void {
     if (this.userSubscription) {
@@ -81,23 +66,20 @@ export class HeaderBarComponent implements OnDestroy {
 
   /**
    * Verifica si el usuario está autenticado
-   * 
-   * @description Getter que consulta el servicio de autenticación para
-   * determinar si existe una sesión activa.
-   * 
-   * @returns {boolean} True si el usuario está logueado, false en caso contrario
    */
   get isLoggedIn(): boolean {
     return this.authService.isLoggedIn();
   }
 
   /**
+   * Verifica si el usuario puede gestionar productos
+   */
+  get canManageProducts(): boolean {
+    return this.authService.canManageProducts();
+  }
+
+  /**
    * Obtiene el nombre completo del usuario actual
-   * 
-   * @description Genera el nombre completo combinando nombre y apellido
-   * del usuario autenticado, o retorna un valor por defecto.
-   * 
-   * @returns {string} Nombre completo del usuario o "Usuario" por defecto
    */
   get userDisplayName(): string {
     const nombre = this.authService.getUserNombre();
@@ -113,26 +95,25 @@ export class HeaderBarComponent implements OnDestroy {
   }
 
   /**
-   * Maneja clics en el documento para cerrar el dropdown
-   * 
-   * @description Listener global que cierra el dropdown de usuario cuando
-   * se hace clic fuera del contenedor del dropdown.
-   * 
-   * @param {Event} event - Evento de click del documento
+   * Maneja clics en el documento para cerrar los dropdowns
    */
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: Event): void {
     const target = event.target as HTMLElement;
+    
+    // Cerrar dropdown de usuario si se hace click fuera
     if (!target.closest('.user-dropdown-container')) {
       this.showUserDropdown = false;
+    }
+    
+    // Cerrar dropdown de administración si se hace click fuera
+    if (!target.closest('.admin-dropdown-container')) {
+      this.showAdminDropdown = false;
     }
   }
 
   /**
    * Maneja el clic en el logo para navegar al inicio
-   * 
-   * @description Navega a la página principal cuando el usuario
-   * hace clic en el logo de AgroMarket.
    */
   onLogoClick(): void {
     this.router.navigate(['/']);
@@ -140,11 +121,6 @@ export class HeaderBarComponent implements OnDestroy {
 
   /**
    * Alterna la visibilidad del dropdown de usuario
-   * 
-   * @description Abre o cierra el dropdown de opciones de usuario
-   * y previene la propagación del evento para evitar que se cierre inmediatamente.
-   * 
-   * @param {Event} event - Evento de click del botón de usuario
    */
   onUserDropdownToggle(event: Event): void {
     event.stopPropagation();
@@ -152,10 +128,17 @@ export class HeaderBarComponent implements OnDestroy {
   }
 
   /**
+   * Alterna la visibilidad del dropdown de administración
+   */
+  onAdminDropdownToggle(event: Event): void {
+    event.stopPropagation();
+    this.showAdminDropdown = !this.showAdminDropdown;
+    // Cerrar el dropdown de usuario si está abierto
+    this.showUserDropdown = false;
+  }
+
+  /**
    * Navega a la página de login
-   * 
-   * @description Cierra el dropdown y redirige al usuario a la página
-   * de inicio de sesión.
    */
   onLoginClick(): void {
     this.showUserDropdown = false;
@@ -164,9 +147,6 @@ export class HeaderBarComponent implements OnDestroy {
 
   /**
    * Navega a la página de registro de usuario
-   * 
-   * @description Cierra el dropdown y redirige al usuario a la página
-   * de creación de cuenta nueva.
    */
   onRegisterClick(): void {
     this.showUserDropdown = false;
@@ -175,9 +155,6 @@ export class HeaderBarComponent implements OnDestroy {
 
   /**
    * Cierra la sesión del usuario
-   * 
-   * @description Cierra el dropdown y ejecuta el logout a través del
-   * servicio de autenticación, que limpiará los datos y redirigirá.
    */
   onLogout(): void {
     this.showUserDropdown = false;
@@ -186,23 +163,29 @@ export class HeaderBarComponent implements OnDestroy {
 
   /**
    * Navega a la página de registro de productos
-   * 
-   * @description Redirige a la página de registro de productos.
-   * Este botón solo está visible para usuarios autenticados.
    */
   onRegisterProductClick(): void {
+    this.showAdminDropdown = false;
     this.router.navigate(['/products/new']);
   }
 
   /**
+   * Navega a la página de gestión/actualización de productos
+   */
+  onManageProductsClick(): void {
+    this.showAdminDropdown = false;
+    this.router.navigate(['/products/manage']);
+  }
+
+  /**
    * Maneja el error de carga del logo del header
-   * 
-   * @description Fallback a un ícono placeholder en caso de error de carga
-   * del logo principal de AgroMarket. Utiliza placeholder.svg como respaldo.
-   * 
-   * @param {Event} ev - Evento de error de carga de imagen
    */
   onHeaderLogoError(ev: Event): void {
-    (ev.target as HTMLImageElement).src = 'assets/icon/placeholder.svg';
+    const img = ev.target as HTMLImageElement;
+    
+    // Si falla la URL de Blob, usar placeholder local
+    if (img.src.includes('azstaagromarket.blob.core.windows.net')) {
+      img.src = 'assets/icon/placeholder.svg';
+    }
   }
 }
