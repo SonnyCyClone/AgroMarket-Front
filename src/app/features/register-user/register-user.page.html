@@ -6,73 +6,73 @@
       <p class="register-subtitle">Únete a AgroMarket y accede a los mejores productos agrícolas</p>
     </div>
 
-    <!-- Información de tipos de documento (dropdown obligatorio) -->
-    <div class="info-section">
-      <h2 class="info-title">Información Requerida</h2>
-      <div class="form-row">
-        <!-- Tipo de documento (obligatorio) -->
-        <div class="form-group">
-          <label for="tipo-documento-select" class="form-label">Tipo de documento *</label>
-          @if (cargandoTipos()) {
-            <p class="loading-text">Cargando tipos de documento...</p>
-          } @else {
-            @if (tiposDocumento().length > 0) {
-              <select
-                id="tipo-documento-select"
-                formControlName="TipoDocumento"
-                class="form-input"
-                required
-              >
-                <option value="">-- Seleccionar tipo de documento --</option>
-                @for (tipo of tiposDocumento(); track tipo.id) {
-                  <option [value]="tipo.id">{{ formatearTipoDocumento(tipo) }}</option>
-                }
-              </select>
-            } @else {
-              <p class="no-tipos">No se pudieron cargar los tipos de documento</p>
-            }
-          }
-        </div>
-
-        <!-- Rol (obligatorio) -->
-        <div class="form-group">
-          <label for="rol-select" class="form-label">Rol en el sistema *</label>
-          @if (cargandoRoles()) {
-            <p class="loading-text">Cargando roles...</p>
-          } @else {
-            @if (rolesDisponibles().length > 0) {
-              <select
-                id="rol-select"
-                formControlName="Rol"
-                class="form-input"
-                required
-              >
-                <option value="">-- Seleccionar rol --</option>
-                @for (rol of rolesDisponibles(); track rol.id) {
-                  <option [value]="rol.name">{{ rol.name }}</option>
-                }
-              </select>
-            } @else {
-              <!-- Fallback a roles estáticos si no se pueden cargar dinámicamente -->
-              <select
-                id="rol-select"
-                formControlName="Rol"
-                class="form-input"
-                required
-              >
-                <option value="">-- Seleccionar rol --</option>
-                @for (rol of tiposRolDisponibles; track rol) {
-                  <option [value]="rol">{{ rol }}</option>
-                }
-              </select>
-            }
-          }
-        </div>
-      </div>
-    </div>
-
     <!-- Formulario de registro -->
     <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-form">
+      
+      <!-- Información de tipos de documento (dropdown obligatorio) -->
+      <div class="info-section">
+        <h2 class="info-title">Información Requerida</h2>
+        <div class="form-row">
+          <!-- Tipo de documento (obligatorio) -->
+          <div class="form-group">
+            <label for="tipo-documento-select" class="form-label">Tipo de documento *</label>
+            @if (cargandoTipos()) {
+              <p class="loading-text">Cargando tipos de documento...</p>
+            } @else {
+              @if (tiposDocumento().length > 0) {
+                <select
+                  id="tipo-documento-select"
+                  formControlName="TipoDocumento"
+                  class="form-input"
+                  required
+                >
+                  <option value="">-- Seleccionar tipo de documento --</option>
+                  @for (tipo of tiposDocumento(); track tipo.id) {
+                    <option [value]="tipo.id">{{ formatearTipoDocumento(tipo) }}</option>
+                  }
+                </select>
+              } @else {
+                <p class="no-tipos">No se pudieron cargar los tipos de documento</p>
+              }
+            }
+          </div>
+
+          <!-- Rol (obligatorio) -->
+          <div class="form-group">
+            <label for="rol-select" class="form-label">Rol en el sistema *</label>
+            @if (cargandoRoles()) {
+              <p class="loading-text">Cargando roles...</p>
+            } @else {
+              @if (rolesDisponibles().length > 0) {
+                <select
+                  id="rol-select"
+                  formControlName="Rol"
+                  class="form-input"
+                  required
+                >
+                  <option value="">-- Seleccionar rol --</option>
+                  @for (rol of rolesDisponibles(); track rol.id) {
+                    <option [value]="rol.name">{{ rol.name }}</option>
+                  }
+                </select>
+              } @else {
+                <!-- Fallback a roles estáticos si no se pueden cargar dinámicamente -->
+                <select
+                  id="rol-select"
+                  formControlName="Rol"
+                  class="form-input"
+                  required
+                >
+                  <option value="">-- Seleccionar rol --</option>
+                  @for (rol of tiposRolDisponibles; track rol) {
+                    <option [value]="rol">{{ rol }}</option>
+                  }
+                </select>
+              }
+            }
+          </div>
+        </div>
+      </div>
       
       <!-- Primera fila: Email y Nombre -->
       <div class="form-row">

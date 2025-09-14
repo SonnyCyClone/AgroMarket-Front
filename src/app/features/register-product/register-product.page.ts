@@ -222,10 +222,10 @@ export class RegisterProductPage implements OnInit {
         // Agregar imagen si existe (el campo debe coincidir con lo que espera el backend)
         if (this.selectedImageFile) {
           formData.append('ImagenUrl', this.selectedImageFile, this.selectedImageFile.name);
-          console.log('Image file attached:', this.selectedImageFile.name, 'Size:', this.selectedImageFile.size);
+          // Image file validation completed
         } else {
           formData.append('ImagenUrl', '');
-          console.log('No image file selected');
+          // No image file selected
         }
         
         // Debug: mostrar el contenido del FormData
@@ -236,7 +236,7 @@ export class RegisterProductPage implements OnInit {
         
         // Llamada directa a la API usando HttpClient
         const url = `${environment.apiBaseUrlProduct}/api/Producto`;
-        console.log('Sending request to:', url);
+        // Sending product creation request
         const response = await firstValueFrom(this.http.post(url, formData));
         
         this.showSuccess('¡Producto registrado exitosamente!');
@@ -364,7 +364,7 @@ export class RegisterProductPage implements OnInit {
    */
   openCategoryModal(): void {
     // TODO: Implementar modal para crear nueva categoría
-    console.log('Abriendo modal para crear categoría');
+    // Create category action
   }
 
   /**
@@ -372,7 +372,7 @@ export class RegisterProductPage implements OnInit {
    */
   openTipoProductoModal(): void {
     // TODO: Implementar modal para crear nuevo tipo de producto
-    console.log('Abriendo modal para crear tipo de producto');
+    // Create product type action
   }
 
   /**

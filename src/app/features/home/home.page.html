@@ -71,6 +71,10 @@
           <app-product-card 
             *ngFor="let product of products; trackBy: trackByProductId" 
             [product]="product"
+            [canEdit]="false"
+            (buyProduct)="onAddToCart($event)"
+            (buyNow)="onBuyNow($event)"
+            (viewProduct)="openProductPreview($event)"
           ></app-product-card>
         </div>
         
@@ -82,3 +86,6 @@
     </main>
   </div>
 </div>
+
+<!-- Floating cart button -->
+<app-floating-cart></app-floating-cart>

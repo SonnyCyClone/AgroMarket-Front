@@ -1,0 +1,343 @@
+<!-- 
+  Página de información de envío - AgroMarket
+  
+  Segunda etapa del checkout para capturar información
+  de dirección y método de entrega.
+-->
+<div class="checkout-shipping-page">
+  <div class="checkout-container">
+    
+    <!-- Breadcrumb de navegación -->
+    <nav class="checkout-breadcrumb" id="checkout-breadcrumb">
+      <ol class="breadcrumb-list">
+        <li class="breadcrumb-item">
+          <span class="breadcrumb-text completed">✓ Resumen</span>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+          Envío
+        </li>
+        <li class="breadcrumb-item disabled">
+          Pago
+        </li>
+      </ol>
+    </nav>
+
+    <!-- Encabezado -->
+    <header class="checkout-header">
+      <h1 class="checkout-title" id="checkout-title">Información de Envío</h1>
+      <p class="checkout-subtitle">
+        Proporciona los detalles de entrega para tu pedido
+      </p>
+    </header>
+
+    <!-- Formulario de envío -->
+    <form 
+      [formGroup]="shippingForm" 
+      (ngSubmit)="proceedToPayment()" 
+      class="shipping-form"
+      aria-labelledby="checkout-title"
+      novalidate
+    >
+      
+      <!-- Live region for form errors -->
+      <div 
+        id="form-errors" 
+        class="sr-only" 
+        aria-live="polite" 
+        aria-atomic="true"
+      >
+        <span *ngIf="hasFormErrors()">
+          Hay {{ getFormErrorCount() }} error(es) en el formulario. 
+          Por favor revisa los campos marcados.
+        </span>
+      </div>
+      
+      <!-- Información personal -->
+      <section class="form-section">
+        <h2 class="section-title">Información Personal</h2>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="firstName" class="form-label">Nombre *</label>
+            <input
+              type="text"
+              id="firstName"
+              class="form-input"
+              formControlName="firstName"
+              [class.error]="isFieldInvalid('firstName')"
+              placeholder="Tu nombre"
+              [attr.aria-invalid]="isFieldInvalid('firstName')"
+              [attr.aria-describedby]="isFieldInvalid('firstName') ? 'firstName-error' : null"
+            >
+            <div 
+              *ngIf="isFieldInvalid('firstName')"
+              id="firstName-error" 
+              class="error-message"
+              role="alert"
+            >
+              {{ getFieldError('firstName') }}
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="lastName" class="form-label">Apellido *</label>
+            <input
+              type="text"
+              id="lastName"
+              class="form-input"
+              formControlName="lastName"
+              [class.error]="isFieldInvalid('lastName')"
+              placeholder="Tu apellido"
+            >
+            <div class="error-message" *ngIf="isFieldInvalid('lastName')">
+              {{ getFieldError('lastName') }}
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="email" class="form-label">Email *</label>
+            <input
+              type="email"
+              id="email"
+              class="form-input"
+              formControlName="email"
+              [class.error]="isFieldInvalid('email')"
+              placeholder="tu@email.com"
+            >
+            <div class="error-message" *ngIf="isFieldInvalid('email')">
+              {{ getFieldError('email') }}
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="phone" class="form-label">Teléfono *</label>
+            <input
+              type="tel"
+              id="phone"
+              class="form-input"
+              formControlName="phone"
+              [class.error]="isFieldInvalid('phone')"
+              placeholder="+57 300 123 4567"
+            >
+            <div class="error-message" *ngIf="isFieldInvalid('phone')">
+              {{ getFieldError('phone') }}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Dirección de envío -->
+      <section class="form-section">
+        <h2 class="section-title">Dirección de Envío</h2>
+        
+        <!-- 1. Dirección -->
+        <div class="form-group">
+          <label for="address" class="form-label">Dirección *</label>
+          <input
+            type="text"
+            id="address"
+            class="form-input"
+            formControlName="address"
+            [class.error]="isFieldInvalid('address')"
+            placeholder="Calle, carrera, número de casa/apartamento"
+          >
+          <div class="error-message" *ngIf="isFieldInvalid('address')">
+            {{ getFieldError('address') }}
+          </div>
+        </div>
+        
+        <!-- 2. País -->
+        <div class="form-group">
+          <label for="country" class="form-label">País *</label>
+          <select
+            id="country"
+            class="form-input"
+            formControlName="country"
+            [class.error]="isFieldInvalid('country')"
+          >
+            <option value="Colombia">Colombia</option>
+          </select>
+          <div class="error-message" *ngIf="isFieldInvalid('country')">
+            {{ getFieldError('country') }}
+          </div>
+        </div>
+        
+        <!-- 3. Departamento -->
+        <div class="form-group">
+          <label for="state" class="form-label">Departamento *</label>
+          <select
+            id="state"
+            class="form-input"
+            formControlName="state"
+            [class.error]="isFieldInvalid('state')"
+          >
+            <option value="">Selecciona departamento</option>
+            <option value="Amazonas">Amazonas</option>
+            <option value="Antioquia">Antioquia</option>
+            <option value="Arauca">Arauca</option>
+            <option value="Atlántico">Atlántico</option>
+            <option value="Bolívar">Bolívar</option>
+            <option value="Boyacá">Boyacá</option>
+            <option value="Caldas">Caldas</option>
+            <option value="Caquetá">Caquetá</option>
+            <option value="Casanare">Casanare</option>
+            <option value="Cauca">Cauca</option>
+            <option value="Cesar">Cesar</option>
+            <option value="Chocó">Chocó</option>
+            <option value="Córdoba">Córdoba</option>
+            <option value="Cundinamarca">Cundinamarca</option>
+            <option value="Guainía">Guainía</option>
+            <option value="Guaviare">Guaviare</option>
+            <option value="Huila">Huila</option>
+            <option value="La Guajira">La Guajira</option>
+            <option value="Magdalena">Magdalena</option>
+            <option value="Meta">Meta</option>
+            <option value="Nariño">Nariño</option>
+            <option value="Norte de Santander">Norte de Santander</option>
+            <option value="Putumayo">Putumayo</option>
+            <option value="Quindío">Quindío</option>
+            <option value="Risaralda">Risaralda</option>
+            <option value="San Andrés y Providencia">San Andrés y Providencia</option>
+            <option value="Santander">Santander</option>
+            <option value="Sucre">Sucre</option>
+            <option value="Tolima">Tolima</option>
+            <option value="Valle del Cauca">Valle del Cauca</option>
+            <option value="Vaupés">Vaupés</option>
+            <option value="Vichada">Vichada</option>
+          </select>
+          <div class="error-message" *ngIf="isFieldInvalid('state')">
+            {{ getFieldError('state') }}
+          </div>
+        </div>
+        
+        <!-- 4. Ciudad -->
+        <div class="form-group">
+          <label for="city" class="form-label">Ciudad *</label>
+          <input
+            type="text"
+            id="city"
+            class="form-input"
+            formControlName="city"
+            [class.error]="isFieldInvalid('city')"
+            placeholder="Tu ciudad"
+          >
+          <div class="error-message" *ngIf="isFieldInvalid('city')">
+            {{ getFieldError('city') }}
+          </div>
+        </div>
+        
+        <!-- 5. Código Postal -->
+        <div class="form-group">
+          <label for="zipCode" class="form-label">Código Postal *</label>
+          <input
+            type="text"
+            id="zipCode"
+            class="form-input"
+            formControlName="zipCode"
+            [class.error]="isFieldInvalid('zipCode')"
+            placeholder="110111"
+          >
+          <div class="error-message" *ngIf="isFieldInvalid('zipCode')">
+            {{ getFieldError('zipCode') }}
+          </div>
+        </div>
+      </section>
+
+      <!-- Método de envío -->
+      <section class="form-section">
+        <h2 class="section-title">Método de Envío</h2>
+        
+        <div class="shipping-methods">
+          <div 
+            *ngFor="let method of shippingMethods" 
+            class="shipping-method"
+            [class.selected]="shippingForm.get('shippingMethod')?.value === method.id"
+          >
+            <input
+              type="radio"
+              [id]="'method-' + method.id"
+              [value]="method.id"
+              formControlName="shippingMethod"
+              class="method-radio"
+            >
+            <label [for]="'method-' + method.id" class="method-label">
+              <div class="method-info">
+                <div class="method-header">
+                  <span class="method-name">{{ method.name }}</span>
+                  <span class="method-price">{{ formatPrice(method.price) }}</span>
+                </div>
+                <div class="method-details">
+                  <span class="method-description">{{ method.description }}</span>
+                  <span class="method-estimated">Estimado: {{ method.estimated }}</span>
+                </div>
+              </div>
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <!-- Instrucciones especiales -->
+      <section class="form-section">
+        <h2 class="section-title">Instrucciones Especiales</h2>
+        
+        <div class="form-group">
+          <label for="specialInstructions" class="form-label">
+            Instrucciones de entrega (opcional)
+          </label>
+          <textarea
+            id="specialInstructions"
+            class="form-textarea"
+            formControlName="specialInstructions"
+            placeholder="Ej: Tocar el timbre, dejar en portería, casa color azul..."
+            rows="3"
+          ></textarea>
+        </div>
+      </section>
+
+      <!-- Resumen del envío -->
+      <aside class="shipping-summary">
+        <h3 class="summary-title">Resumen del Envío</h3>
+        <div class="summary-content">
+          <div class="summary-line">
+            <span class="summary-label">Método seleccionado:</span>
+            <span class="summary-value">{{ getSelectedShippingMethodName() }}</span>
+          </div>
+          <div class="summary-line">
+            <span class="summary-label">Costo de envío:</span>
+            <span class="summary-value">{{ formatPrice(getSelectedShippingPrice()) }}</span>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Acciones de navegación -->
+      <footer class="checkout-actions">
+        <div class="actions-container">
+          <button 
+            type="button"
+            class="action-btn secondary"
+            id="back-to-summary-btn"
+            (click)="backToSummary()"
+            [disabled]="loading"
+            aria-label="Volver a la página anterior: Resumen del pedido"
+          >
+            ← Volver al Resumen
+          </button>
+          
+          <button 
+            type="submit"
+            class="am-primary"
+            id="proceed-to-payment-btn"
+            [disabled]="loading || shippingForm.invalid"
+            [attr.aria-describedby]="shippingForm.invalid ? 'form-errors' : null"
+            aria-label="Continuar al siguiente paso: Información de pago"
+          >
+            <span *ngIf="!loading">Continuar al Pago →</span>
+            <span *ngIf="loading" aria-live="polite">Validando dirección...</span>
+          </button>
+        </div>
+      </footer>
+    </form>
+  </div>
+</div>

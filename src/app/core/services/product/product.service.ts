@@ -68,7 +68,7 @@ export class ProductService {
       map((products: Product[]) => {
         // Filtrar solo productos activos
         const activeProducts = products.filter(product => product.activo);
-        console.log(`Productos obtenidos: ${products.length}, Activos: ${activeProducts.length}`);
+        // Debug log removed
         return activeProducts;
       }),
       catchError(error => {

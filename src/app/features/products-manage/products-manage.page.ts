@@ -3,32 +3,28 @@
  * 
  * @description Página para administrar productos, similar al Home pero con
  * controles de edición visibles para usuarios autorizados (AGRICULTOR).
- * Incluye funcionalidades de ordenamiento y gestión.
+ * Incluye funcionalidades de carrito, ordenamiento y gestión.
  * 
  * @author AgroMarket Team
  * @since 2.0.0
  */
 
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { SidebarFilterComponent } from '../../shared/sidebar-filter/sidebar-filter.component';
 import { ProductCardComponent } from '../../shared/product-card/product-card.component';
-import { EditProductModalComponent, EditProductModalResult } from '../../shared/edit-product-modal/edit-product-modal.component';
+import { FloatingCartComponent } from '../../shared/floating-cart/floating-cart.component';
 import { ProductService } from '../../core/services/product/product.service';
 import { AuthService } from '../../core/services/auth/auth.service';
+import { CartService } from '../../core/services/cart/cart.service';
 import { Product, LegacyProduct } from '../../core/models/product.model';
 
-/**
- * Componente de la página de gestión de productos
- * 
- * @description Muestra el catálogo de productos con controles de gestión
- * habilitados para usuarios AGRICULTOR. Incluye ordenamiento y edición.
- */
 @Component({
   selector: 'app-products-manage',
   standalone: true,
-  imports: [CommonModule, SidebarFilterComponent, ProductCardComponent, EditProductModalComponent],
+  imports: [CommonModule, SidebarFilterComponent, ProductCardComponent, FloatingCartComponent],
   templateUrl: './products-manage.page.html',
   styleUrl: './products-manage.page.css'
 })
@@ -45,15 +41,8 @@ export class ProductsManagePage implements OnInit {
   /** Mensaje de error si falla la carga */
   errorMessage = '';
 
-  /** Control del modal de edición */
-  showEditModal = false;
-  currentEditProduct: Product | null = null;
-
-  /** Mensajes de éxito y error */
-  showSuccessMessage = false;
-  showErrorMessage = false;
-  successMessage = '';
-  modalErrorMessage = '';
+  /** Referencia al componente de carrito flotante */
+  @ViewChild(FloatingCartComponent) floatingCart?: FloatingCartComponent;
 
   /** Opciones disponibles para ordenamiento de productos */
   sortOptions = [
@@ -69,11 +58,15 @@ export class ProductsManagePage implements OnInit {
    * @param {ProductService} productService - Servicio para operaciones de productos
    * @param {AuthService} authService - Servicio de autenticación
    * @param {Router} router - Router para navegación
+   * @param {CartService} cartService - Servicio del carrito de compras
+   * @param {MatSnackBar} snackBar - Servicio para mostrar notificaciones
    */
   constructor(
     private productService: ProductService,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private cartService: CartService,
+    private snackBar: MatSnackBar
   ) {}
 
   /**
@@ -172,116 +165,138 @@ export class ProductsManagePage implements OnInit {
   /**
    * Maneja el evento de edición de producto
    * 
-   * @description Abre un modal de edición de productos usando CSS-only
-   * para mejorar la experiencia del usuario.
+   * @description Navega a la página de edición del producto.
    * 
    * @param {Product | LegacyProduct} product - Producto a editar
    */
   onEditProduct(product: Product | LegacyProduct): void {
-    // Verificar si es un Product (nuevo formato) para abrir modal
+    // Verificar si es un Product (nuevo formato) para navegar a edición
     if ('variedad' in product && product.id) {
-      // Abrir modal de edición CSS-only
-      this.openEditModal(product as Product);
+      this.router.navigate(['/products/edit', product.id]);
     } else {
-      this.showError('No se puede editar este producto. ID no disponible.');
+      this.snackBar.open(
+        'No se puede editar este producto. ID no disponible.',
+        'Cerrar',
+        { duration: 3000 }
+      );
     }
   }
 
   /**
-   * Abre el modal de edición de producto
+   * Maneja la adición de un producto al carrito
    * 
-   * @param {Product} product - Producto a editar
-   * @private
+   * @param {Object} event - Evento que contiene producto y cantidad
    */
-  private openEditModal(product: Product): void {
-    this.currentEditProduct = product;
-    this.showEditModal = true;
-    
-    // Deshabilitar scroll del body
-    document.body.style.overflow = 'hidden';
-  }
+  onAddToCart(event: {product: Product | LegacyProduct, quantity: number}): void {
+    try {
+      const result = this.cartService.addToCart(event.product, {
+        quantity: event.quantity
+      });
+      
+      if (result.success) {
+        // Obtener nombre del producto según su formato
+        const productName = this.getProductName(event.product);
+        
+        this.snackBar.open(
+          `"${productName}" agregado al carrito`,
+          'Ver carrito',
+          { duration: 3000 }
+        ).onAction().subscribe(() => {
+          this.router.navigate(['/cart']);
+        });
 
-  /**
-   * Maneja el cierre del modal de edición
-   * 
-   * @param {EditProductModalResult} result - Resultado del modal
-   */
-  onModalClose(result: EditProductModalResult): void {
-    this.showEditModal = false;
-    this.currentEditProduct = null;
-    
-    // Rehabilitar scroll del body
-    document.body.style.overflow = 'auto';
-
-    if (result && result.action === 'save' && result.product) {
-      this.handleProductUpdate(result.product);
+        // TODO: Trigger fly-to-FAB animation here
+        this.triggerFlyToCartAnimation();
+      } else {
+        this.snackBar.open(
+          result.message || 'No se pudo agregar el producto al carrito',
+          'Cerrar',
+          { duration: 3000 }
+        );
+      }
+    } catch (error) {
+      console.error('Error al agregar producto al carrito:', error);
+      this.snackBar.open(
+        'Error inesperado al agregar el producto',
+        'Cerrar',
+        { duration: 3000 }
+      );
     }
   }
 
   /**
-   * Maneja la actualización de un producto
+   * Maneja la compra inmediata de un producto
    * 
-   * @param {Product} updatedProduct - Producto con datos actualizados
-   * @private
+   * @param {Object} event - Evento que contiene producto y cantidad
    */
-  private handleProductUpdate(updatedProduct: Product): void {
-    // El modal ya realizó la actualización al API,
-    // solo necesitamos actualizar la lista local
-    const index = this.products.findIndex(p => p.id === updatedProduct.id);
-    if (index !== -1) {
-      this.products[index] = updatedProduct;
+  onBuyNow(event: {product: Product | LegacyProduct, quantity: number}): void {
+    try {
+      const result = this.cartService.addToCart(event.product, {
+        quantity: event.quantity
+      });
+      
+      if (result.success) {
+        // Navegar inmediatamente al carrito
+        this.router.navigate(['/cart']);
+      } else {
+        this.snackBar.open(
+          result.message || 'No se pudo agregar el producto al carrito',
+          'Cerrar',
+          { duration: 3000 }
+        );
+      }
+    } catch (error) {
+      console.error('Error al comprar producto:', error);
+      this.snackBar.open(
+        'Error inesperado al procesar la compra',
+        'Cerrar',
+        { duration: 3000 }
+      );
     }
-
-    this.showSuccess(`Producto "${updatedProduct.variedad}" actualizado exitosamente`);
   }
 
   /**
-   * Muestra mensaje de éxito
+   * Placeholder para la animación de volar al carrito
+   * TODO: Implementar animación real
+   */
+  private triggerFlyToCartAnimation(): void {
+    this.floatingCart?.triggerAddAnimation();
+  }
+
+  /**
+   * Abre la vista previa del producto
    * 
-   * @param {string} message - Mensaje a mostrar
+   * @param {Product | LegacyProduct} product - Producto a mostrar
+   */
+  openProductPreview(product: Product | LegacyProduct): void {
+    this.router.navigate(['/products', this.getProductId(product)]);
+  }
+
+  /**
+   * Obtiene el nombre del producto según su formato
+   * 
+   * @param {Product | LegacyProduct} product - Producto
+   * @returns {string} Nombre del producto
    * @private
    */
-  private showSuccess(message: string): void {
-    this.successMessage = message;
-    this.showSuccessMessage = true;
-    this.showErrorMessage = false;
-    
-    // Auto-ocultar después de 4 segundos
-    setTimeout(() => {
-      this.dismissSuccessMessage();
-    }, 4000);
+  private getProductName(product: Product | LegacyProduct): string {
+    if ('name' in product) {
+      return product.name;
+    }
+    return product.variedad;
   }
 
   /**
-   * Muestra mensaje de error
+   * Obtiene el ID del producto según su formato
    * 
-   * @param {string} message - Mensaje a mostrar
+   * @param {Product | LegacyProduct} product - Producto
+   * @returns {string} ID del producto
    * @private
    */
-  private showError(message: string): void {
-    this.modalErrorMessage = message;
-    this.showErrorMessage = true;
-    this.showSuccessMessage = false;
-    
-    // Auto-ocultar después de 6 segundos
-    setTimeout(() => {
-      this.dismissErrorMessage();
-    }, 6000);
-  }
-
-  /**
-   * Oculta mensaje de éxito
-   */
-  dismissSuccessMessage(): void {
-    this.showSuccessMessage = false;
-    this.successMessage = '';
-  }
-
-  /**
-   * Oculta mensaje de error
-   */
-  dismissErrorMessage(): void {
-    this.showErrorMessage = false;
-    this.modalErrorMessage = '';
+  private getProductId(product: Product | LegacyProduct): string {
+    if ('name' in product) {
+      return product.id;
+    }
+    return product.id.toString();
   }
 }

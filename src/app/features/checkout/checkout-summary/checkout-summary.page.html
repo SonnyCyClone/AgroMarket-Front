@@ -1,0 +1,160 @@
+<!-- 
+  Página de resumen de checkout - AgroMarket
+  
+  Primera etapa del checkout mostrando resumen del pedido
+  con productos, cantidades y totales.
+-->
+<div class="checkout-summary-page">
+  <div class="checkout-container">
+    
+    <!-- Breadcrumb de navegación -->
+    <nav class="checkout-breadcrumb" id="checkout-breadcrumb">
+      <ol class="breadcrumb-list">
+        <li class="breadcrumb-item">
+          <button 
+            class="breadcrumb-link"
+            (click)="backToShopping()"
+            aria-label="Ir a la tienda"
+          >
+            Tienda
+          </button>
+        </li>
+        <li class="breadcrumb-item">
+          <button 
+            class="breadcrumb-link"
+            (click)="backToCart()"
+            aria-label="Ir al carrito"
+          >
+            Carrito
+          </button>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+          Resumen
+        </li>
+        <li class="breadcrumb-item disabled">
+          Envío
+        </li>
+        <li class="breadcrumb-item disabled">
+          Pago
+        </li>
+      </ol>
+    </nav>
+
+    <!-- Encabezado -->
+    <header class="checkout-header">
+      <h1 class="checkout-title" id="checkout-title">Resumen del Pedido</h1>
+      <p class="checkout-subtitle">
+        Revisa tu pedido antes de continuar
+      </p>
+    </header>
+
+    <!-- Contenido principal -->
+    <div class="checkout-content">
+      
+      <!-- Lista de productos -->
+      <section class="order-items-section">
+        <h2 class="section-title" id="order-items-title">
+          Productos ({{ totalItems }} {{ totalItems === 1 ? 'artículo' : 'artículos' }})
+        </h2>
+        
+        <div class="order-items-list" id="order-items-list">
+          <article 
+            *ngFor="let item of cartItems; trackBy: trackByItemId" 
+            class="order-item"
+            [attr.id]="'order-item-' + item.id"
+          >
+            <!-- Imagen del producto -->
+            <div class="item-image-container">
+              <img 
+                *ngIf="getProductImageUrl(item.product)"
+                [src]="getProductImageUrl(item.product)"
+                [alt]="getProductName(item.product)"
+                class="item-image"
+              >
+              <div 
+                *ngIf="!getProductImageUrl(item.product)"
+                class="item-image-placeholder"
+                [attr.aria-label]="'Imagen de ' + getProductName(item.product)"
+              >
+                📦
+              </div>
+            </div>
+
+            <!-- Información del producto -->
+            <div class="item-info">
+              <h3 class="item-name">{{ getProductName(item.product) }}</h3>
+              <div class="item-details">
+                <span class="item-quantity">Cantidad: {{ item.quantity }}</span>
+                <span class="item-unit-price">{{ formatPrice(item.unitPrice) }} c/u</span>
+              </div>
+            </div>
+
+            <!-- Precio total del item -->
+            <div class="item-total">
+              <span class="item-total-price">{{ formatPrice(item.totalPrice) }}</span>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- Resumen de precios -->
+      <aside class="order-summary-section">
+        <div class="order-summary" id="order-summary">
+          <h3 class="summary-title">Resumen del Pedido</h3>
+          
+          <div class="summary-details">
+            <div class="summary-line">
+              <span class="summary-label">Subtotal:</span>
+              <span class="summary-value">{{ formatPrice(cartSummary?.subtotal || 0) }}</span>
+            </div>
+            
+            <div class="summary-line" *ngIf="cartSummary && cartSummary.taxes && cartSummary.taxes > 0">
+              <span class="summary-label">Impuestos:</span>
+              <span class="summary-value">{{ formatPrice(cartSummary.taxes) }}</span>
+            </div>
+            
+            <div class="summary-line" *ngIf="cartSummary && cartSummary.shipping && cartSummary.shipping > 0">
+              <span class="summary-label">Envío:</span>
+              <span class="summary-value">{{ formatPrice(cartSummary.shipping) }}</span>
+            </div>
+            
+            <div class="summary-line" *ngIf="cartSummary && cartSummary.discounts && cartSummary.discounts > 0">
+              <span class="summary-label">Descuentos:</span>
+              <span class="summary-value discount">-{{ formatPrice(cartSummary.discounts) }}</span>
+            </div>
+            
+            <hr class="summary-divider">
+            
+            <div class="summary-line total">
+              <span class="summary-label">Total a Pagar:</span>
+              <span class="summary-value">{{ formatPrice(cartSummary?.total || 0) }}</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <!-- Acciones de navegación -->
+    <footer class="checkout-actions">
+      <div class="actions-container">
+        <button 
+          class="action-btn secondary"
+          id="back-to-cart-btn"
+          (click)="backToCart()"
+        >
+          ← Volver al Carrito
+        </button>
+        
+        <button 
+          class="action-btn primary"
+          id="proceed-to-shipping-btn"
+          (click)="proceedToShipping()"
+          [disabled]="loading"
+        >
+          <span *ngIf="!loading">Continuar a Envío →</span>
+          <span *ngIf="loading">Procesando...</span>
+        </button>
+      </div>
+    </footer>
+  </div>
+</div>

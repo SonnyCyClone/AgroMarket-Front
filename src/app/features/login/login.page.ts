@@ -1,39 +1,7 @@
-/**
- * Página de inicio de sesión para AgroMarket
- * 
- * @description Componente que maneja el formulario de login con autenticación
- * real contra el API. Incluye manejo de errores 401 y persistencia de sesión.
- * Agregada funcionalidad de recuperación de contraseña mock.
- * 
- * Funcionalidades implementadas:
- * - Formulario reactivo de login con validaciones
- * - Autenticación real contra API de autenticación
- * - Manejo específico de errores 401 (credenciales incorrectas)
- * - Modal de recuperación de contraseña con simulación de envío de email
- * - Validación de formato de email para recuperación
- * - Mensajes de error y éxito contextuales
- * - Redirección automática tras login exitoso
- * - Navegación a página de registro
- * 
- * Elementos QA identificados:
- * - #login-email: Campo de email para autenticación
- * - #login-password: Campo de contraseña
- * - #forgot-password-button: Enlace para abrir modal de recuperación
- * - #login-submit-button: Botón principal de login
- * - #login-register-link-button: Enlace para crear cuenta nueva
- * - #close-forgot-password-modal: Botón para cerrar modal de recuperación
- * - #recovery-email: Campo de email en modal de recuperación
- * - #cancel-recovery-button: Botón cancelar en modal
- * - #send-recovery-button: Botón enviar recuperación
- * 
- * @author AgroMarket Team
- * @since 1.0.0
- */
-
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../core/services/auth/auth.service';
 
 /**
@@ -44,7 +12,7 @@ import { AuthService } from '../../core/services/auth/auth.service';
  */
 @Component({
   selector: 'app-login',
-  imports: [CommonModule, ReactiveFormsModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, RouterModule],
   templateUrl: './login.page.html',
   styleUrl: './login.page.css'
 })

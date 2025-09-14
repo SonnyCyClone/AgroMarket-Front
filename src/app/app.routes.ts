@@ -16,6 +16,14 @@ export const routes: Routes = [
     loadComponent: () => import('./features/register-user/register-user.page').then(m => m.RegisterUserPage)
   },
   {
+    path: 'cart',
+    loadComponent: () => import('./features/cart/cart.page').then(m => m.CartPage)
+  },
+  {
+    path: 'forgot-password',
+    loadComponent: () => import('./features/account/forgot-password.page').then(m => m.ForgotPasswordPage)
+  },
+  {
     path: 'products/new',
     loadComponent: () => import('./features/register-product/register-product.page').then(m => m.RegisterProductPage),
     canActivate: [agricultorGuard]
@@ -29,6 +37,31 @@ export const routes: Routes = [
     path: 'products/manage',
     loadComponent: () => import('./features/products-manage/products-manage.page').then(m => m.ProductsManagePage),
     canActivate: [agricultorGuard]
+  },
+  {
+    path: 'checkout',
+    redirectTo: 'checkout/shipping',
+    pathMatch: 'full'
+  },
+  {
+    path: 'checkout/shipping',
+    loadComponent: () => import('./features/checkout/checkout-shipping/checkout-shipping.page').then(m => m.CheckoutShippingPage)
+  },
+  {
+    path: 'checkout/summary',
+    loadComponent: () => import('./features/checkout/checkout-summary/checkout-summary.page').then(m => m.CheckoutSummaryPage)
+  },
+  {
+    path: 'checkout/payment',
+    loadComponent: () => import('./features/checkout/checkout-payment/checkout-payment.page').then(m => m.CheckoutPaymentPage)
+  },
+  {
+    path: 'checkout/success',
+    loadComponent: () => import('./features/checkout/checkout-success/checkout-success.page').then(m => m.CheckoutSuccessPage)
+  },
+  {
+    path: 'checkout/failure',
+    loadComponent: () => import('./features/checkout/checkout-failure/checkout-failure.page').then(m => m.CheckoutFailurePage)
   },
   {
     path: '**',

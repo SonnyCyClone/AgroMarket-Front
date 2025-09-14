@@ -1,0 +1,343 @@
+<!-- 
+  Página de métodos de pago colombianos - AgroMarket
+  
+  Componente que permite seleccionar y procesar pagos usando métodos
+  específicos para Colombia: PSE, Bancolombia, tarjetas de crédito/débito.
+  Incluye simulación de aprobación/rechazo y preservación del carrito.
+-->
+<div class="checkout-payment-container">
+  <!-- Header con navegación -->
+  <header class="payment-header">
+    <button class="back-button" (click)="goBack()" aria-label="Volver a envío">
+      ← Volver a Envío
+    </button>
+    
+    <div class="breadcrumb">
+      <span class="breadcrumb-item completed">Resumen</span>
+      <span class="breadcrumb-separator">→</span>
+      <span class="breadcrumb-item completed">Envío</span>
+      <span class="breadcrumb-separator">→</span>
+      <span class="breadcrumb-item active">Pago</span>
+    </div>
+    
+    <h1 class="payment-title">Métodos de Pago</h1>
+    <p class="payment-subtitle">Selecciona tu método de pago preferido para Colombia</p>
+  </header>
+
+  <div class="payment-content">
+    <!-- Resumen del pedido -->
+    @if (cartSummary$()) {
+      <div class="order-summary">
+        <h2>Resumen del Pedido</h2>
+        <div class="summary-line">
+          <span>Subtotal:</span>
+          <span>{{ formatPrice(cartSummary$()!.subtotal) }}</span>
+        </div>
+        @if (cartSummary$()!.taxes > 0) {
+          <div class="summary-line">
+            <span>Impuestos:</span>
+            <span>{{ formatPrice(cartSummary$()!.taxes) }}</span>
+          </div>
+        }
+        @if (cartSummary$()!.shipping > 0) {
+          <div class="summary-line">
+            <span>Envío:</span>
+            <span>{{ formatPrice(cartSummary$()!.shipping) }}</span>
+          </div>
+        }
+        <div class="summary-line total">
+          <span>Total a Pagar:</span>
+          <span>{{ formatPrice(cartSummary$()!.total) }}</span>
+        </div>
+      </div>
+    }
+
+    <!-- Selección de método de pago -->
+    <div class="payment-methods">
+      <h2>Selecciona tu Método de Pago</h2>
+      
+      <div class="payment-options">
+        <!-- PSE -->
+        <div 
+          class="payment-option" 
+          [class.selected]="selectedPaymentMethod === 'pse'"
+          (click)="selectPaymentMethod('pse')"
+        >
+          <div class="payment-option-header">
+            <span class="payment-icon">🏛️</span>
+            <div class="payment-info">
+              <h3>PSE - Pagos Seguros en Línea</h3>
+              <p>Paga directamente desde tu cuenta bancaria</p>
+            </div>
+            <input 
+              type="radio" 
+              name="paymentMethod" 
+              value="pse" 
+              [checked]="selectedPaymentMethod === 'pse'"
+              (change)="selectPaymentMethod('pse')"
+            >
+          </div>
+        </div>
+
+        <!-- Bancolombia -->
+        <div 
+          class="payment-option" 
+          [class.selected]="selectedPaymentMethod === 'bancolombia'"
+          (click)="selectPaymentMethod('bancolombia')"
+        >
+          <div class="payment-option-header">
+            <span class="payment-icon">🏦</span>
+            <div class="payment-info">
+              <h3>Bancolombia Sucursal Virtual</h3>
+              <p>Accede con tu usuario de Bancolombia</p>
+            </div>
+            <input 
+              type="radio" 
+              name="paymentMethod" 
+              value="bancolombia" 
+              [checked]="selectedPaymentMethod === 'bancolombia'"
+              (change)="selectPaymentMethod('bancolombia')"
+            >
+          </div>
+        </div>
+
+        <!-- Tarjeta de crédito -->
+        <div 
+          class="payment-option" 
+          [class.selected]="selectedPaymentMethod === 'credit'"
+          (click)="selectPaymentMethod('credit')"
+        >
+          <div class="payment-option-header">
+            <span class="payment-icon">💳</span>
+            <div class="payment-info">
+              <h3>Tarjeta de Crédito</h3>
+              <p>Visa, Mastercard, American Express, Diners</p>
+            </div>
+            <input 
+              type="radio" 
+              name="paymentMethod" 
+              value="credit" 
+              [checked]="selectedPaymentMethod === 'credit'"
+              (change)="selectPaymentMethod('credit')"
+            >
+          </div>
+        </div>
+
+        <!-- Tarjeta débito -->
+        <div 
+          class="payment-option" 
+          [class.selected]="selectedPaymentMethod === 'debit'"
+          (click)="selectPaymentMethod('debit')"
+        >
+          <div class="payment-option-header">
+            <span class="payment-icon">💳</span>
+            <div class="payment-info">
+              <h3>Tarjeta Débito</h3>
+              <p>Pago directo desde tu cuenta corriente/ahorros</p>
+            </div>
+            <input 
+              type="radio" 
+              name="paymentMethod" 
+              value="debit" 
+              [checked]="selectedPaymentMethod === 'debit'"
+              (change)="selectPaymentMethod('debit')"
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Formulario de datos según método seleccionado -->
+    @if (selectedPaymentMethod) {
+      <div class="payment-form" [formGroup]="paymentForm">
+        
+        <!-- Formulario PSE -->
+        @if (selectedPaymentMethod === 'pse') {
+          <div class="pse-form">
+            <h3>Datos para PSE</h3>
+            
+            <div class="form-group">
+              <label for="pseBank">Banco *</label>
+              <select id="pseBank" formControlName="pseBank" class="form-control">
+                <option value="">Selecciona tu banco</option>
+                @for (bank of pseBanks; track bank.id) {
+                  <option [value]="bank.id">{{ bank.name }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="pseUserType">Tipo de Usuario *</label>
+                <select id="pseUserType" formControlName="pseUserType" class="form-control">
+                  <option value="natural">Persona Natural</option>
+                  <option value="juridica">Persona Jurídica</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="pseDocumentType">Tipo de Documento *</label>
+                <select id="pseDocumentType" formControlName="pseDocumentType" class="form-control">
+                  <option value="cc">Cédula de Ciudadanía</option>
+                  <option value="ce">Cédula de Extranjería</option>
+                  <option value="nit">NIT</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="pseDocumentNumber">Número de Documento *</label>
+              <input 
+                type="text" 
+                id="pseDocumentNumber" 
+                formControlName="pseDocumentNumber" 
+                class="form-control"
+                placeholder="Ingresa tu número de documento"
+                maxlength="15"
+              >
+            </div>
+          </div>
+        }
+
+        <!-- Formulario Bancolombia -->
+        @if (selectedPaymentMethod === 'bancolombia') {
+          <div class="bancolombia-form">
+            <h3>Datos de Bancolombia</h3>
+            
+            <div class="form-group">
+              <label for="bancolombiaUser">Usuario Bancolombia *</label>
+              <input 
+                type="text" 
+                id="bancolombiaUser" 
+                formControlName="bancolombiaUser" 
+                class="form-control"
+                placeholder="Tu usuario de Bancolombia"
+                autocomplete="username"
+              >
+            </div>
+
+            <div class="form-group">
+              <label for="bancolombiaPassword">Contraseña *</label>
+              <input 
+                type="password" 
+                id="bancolombiaPassword" 
+                formControlName="bancolombiaPassword" 
+                class="form-control"
+                placeholder="Tu contraseña de Bancolombia"
+                autocomplete="current-password"
+              >
+            </div>
+
+            <div class="security-notice">
+              🔒 Tus datos están protegidos con cifrado de nivel bancario
+            </div>
+          </div>
+        }
+
+        <!-- Formulario Tarjetas -->
+        @if (selectedPaymentMethod === 'credit' || selectedPaymentMethod === 'debit') {
+          <div class="card-form">
+            <h3>Datos de la {{ selectedPaymentMethod === 'credit' ? 'Tarjeta de Crédito' : 'Tarjeta Débito' }}</h3>
+            
+            <div class="form-group">
+              <label for="cardType">Tipo de Tarjeta *</label>
+              <select id="cardType" formControlName="cardType" class="form-control">
+                <option value="">Selecciona el tipo</option>
+                @for (type of cardTypes; track type.id) {
+                  <option [value]="type.id">{{ type.icon }} {{ type.name }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="cardNumber">Número de Tarjeta *</label>
+              <input 
+                type="text" 
+                id="cardNumber" 
+                class="form-control"
+                placeholder="1234 5678 9012 3456"
+                (input)="formatCardNumber($event)"
+                maxlength="19"
+                autocomplete="cc-number"
+              >
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="cardExpiry">Fecha de Vencimiento *</label>
+                <input 
+                  type="text" 
+                  id="cardExpiry" 
+                  class="form-control"
+                  placeholder="MM/AA"
+                  (input)="formatCardExpiry($event)"
+                  maxlength="5"
+                  autocomplete="cc-exp"
+                >
+              </div>
+
+              <div class="form-group">
+                <label for="cardCVV">CVV *</label>
+                <input 
+                  type="text" 
+                  id="cardCVV" 
+                  formControlName="cardCVV" 
+                  class="form-control"
+                  placeholder="123"
+                  maxlength="4"
+                  autocomplete="cc-csc"
+                >
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="cardName">Nombre del Titular *</label>
+              <input 
+                type="text" 
+                id="cardName" 
+                formControlName="cardName" 
+                class="form-control"
+                placeholder="Nombre como aparece en la tarjeta"
+                autocomplete="cc-name"
+              >
+            </div>
+          </div>
+        }
+      </div>
+    }
+    <!-- Botón de pago -->
+    @if (selectedPaymentMethod) {
+      <div class="payment-actions">
+        <button 
+          class="btn-pay" 
+          [disabled]="isProcessing || !isFormValid()"
+          (click)="processPayment()"
+        >
+          @if (!isProcessing) {
+            <span class="btn-content">
+              🔒 Pagar {{ cartSummary$()!.total | currency:'COP':'symbol':'1.0-0' }}
+            </span>
+          } @else {
+            <span class="btn-content">
+              <span class="loading-spinner"></span>
+              Procesando Pago...
+            </span>
+          }
+        </button>
+        
+        <div class="security-info">
+          <p>🔐 Tu información está protegida con cifrado SSL</p>
+          <p>💡 Si el pago falla, tu carrito se mantendrá para que puedas intentar nuevamente</p>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Notificación Toast -->
+  @if (showNotification) {
+    <div class="toast-notification" [class.success]="notificationType === 'success'" [class.error]="notificationType === 'error'">
+      <span class="toast-message">{{ notificationMessage }}</span>
+      <button class="toast-close" (click)="hideNotification()">✕</button>
+    </div>
+  }
+</div>
