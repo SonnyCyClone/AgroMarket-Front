@@ -1,5 +1,5 @@
 .footer {
-  background: #2c5aa0;
+  background: linear-gradient(135deg, var(--agro-green-500), var(--agro-green-400));
   color: white;
   margin-top: auto;
 }
@@ -29,7 +29,7 @@
 
 .footer-section p {
   margin: 0;
-  color: #b8d4f0;
+  color: rgba(255, 255, 255, 0.8);
   line-height: 1.6;
 }
 
@@ -44,24 +44,47 @@
 }
 
 .footer-section a {
-  color: #b8d4f0;
+  color: rgba(255, 255, 255, 0.8);
   text-decoration: none;
-  transition: color 0.2s;
+  transition: all 0.2s ease;
 }
 
 .footer-section a:hover {
   color: white;
+  text-decoration: underline;
+}
+
+/* CTA buttons in footer */
+.footer-cta {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  display: inline-block;
+  margin-top: 8px;
+}
+
+.footer-cta:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+  color: white;
+  text-decoration: none;
 }
 
 .footer-bottom {
-  border-top: 1px solid #4a6fa5;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
   padding: 20px 16px;
   text-align: center;
 }
 
 .footer-bottom p {
   margin: 0;
-  color: #b8d4f0;
+  color: rgba(255, 255, 255, 0.8);
   font-size: 14px;
 }
 

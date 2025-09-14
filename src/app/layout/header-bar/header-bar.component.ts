@@ -208,6 +208,7 @@ export class HeaderBarComponent implements OnDestroy {
    * Navega al perfil del usuario
    */
   onProfileClick(): void {
+    this.showUserDropdown = false;
     this.showLoggedUserDropdown = false;
     this.router.navigate(['/profile']);
   }
@@ -216,14 +217,25 @@ export class HeaderBarComponent implements OnDestroy {
    * Navega a las compras del usuario
    */
   onOrdersClick(): void {
+    this.showUserDropdown = false;
     this.showLoggedUserDropdown = false;
     this.router.navigate(['/orders']);
+  }
+
+  /**
+   * Navega a las preguntas frecuentes
+   */
+  onFaqClick(): void {
+    this.showUserDropdown = false;
+    this.showLoggedUserDropdown = false;
+    this.router.navigate(['/faq']);
   }
 
   /**
    * Navega al soporte
    */
   onSupportClick(): void {
+    this.showUserDropdown = false;
     this.showLoggedUserDropdown = false;
     this.router.navigate(['/support']);
   }
