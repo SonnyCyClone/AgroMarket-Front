@@ -211,7 +211,8 @@
 }
 
 .dropdown-item:hover {
-  background: #f8f9fa;
+  background: var(--agro-green-50);
+  color: var(--agro-green-500);
 }
 
 .dropdown-icon {

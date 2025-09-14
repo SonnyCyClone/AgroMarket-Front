@@ -22,10 +22,17 @@ body {
 }
 
 /* =================================================================
-   AGROMARKET GLOBAL THEME TOKENS - GREEN GRADIENT PRIMARY
+   AGROMARKET GREEN THEME SYSTEM - OFFICIAL TOKENS
    ================================================================= */
 
 :root {
+  --agro-green-500: #28a745;
+  --agro-green-400: #20c997;
+  --agro-green-50: #f6fffb;
+  --agro-text: #1f2937;
+  --agro-muted: #6b7280;
+  
+  /* Legacy compatibility (gradually migrate away from these) */
   --am-primary: #28a745;
   --am-primary-light: #20c997;
   --am-primary-dark: #218838;
@@ -51,6 +58,70 @@ body {
   --am-primary-gradient: linear-gradient(135deg, #28a745, #20c997);
   --am-primary-gradient-hover: linear-gradient(135deg, #218838, #1ea085);
   --am-primary-gradient-active: linear-gradient(135deg, #1e7e34, #198c72);
+}
+
+/* =================================================================
+   AGROMARKET GREEN THEME CLASSES
+   ================================================================= */
+
+/* Primary theme buttons and CTAs */
+.agro-primary,
+button.agro,
+.agro-btn,
+.agro-cta {
+  background: linear-gradient(135deg, #28a745, #20c997);
+  color: #fff;
+  border: none;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .2s ease;
+  font-size: .95rem;
+  text-transform: none;
+  letter-spacing: .2px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.agro-primary:hover,
+button.agro:hover,
+.agro-btn:hover,
+.agro-cta:hover { 
+  filter: brightness(1.05); 
+}
+
+/* Outline variant that matches theme */
+.agro-outline { 
+  background: #fff;
+  color: #20c997;
+  border: 2px solid #20c997;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .2s ease;
+  font-size: .95rem;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.agro-outline:hover { 
+  background: #f6fffb; 
+}
+
+/* Green focus ring for inputs (replace any blue focus) */
+input:focus, 
+select:focus, 
+textarea:focus, 
+.mat-mdc-form-field-focus-overlay {
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(32,201,151,.25) !important;
+  border-color: #20c997 !important;
 }
 
 /* Primary theme class for consistent styling */
