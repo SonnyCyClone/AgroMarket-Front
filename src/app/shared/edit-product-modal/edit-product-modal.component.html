@@ -6,7 +6,7 @@
 -->
 
 <!-- Backdrop del modal -->
-<div class="modal-backdrop" (click)="onBackdropClick($event)" *ngIf="isOpen && product">
+<div class="modal-backdrop" (click)="onBackdropClick($event)" *ngIf="isOpen() && product">
   <!-- Contenedor del modal -->
   <div class="modal-container">
     <!-- Header -->
