@@ -182,8 +182,8 @@ export class RegisterUserPage implements OnInit {
       )
       .subscribe({
         next: (roles) => {
+          // Roles loaded successfully
           this.rolesDisponibles.set(roles);
-          console.log('Roles cargados desde API:', roles);
         },
         error: (error) => {
           console.error('Error al cargar roles:', error);
@@ -224,7 +224,7 @@ export class RegisterUserPage implements OnInit {
       )
       .subscribe({
         next: (response) => {
-          console.log('Usuario creado exitosamente:', response);
+          // User created successfully
           this.mostrarDialogExito.set(true);
         },
         error: (error) => {

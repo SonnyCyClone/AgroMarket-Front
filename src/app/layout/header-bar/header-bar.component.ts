@@ -15,6 +15,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { SearchBarComponent } from '../../shared/search-bar/search-bar.component';
 import { AuthService } from '../../core/services/auth/auth.service';
+import { CartService } from '../../core/services/cart/cart.service';
 import { Subscription } from 'rxjs';
 import { User } from '../../core/models/auth.model';
 
@@ -31,6 +32,9 @@ export class HeaderBarComponent implements OnDestroy {
   /** Controla la visibilidad del dropdown de usuario */
   showUserDropdown = false;
   
+  /** Controla la visibilidad del dropdown de usuario loggeado */
+  showLoggedUserDropdown = false;
+  
   /** Controla la visibilidad del dropdown de administración */
   showAdminDropdown = false;
   
@@ -41,17 +45,25 @@ export class HeaderBarComponent implements OnDestroy {
   logoUrl = 'https://azstaagromarket.blob.core.windows.net/productos/Logo/Icono.png?sp=r&st=2025-09-12T22:25:12Z&se=2025-12-31T06:40:12Z&spr=https&sv=2024-11-04&sr=c&sig=9Z8yTQYXsBePoAs50WcOMBusYafTexW0nTgXVnVHfe0%3D';
   
   /** Suscripción al observable del usuario actual */
-  private userSubscription: Subscription;
+  private userSubscription!: Subscription;
+  
+  /** Suscripción al observable del carrito */
+  private cartSubscription!: Subscription;
 
   /**
    * Constructor del componente header
    */
   constructor(
     private authService: AuthService,
+    private cartService: CartService,
     private router: Router
   ) {
     this.userSubscription = this.authService.currentUser$.subscribe(user => {
       this.currentUser = user;
+    });
+    
+    this.cartSubscription = this.cartService.cartUpdates.subscribe(() => {
+      // El cart service ya maneja la reactividad a través de signals
     });
   }
 
@@ -61,6 +73,9 @@ export class HeaderBarComponent implements OnDestroy {
   ngOnDestroy(): void {
     if (this.userSubscription) {
       this.userSubscription.unsubscribe();
+    }
+    if (this.cartSubscription) {
+      this.cartSubscription.unsubscribe();
     }
   }
 
@@ -95,6 +110,13 @@ export class HeaderBarComponent implements OnDestroy {
   }
 
   /**
+   * Obtiene la cantidad total de items en el carrito
+   */
+  get cartItemCount(): number {
+    return this.cartService.totalItems();
+  }
+
+  /**
    * Maneja clics en el documento para cerrar los dropdowns
    */
   @HostListener('document:click', ['$event'])
@@ -104,6 +126,7 @@ export class HeaderBarComponent implements OnDestroy {
     // Cerrar dropdown de usuario si se hace click fuera
     if (!target.closest('.user-dropdown-container')) {
       this.showUserDropdown = false;
+      this.showLoggedUserDropdown = false;
     }
     
     // Cerrar dropdown de administración si se hace click fuera
@@ -133,8 +156,27 @@ export class HeaderBarComponent implements OnDestroy {
   onAdminDropdownToggle(event: Event): void {
     event.stopPropagation();
     this.showAdminDropdown = !this.showAdminDropdown;
-    // Cerrar el dropdown de usuario si está abierto
+    // Cerrar los otros dropdowns si están abiertos
     this.showUserDropdown = false;
+    this.showLoggedUserDropdown = false;
+  }
+
+  /**
+   * Alterna la visibilidad del dropdown de usuario loggeado
+   */
+  onLoggedUserDropdownToggle(event: Event): void {
+    event.stopPropagation();
+    this.showLoggedUserDropdown = !this.showLoggedUserDropdown;
+    // Cerrar los otros dropdowns si están abiertos
+    this.showUserDropdown = false;
+    this.showAdminDropdown = false;
+  }
+
+  /**
+   * Navega al carrito de compras
+   */
+  onCartClick(): void {
+    this.router.navigate(['/cart']);
   }
 
   /**
@@ -158,7 +200,32 @@ export class HeaderBarComponent implements OnDestroy {
    */
   onLogout(): void {
     this.showUserDropdown = false;
+    this.showLoggedUserDropdown = false;
     this.authService.logout();
+  }
+
+  /**
+   * Navega al perfil del usuario
+   */
+  onProfileClick(): void {
+    this.showLoggedUserDropdown = false;
+    this.router.navigate(['/profile']);
+  }
+
+  /**
+   * Navega a las compras del usuario
+   */
+  onOrdersClick(): void {
+    this.showLoggedUserDropdown = false;
+    this.router.navigate(['/orders']);
+  }
+
+  /**
+   * Navega al soporte
+   */
+  onSupportClick(): void {
+    this.showLoggedUserDropdown = false;
+    this.router.navigate(['/support']);
   }
 
   /**

@@ -5,7 +5,7 @@
   Compatible con productos API (nuevo formato) y legacy (formato anterior).
   Incluye manejo robusto de imágenes con fallback a placeholder.
 -->
-<div class="product-card">
+<div class="product-card" (click)="onViewProduct()">
   <div class="product-image-container">
     <img 
       *ngIf="!imageError && getImageUrl()"
@@ -53,6 +53,30 @@
       <div *ngIf="!hasDiscount" class="price-container">
         <span class="current-price">{{ formatPrice(getPrice()) }}</span>
       </div>
+    </div>
+    
+    <!-- Botones de acción (solo si no es modo edición) -->
+    <div *ngIf="!canEdit" class="action-buttons">
+      <button 
+        [id]="'btn-addcart-' + getProductId()"
+        class="add-to-cart-button"
+        (click)="onAddToCart($event)"
+        [disabled]="getQuantity() <= 0"
+        title="Agregar al carrito"
+        aria-label="Agregar al carrito"
+      >
+        🛒 Agregar al carrito
+      </button>
+      <button 
+        [id]="'btn-comprar-' + getProductId()"
+        class="buy-button"
+        (click)="onBuyNow($event)"
+        [disabled]="getQuantity() <= 0"
+        title="Comprar"
+        aria-label="Comprar"
+      >
+        💳 Comprar
+      </button>
     </div>
   </div>
 </div>

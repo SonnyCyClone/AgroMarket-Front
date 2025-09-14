@@ -6,6 +6,12 @@
   border-radius: 8px;
   overflow: hidden;
   background: white;
+  transition: border-color 0.2s ease;
+}
+
+.search-container:focus-within {
+  border-color: var(--am-primary, #28a745);
+  box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.15);
 }
 
 .search-input {
@@ -24,14 +30,18 @@
 .search-button {
   padding: 12px 16px;
   border: none;
-  background: #007bff;
+  background: var(--am-primary-gradient, linear-gradient(135deg, #28a745, #20c997));
   color: white;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .search-button:hover {
-  background: #0056b3;
+  background: var(--am-primary-gradient-hover, linear-gradient(135deg, #218838, #1ea085));
+  transform: scale(1.05);
 }
 
 .search-icon {

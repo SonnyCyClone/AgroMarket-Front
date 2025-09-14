@@ -27,9 +27,9 @@
 
 .clear-button {
   padding: 6px 12px;
-  border: 1px solid #007bff;
+  border: 1px solid var(--am-primary, #28a745);
   background: white;
-  color: #007bff;
+  color: var(--am-primary, #28a745);
   border-radius: 4px;
   cursor: pointer;
   font-size: 12px;
@@ -37,7 +37,7 @@
 }
 
 .clear-button:hover {
-  background: #007bff;
+  background: var(--am-primary, #28a745);
   color: white;
 }
 
@@ -71,14 +71,14 @@
 }
 
 .filter-option:hover {
-  background: #f0f8ff;
-  color: #007bff;
+  background: rgba(40, 167, 69, 0.1);
+  color: var(--am-primary, #28a745);
 }
 
 .filter-option.selected {
-  background: #007bff;
+  background: var(--am-primary-gradient, linear-gradient(135deg, #28a745, #20c997));
   color: white;
-  border-color: #0056b3;
+  border-color: #218838;
 }
 
 @media (max-width: 768px) {

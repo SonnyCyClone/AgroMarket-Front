@@ -1,0 +1,127 @@
+<!--
+  Página de Gestión de Productos - AgroMarket
+  
+  Layout idéntico al Home pero con engranajes para edición.
+  Compatible con productos tanto del formato API nuevo como legacy.
+-->
+<div class="home-page">
+  <div class="home-container">
+    <aside class="sidebar-section">
+      <app-sidebar-filter></app-sidebar-filter>
+    </aside>
+    
+    <main class="content-section">
+      <!-- Estado de carga -->
+      @if (loading) {
+        <div class="loading-state">
+          <p>Cargando productos...</p>
+        </div>
+      }
+      
+      <!-- Estado de error -->
+      @if (errorMessage && !loading) {
+        <div class="error-state">
+          <p>{{ errorMessage }}</p>
+          <button class="retry-button" (click)="retryLoadProducts()">
+            Reintentar
+          </button>
+        </div>
+      }
+      
+      <!-- Contenido principal -->
+      @if (!loading && !errorMessage) {
+        <!-- Controles superiores -->
+        <div class="products-controls" id="products-controls-manage">
+          <!-- Selector de ordenamiento -->
+          <div class="sort-control">
+            <label for="sort-select-manage" class="sort-label">Ordenar por:</label>
+            <select 
+              id="sort-select-manage" 
+              class="sort-select"
+              [value]="sortOption" 
+              (change)="onSortChange($event)"
+            >
+              @for (option of sortOptions; track option.value) {
+                <option [value]="option.value">
+                  {{ option.label }}
+                </option>
+              }
+            </select>
+          </div>
+
+          <!-- Contador de productos -->
+          <div class="products-count" id="products-count-manage">
+            <span class="count-text count-pill">
+              {{ products.length }} 
+              {{ products.length === 1 ? 'producto' : 'productos' }}
+            </span>
+          </div>
+        </div>
+        
+        @if (products.length > 0) {
+          <div class="product-grid">
+            @for (product of products; track trackByProductId($index, product)) {
+              <app-product-card 
+                [product]="product"
+                [canEdit]="canEditProducts()"
+                (editProduct)="onEditProduct($event)"
+                (productClick)="openProductPreview($event)"
+                (buyProduct)="onBuyProduct($event)"
+              />
+            }
+          </div>
+        }
+        
+        @if (products.length === 0) {
+          <div class="no-products">
+            <p>No se encontraron productos activos.</p>
+            <p>Todos los productos pueden estar inactivos o no hay productos registrados.</p>
+          </div>
+        }
+      }
+    </main>
+  </div>
+
+  <!-- Mensajes de notificación -->
+  @if (showSuccessMessage) {
+    <div 
+      class="notification success-notification"
+      id="success-notification-manage"
+      role="alert"
+      aria-live="polite">
+      <div class="notification-content">
+        <span class="notification-icon">✅</span>
+        <span class="notification-message">{{ successMessage }}</span>
+        <button 
+          type="button"
+          class="notification-close"
+          id="success-close-manage"
+          (click)="dismissSuccessMessage()"
+          aria-label="Cerrar mensaje de éxito">
+          ✕
+        </button>
+      </div>
+    </div>
+  }
+
+  @if (showErrorMessage) {
+    <div 
+      class="notification error-notification"
+      id="error-notification-manage"
+      role="alert"
+      aria-live="assertive">
+      <div class="notification-content">
+        <span class="notification-icon">❌</span>
+        <span class="notification-message">{{ modalErrorMessage }}</span>
+        <button 
+          type="button"
+          class="notification-close"
+          id="error-close-manage"
+          (click)="dismissErrorMessage()"
+          aria-label="Cerrar mensaje de error">
+          ✕
+        </button>
+      </div>
+    </div>
+  }
+</div>

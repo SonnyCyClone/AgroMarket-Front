@@ -1,0 +1,206 @@
+<!-- 
+  Página del carrito de compras - AgroMarket
+  
+  Muestra los productos agregados al carrito con opciones de cantidad,
+  eliminación y resumen de precios para proceder al checkout.
+-->
+<div class="cart-page">
+  <div class="cart-container">
+    
+    <!-- Encabezado de la página -->
+    <header class="cart-header">
+      <h1 class="cart-title" id="cart-title">Mi Carrito</h1>
+      <button 
+        class="continue-shopping-btn"
+        id="continue-shopping-btn"
+        (click)="continueShopping()"
+        aria-label="Continuar comprando"
+      >
+        ← Continuar Comprando
+      </button>
+    </header>
+
+    <!-- Estado vacío -->
+    <div *ngIf="isEmpty" class="empty-cart" id="empty-cart-state">
+      <div class="empty-cart-content">
+        <div class="empty-cart-icon">🛒</div>
+        <h2 class="empty-cart-title">Tu carrito está vacío</h2>
+        <p class="empty-cart-description">
+          Agrega productos para comenzar tu compra
+        </p>
+        <button 
+          class="am-primary"
+          id="shop-now-btn"
+          (click)="continueShopping()"
+        >
+          Explorar Productos
+        </button>
+      </div>
+    </div>
+
+    <!-- Contenido del carrito -->
+    <div *ngIf="!isEmpty" class="cart-content">
+      
+      <!-- Lista de productos -->
+      <section class="cart-items-section">
+        <div class="cart-items-header">
+          <h2 class="items-title" id="cart-items-title">
+            Productos ({{ totalItems }} {{ totalItems === 1 ? 'artículo' : 'artículos' }})
+          </h2>
+          <button 
+            class="clear-cart-btn"
+            id="clear-cart-btn"
+            (click)="clearCart()"
+            aria-label="Vaciar carrito"
+          >
+            Vaciar Carrito
+          </button>
+        </div>
+
+        <div class="cart-items-list" id="cart-items-list">
+          <article 
+            *ngFor="let item of cartItems; trackBy: trackByItemId" 
+            class="cart-item"
+            [attr.id]="'cart-item-' + item.id"
+          >
+            <!-- Imagen del producto -->
+            <div class="item-image-container">
+              <img 
+                *ngIf="getProductImageUrl(item.product) && !imageError"
+                [src]="getProductImageUrl(item.product)"
+                [alt]="getProductName(item.product)"
+                class="item-image"
+                (error)="onImageError($event)"
+              >
+              <div 
+                *ngIf="!getProductImageUrl(item.product) || imageError"
+                class="item-image-placeholder"
+                [attr.aria-label]="'Imagen de ' + getProductName(item.product)"
+              >
+                📦
+              </div>
+            </div>
+
+            <!-- Información del producto -->
+            <div class="item-info">
+              <h3 class="item-name">{{ getProductName(item.product) }}</h3>
+              <p class="item-description">{{ getProductDescription(item.product) }}</p>
+              <div class="item-details">
+                <span class="item-price">{{ formatPrice(item.unitPrice) }}</span>
+                <span class="item-currency">{{ item.currency }}</span>
+              </div>
+            </div>
+
+            <!-- Controles de cantidad -->
+            <div class="item-quantity">
+              <label class="quantity-label" [for]="'quantity-' + item.id">
+                Cantidad:
+              </label>
+              <div class="quantity-controls">
+                <button 
+                  class="quantity-btn decrease"
+                  [id]="'decrease-' + item.id"
+                  (click)="decrementQuantity(item.id)"
+                  [attr.aria-label]="'Disminuir cantidad de ' + getProductName(item.product)"
+                >
+                  −
+                </button>
+                <input 
+                  type="number"
+                  class="quantity-input"
+                  [id]="'quantity-' + item.id"
+                  [value]="item.quantity"
+                  min="1"
+                  max="99"
+                  (change)="updateQuantity(item.id, +$event.target.value)"
+                  [attr.aria-label]="'Cantidad de ' + getProductName(item.product)"
+                >
+                <button 
+                  class="quantity-btn increase"
+                  [id]="'increase-' + item.id"
+                  (click)="incrementQuantity(item.id)"
+                  [attr.aria-label]="'Aumentar cantidad de ' + getProductName(item.product)"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+
+            <!-- Precio total del item -->
+            <div class="item-total">
+              <span class="total-label">Total:</span>
+              <span class="total-price">{{ formatPrice(item.totalPrice) }}</span>
+            </div>
+
+            <!-- Botón de eliminar -->
+            <div class="item-actions">
+              <button 
+                class="remove-item-btn"
+                [id]="'remove-' + item.id"
+                (click)="removeItem(item.id)"
+                [attr.aria-label]="'Eliminar ' + getProductName(item.product) + ' del carrito'"
+              >
+                🗑️
+              </button>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- Resumen y checkout -->
+      <aside class="cart-summary-section">
+        <div class="cart-summary" id="cart-summary">
+          <h3 class="summary-title">Resumen del Pedido</h3>
+          
+          <div class="summary-details">
+            <div class="summary-line">
+              <span class="summary-label">Subtotal:</span>
+              <span class="summary-value">{{ formatPrice(cartSummary?.subtotal || 0) }}</span>
+            </div>
+            
+            <div class="summary-line" *ngIf="(cartSummary?.taxes || 0) > 0">
+              <span class="summary-label">Impuestos:</span>
+              <span class="summary-value">{{ formatPrice(cartSummary?.taxes || 0) }}</span>
+            </div>
+            
+            <div class="summary-line" *ngIf="(cartSummary?.shipping || 0) > 0">
+              <span class="summary-label">Envío:</span>
+              <span class="summary-value">{{ formatPrice(cartSummary?.shipping || 0) }}</span>
+            </div>
+            
+            <div class="summary-line" *ngIf="(cartSummary?.discounts || 0) > 0">
+              <span class="summary-label">Descuentos:</span>
+              <span class="summary-value discount">-{{ formatPrice(cartSummary?.discounts || 0) }}</span>
+            </div>
+            
+            <hr class="summary-divider">
+            
+            <div class="summary-line total">
+              <span class="summary-label">Total:</span>
+              <span class="summary-value">{{ formatPrice(cartSummary?.total || 0) }}</span>
+            </div>
+          </div>
+          
+          <div class="checkout-actions">
+            <button 
+              class="am-primary"
+              id="checkout-btn"
+              (click)="proceedToCheckout()"
+              [disabled]="isEmpty"
+            >
+              Proceder al Pago
+            </button>
+            
+            <button 
+              class="continue-shopping-btn secondary"
+              id="continue-shopping-secondary-btn"
+              (click)="continueShopping()"
+            >
+              Continuar Comprando
+            </button>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</div>

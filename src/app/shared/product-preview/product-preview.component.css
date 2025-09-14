@@ -1,0 +1,585 @@
+/**
+ * Estilos para el modal de vista previa de producto - AgroMarket
+ * 
+ * @description CSS para modal estilo marketplace con galería de imágenes,
+ * información detallada y opciones de compra directa.
+ */
+
+/* ==================== MODAL PRINCIPAL ==================== */
+.product-preview-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: modalFadeIn 0.3s ease-out;
+}
+
+.modal-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+}
+
+.modal-content {
+  position: relative;
+  background: white;
+  border-radius: 16px;
+  max-width: 1000px;
+  max-height: 90vh;
+  width: 100%;
+  overflow: hidden;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.2);
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+/* Animaciones */
+@keyframes modalFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modalSlideIn {
+  from {
+    transform: translateY(-20px) scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+/* ==================== BOTÓN CERRAR ==================== */
+.close-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: #6c757d;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.close-btn:hover {
+  background: white;
+  color: #dc3545;
+  transform: scale(1.1);
+}
+
+/* ==================== CONTENIDO PRINCIPAL ==================== */
+.product-preview-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  height: 90vh;
+  max-height: 800px;
+}
+
+/* ==================== GALERÍA DE IMÁGENES ==================== */
+.product-gallery {
+  background: #f8f9fa;
+  display: flex;
+  flex-direction: column;
+  padding: 30px;
+  gap: 20px;
+}
+
+.main-image-container {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.main-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  max-height: 400px;
+}
+
+.image-placeholder {
+  width: 100%;
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  color: #6c757d;
+  background: #e9ecef;
+}
+
+/* Badge de stock */
+.stock-badge {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  background: #28a745;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.stock-badge.low-stock {
+  background: #ffc107;
+  color: #212529;
+}
+
+.stock-badge.out-of-stock {
+  background: #dc3545;
+}
+
+/* Galería de thumbnails */
+.thumbnail-gallery {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.thumbnail-btn {
+  border: 2px solid transparent;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: none;
+  padding: 0;
+}
+
+.thumbnail-btn.active {
+  border-color: #28a745;
+}
+
+.thumbnail-btn:hover {
+  border-color: #6c757d;
+}
+
+.thumbnail-image {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+}
+
+/* ==================== INFORMACIÓN DEL PRODUCTO ==================== */
+.product-info {
+  padding: 30px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+/* Encabezado */
+.product-header {
+  border-bottom: 2px solid #e9ecef;
+  padding-bottom: 20px;
+}
+
+.product-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0 0 15px 0;
+  line-height: 1.3;
+}
+
+.product-price {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.current-price {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #28a745;
+}
+
+/* Descripción */
+.product-description {
+  line-height: 1.6;
+}
+
+.description-text {
+  color: #495057;
+  margin: 0;
+  font-size: 1rem;
+}
+
+/* Detalles */
+.product-details {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.details-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0 0 15px 0;
+}
+
+.details-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.detail-item {
+  color: #6c757d;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.detail-item::before {
+  content: '•';
+  color: #28a745;
+  font-weight: bold;
+}
+
+/* ==================== FORMULARIO DE COMPRA ==================== */
+.purchase-form {
+  background: #f8f9fa;
+  padding: 25px;
+  border-radius: 12px;
+  border: 2px solid #e9ecef;
+}
+
+/* Selector de cantidad */
+.quantity-section {
+  margin-bottom: 20px;
+}
+
+.quantity-label {
+  display: block;
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 10px;
+}
+
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  border: 2px solid #ced4da;
+  border-radius: 8px;
+  overflow: hidden;
+  background: white;
+  width: fit-content;
+}
+
+.quantity-btn {
+  background: #f8f9fa;
+  border: none;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 600;
+  color: #495057;
+}
+
+.quantity-btn:hover:not(:disabled) {
+  background: #e9ecef;
+  color: #28a745;
+}
+
+.quantity-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.quantity-input {
+  border: none;
+  width: 60px;
+  height: 40px;
+  text-align: center;
+  font-weight: 600;
+  background: white;
+  color: #495057;
+  font-size: 1rem;
+}
+
+.quantity-input:focus {
+  outline: none;
+  background: #f8f9fa;
+}
+
+.quantity-input.error {
+  border-color: #dc3545;
+}
+
+.error-message {
+  color: #dc3545;
+  font-size: 0.8rem;
+  margin-top: 5px;
+  font-weight: 500;
+}
+
+/* Total */
+.total-section {
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  border: 1px solid #dee2e6;
+}
+
+.total-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.total-label {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #495057;
+}
+
+.total-amount {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #28a745;
+}
+
+/* ==================== BOTONES DE ACCIÓN ==================== */
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.action-btn {
+  padding: 15px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.action-btn.primary {
+  background: linear-gradient(135deg, #28a745, #20c997);
+  color: white;
+  box-shadow: 0 4px 6px rgba(40, 167, 69, 0.3);
+}
+
+.action-btn.primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 15px rgba(40, 167, 69, 0.4);
+}
+
+.action-btn.secondary {
+  background: white;
+  border: 2px solid #28a745;
+  color: #28a745;
+}
+
+.action-btn.secondary:hover:not(:disabled) {
+  background: #28a745;
+  color: white;
+  transform: translateY(-2px);
+}
+
+.action-btn.tertiary {
+  background: #6c757d;
+  color: white;
+}
+
+.action-btn.tertiary:hover:not(:disabled) {
+  background: #5a6268;
+  transform: translateY(-2px);
+}
+
+.action-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* ==================== INFORMACIÓN DE ENVÍO ==================== */
+.shipping-info {
+  border-top: 2px solid #e9ecef;
+  padding-top: 20px;
+}
+
+.shipping-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0 0 15px 0;
+}
+
+.shipping-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.shipping-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+  transition: all 0.3s ease;
+}
+
+.shipping-option:hover {
+  border-color: #28a745;
+  background: rgba(40, 167, 69, 0.05);
+}
+
+.shipping-icon {
+  font-size: 1.2rem;
+  width: 24px;
+  text-align: center;
+}
+
+.shipping-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.shipping-method {
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 0.9rem;
+}
+
+.shipping-time {
+  color: #6c757d;
+  font-size: 0.8rem;
+}
+
+.shipping-price {
+  font-weight: 600;
+  color: #28a745;
+  font-size: 0.9rem;
+}
+
+/* ==================== RESPONSIVE DESIGN ==================== */
+@media (max-width: 768px) {
+  .product-preview-content {
+    grid-template-columns: 1fr;
+    height: 100vh;
+  }
+  
+  .product-gallery {
+    padding: 20px;
+    min-height: 300px;
+  }
+  
+  .main-image-container {
+    min-height: 250px;
+  }
+  
+  .product-info {
+    padding: 20px;
+  }
+  
+  .product-title {
+    font-size: 1.5rem;
+  }
+  
+  .current-price {
+    font-size: 1.6rem;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+  }
+  
+  .close-btn {
+    top: 15px;
+    right: 15px;
+    width: 35px;
+    height: 35px;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .product-preview-modal {
+    padding: 10px;
+  }
+  
+  .modal-content {
+    border-radius: 12px;
+    max-height: 100vh;
+  }
+  
+  .product-gallery,
+  .product-info,
+  .purchase-form {
+    padding: 15px;
+  }
+  
+  .product-title {
+    font-size: 1.3rem;
+  }
+  
+  .current-price {
+    font-size: 1.4rem;
+  }
+  
+  .quantity-controls {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .shipping-option {
+    flex-direction: column;
+    text-align: center;
+    gap: 8px;
+  }
+}

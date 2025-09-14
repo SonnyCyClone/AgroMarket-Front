@@ -1,0 +1,227 @@
+<!-- 
+  Modal de vista previa de producto - AgroMarket
+  
+  Vista detallada del producto estilo marketplace con galería,
+  información completa y opciones de compra directa.
+-->
+<div class="product-preview-modal" id="product-preview-modal">
+  <div class="modal-backdrop" (click)="closeModal()"></div>
+  
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    
+    <!-- Botón de cerrar -->
+    <button 
+      class="close-btn"
+      id="close-preview-btn"
+      (click)="closeModal()"
+      aria-label="Cerrar vista previa del producto"
+    >
+      ✕
+    </button>
+
+    <!-- Contenido principal -->
+    <div class="product-preview-content">
+      
+      <!-- Galería de imágenes -->
+      <section class="product-gallery" id="product-gallery">
+        <div class="main-image-container">
+          @if (getProductImageUrl() && !imageError) {
+            <img 
+              [src]="getProductImageUrl()"
+              [alt]="getProductName()"
+              class="main-image"
+              (error)="onImageError()"
+            >
+          }
+          @if (!getProductImageUrl() || imageError) {
+            <div 
+              class="image-placeholder"
+              [attr.aria-label]="'Imagen de ' + getProductName()"
+            >
+              📦
+            </div>
+          }
+          
+          <!-- Badge de stock -->
+          <div class="stock-badge" [class.low-stock]="getAvailableQuantity() <= 5" [class.out-of-stock]="!isAvailable">
+            {{ stockText }}
+          </div>
+        </div>
+        
+        <!-- Thumbnails (futuro: múltiples imágenes) -->
+        @if (imageGallery.length > 1) {
+          <div class="thumbnail-gallery">
+            @for (image of imageGallery; track $index) {
+              <button 
+                class="thumbnail-btn"
+                [class.active]="$index === activeImageIndex"
+                (click)="activeImageIndex = $index"
+                [attr.aria-label]="'Ver imagen ' + ($index + 1)"
+              >
+                <img [src]="image" [alt]="'Vista ' + ($index + 1) + ' de ' + getProductName()" class="thumbnail-image">
+              </button>
+            }
+          </div>
+        }
+      </section>
+
+      <!-- Información del producto -->
+      <section class="product-info" id="product-info">
+        
+        <!-- Encabezado del producto -->
+        <header class="product-header">
+          <h1 class="product-title" id="product-title">{{ getProductName() }}</h1>
+          <div class="product-price">
+            <span class="current-price">{{ formatPrice(getProductPrice()) }}</span>
+            <!-- TODO: Agregar precio anterior si hay descuentos -->
+          </div>
+        </header>
+
+        <!-- Descripción -->
+        <div class="product-description">
+          <p class="description-text">{{ getProductDescription() }}</p>
+        </div>
+
+        <!-- Información adicional -->
+        @if (getAdditionalInfo().length > 0) {
+          <div class="product-details">
+            <h3 class="details-title">Detalles del Producto</h3>
+            <ul class="details-list">
+              @for (info of getAdditionalInfo(); track $index) {
+                <li class="detail-item">
+                  {{ info }}
+                </li>
+              }
+            </ul>
+          </div>
+        }
+
+        <!-- Formulario de compra -->
+        <form [formGroup]="quantityForm" class="purchase-form" id="purchase-form">
+          
+          <!-- Selector de cantidad -->
+          <div class="quantity-section">
+            <label for="quantity-selector" class="quantity-label">Cantidad:</label>
+            <div class="quantity-controls">
+              <button 
+                type="button"
+                class="quantity-btn decrease"
+                id="decrease-quantity-btn"
+                (click)="decrementQuantity()"
+                [disabled]="quantityForm.get('quantity')?.value <= 1"
+                aria-label="Disminuir cantidad"
+              >
+                −
+              </button>
+              <input 
+                type="number"
+                id="quantity-selector"
+                class="quantity-input"
+                formControlName="quantity"
+                min="1"
+                [max]="getAvailableQuantity()"
+                [class.error]="isFieldInvalid('quantity')"
+                aria-label="Cantidad a comprar"
+              >
+              <button 
+                type="button"
+                class="quantity-btn increase"
+                id="increase-quantity-btn"
+                (click)="incrementQuantity()"
+                [disabled]="quantityForm.get('quantity')?.value >= getAvailableQuantity()"
+                aria-label="Aumentar cantidad"
+              >
+                +
+              </button>
+            </div>
+            @if (isFieldInvalid('quantity')) {
+              <div class="error-message">
+                {{ getFieldError('quantity') }}
+              </div>
+            }
+          </div>
+
+          <!-- Total -->
+          <div class="total-section">
+            <div class="total-line">
+              <span class="total-label">Total:</span>
+              <span class="total-amount">
+                {{ formatPrice(getProductPrice() * (quantityForm.get('quantity')?.value || 1)) }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Botones de acción -->
+          <div class="action-buttons">
+            <button 
+              type="button"
+              class="action-btn primary buy-now"
+              id="buy-now-btn"
+              (click)="buyNow()"
+              [disabled]="!isAvailable || loading"
+            >
+              @if (!loading) {
+                <span>🛒 Comprar Ahora</span>
+              }
+              @if (loading) {
+                <span>Procesando...</span>
+              }
+            </button>
+            
+            <button 
+              type="button"
+              class="action-btn secondary add-to-cart"
+              id="add-to-cart-btn"
+              (click)="addToCart()"
+              [disabled]="!isAvailable || loading"
+            >
+              @if (!loading) {
+                <span>➕ Agregar al Carrito</span>
+              }
+              @if (loading) {
+                <span>Agregando...</span>
+              }
+            </button>
+          </div>
+
+          <!-- Botón de editar (solo si tiene permisos) -->
+          @if (canEdit) {
+            <div class="admin-actions">
+              <button 
+                type="button"
+                class="action-btn tertiary edit-product"
+                id="edit-product-btn"
+                (click)="editProduct()"
+              >
+                ✏️ Editar Producto
+              </button>
+            </div>
+          }
+        </form>
+
+        <!-- Información de envío -->
+        <div class="shipping-info">
+          <h3 class="shipping-title">Información de Envío</h3>
+          <div class="shipping-options">
+            <div class="shipping-option">
+              <span class="shipping-icon">🚚</span>
+              <div class="shipping-details">
+                <span class="shipping-method">Envío Estándar</span>
+                <span class="shipping-time">3-5 días hábiles</span>
+              </div>
+              <span class="shipping-price">{{ formatPrice(15000) }}</span>
+            </div>
+            <div class="shipping-option">
+              <span class="shipping-icon">⚡</span>
+              <div class="shipping-details">
+                <span class="shipping-method">Envío Express</span>
+                <span class="shipping-time">1-2 días hábiles</span>
+              </div>
+              <span class="shipping-price">{{ formatPrice(25000) }}</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>

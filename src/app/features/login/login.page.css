@@ -22,7 +22,7 @@
 .login-header {
   text-align: center;
   padding: 32px 32px 24px;
-  background: linear-gradient(135deg, #2c5aa0 0%, #1a4480 100%);
+  background: var(--am-primary-gradient, linear-gradient(135deg, #28a745, #20c997));
   color: white;
 }
 
@@ -66,8 +66,8 @@
 
 .form-input:focus {
   outline: none;
-  border-color: #2c5aa0;
-  box-shadow: 0 0 0 3px rgba(44, 90, 160, 0.1);
+  border-color: var(--am-primary, #28a745);
+  box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.15);
 }
 
 .form-input.error {
@@ -126,23 +126,25 @@
 .primary-button {
   width: 100%;
   padding: 14px 24px;
-  background: #2c5aa0;
+  background: var(--am-primary-gradient, linear-gradient(135deg, #28a745, #20c997));
   color: white;
   border: none;
   border-radius: 8px;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s, transform 0.1s;
+  transition: all 0.2s ease;
 }
 
 .primary-button:hover:not(:disabled) {
-  background: #1a4480;
+  background: linear-gradient(135deg, #218838, #1ea085);
   transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
 }
 
 .primary-button:disabled {
-  background: #cccccc;
+  background: #e9ecef;
+  color: #6c757d;
   cursor: not-allowed;
   transform: none;
 }
@@ -163,7 +165,7 @@
 .link-button {
   background: none;
   border: none;
-  color: #2c5aa0;
+  color: var(--am-primary, #28a745);
   cursor: pointer;
   font-weight: 600;
   text-decoration: underline;
@@ -177,7 +179,7 @@
 }
 
 .link-button:hover {
-  color: #1a4480;
+  color: #218838;
 }
 
 .forgot-password-link {
@@ -279,9 +281,9 @@
 
 .secondary-button {
   padding: 10px 20px;
-  border: 2px solid #2c5aa0;
+  border: 2px solid var(--am-primary, #28a745);
   background: white;
-  color: #2c5aa0;
+  color: var(--am-primary, #28a745);
   border-radius: 6px;
   cursor: pointer;
   font-size: 14px;
@@ -291,7 +293,9 @@
 }
 
 .secondary-button:hover:not(:disabled) {
-  background: #f0f8ff;
+  background: #f8fff8;
+  border-color: #218838;
+  color: #218838;
 }
 
 .secondary-button:disabled {
@@ -300,12 +304,12 @@
 }
 
 .success-message {
-  color: #28a745;
+  color: var(--am-primary, #28a745);
   font-size: 14px;
   margin-top: 12px;
   padding: 12px;
-  background: #d4edda;
-  border: 1px solid #c3e6cb;
+  background: rgba(40, 167, 69, 0.1);
+  border: 1px solid rgba(40, 167, 69, 0.3);
   border-radius: 6px;
   line-height: 1.4;
 }

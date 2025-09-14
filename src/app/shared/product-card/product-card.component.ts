@@ -36,6 +36,15 @@ export class ProductCardComponent {
   /** Evento emitido cuando se solicita editar el producto */
   @Output() editProduct = new EventEmitter<Product | LegacyProduct>();
   
+  /** Evento emitido cuando se hace click en el producto para ver detalles */
+  @Output() viewProduct = new EventEmitter<Product | LegacyProduct>();
+  
+  /** Evento emitido cuando se agrega al carrito */
+  @Output() buyProduct = new EventEmitter<{product: Product | LegacyProduct, quantity: number}>();
+  
+  /** Evento emitido cuando se compra inmediatamente */
+  @Output() buyNow = new EventEmitter<{product: Product | LegacyProduct, quantity: number}>();
+  
   /** Estado de error de imagen para fallback */
   imageError = false;
 
@@ -239,15 +248,43 @@ export class ProductCardComponent {
    * Maneja la acción de agregar al carrito
    * 
    * @description Se ejecuta cuando el usuario hace clic en "Agregar al Carrito".
-   * Por ahora solo registra la acción en consola. TODO: Implementar carrito real.
+   * Emite el evento buyProduct con el producto y cantidad por defecto.
    */
-  onAddToCart(): void {
-    console.log('Agregando al carrito:', {
-      id: this.getProductId(),
-      name: this.getName(),
-      price: this.getPrice()
+  onAddToCart(event?: Event): void {
+    if (event) {
+      event.stopPropagation(); // Prevenir propagación al hacer click en el botón
+    }
+    
+    // Emitir evento con producto y cantidad por defecto
+    this.buyProduct.emit({
+      product: this.product,
+      quantity: 1
     });
-    // TODO: Implementar funcionalidad real de carrito
+  }
+
+  /**
+   * Maneja la acción de comprar ahora
+   * 
+   * @description Se ejecuta cuando el usuario hace clic en "Comprar".
+   * Emite el evento buyNow con el producto y cantidad por defecto.
+   */
+  onBuyNow(event?: Event): void {
+    if (event) {
+      event.stopPropagation(); // Prevenir propagación al hacer click en el botón
+    }
+    
+    // Emitir evento con producto y cantidad por defecto
+    this.buyNow.emit({
+      product: this.product,
+      quantity: 1
+    });
+  }
+
+  /**
+   * Maneja el click en el producto para ver detalles
+   */
+  onViewProduct(): void {
+    this.viewProduct.emit(this.product);
   }
 
   /**

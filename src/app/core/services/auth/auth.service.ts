@@ -424,8 +424,8 @@ export class AuthService {
    */
   isAgricultor(): boolean {
     const currentRole = this.hasRole('AGRICULTOR');
-    console.log('isAgricultor - hasRole result:', currentRole); // DEBUG
-    console.log('isAgricultor - checking role AGRICULTOR against:', localStorage.getItem(this.userRolKey)); // DEBUG
+ //   console.log('isAgricultor - hasRole result:', currentRole); // DEBUG
+ //   console.log('isAgricultor - checking role AGRICULTOR against:', localStorage.getItem(this.userRolKey)); // DEBUG
     return currentRole;
   }
 
@@ -441,12 +441,12 @@ export class AuthService {
     const isLoggedIn = this.isLoggedIn();
     const isAgricultor = this.isAgricultor();
     const currentUser = this.currentUserSubject.value;
-    
+    /** 
     console.log('canManageProducts - isLoggedIn:', isLoggedIn); // DEBUG
     console.log('canManageProducts - isAgricultor:', isAgricultor); // DEBUG
     console.log('canManageProducts - currentUser:', currentUser); // DEBUG
     console.log('canManageProducts - localStorage rol:', localStorage.getItem(this.userRolKey)); // DEBUG
-    
+    /** */
     return isLoggedIn && isAgricultor;
   }
 
