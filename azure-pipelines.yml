@@ -10,11 +10,11 @@ pr:
 
 # ===== VARIABLES =====
 variables:
-  azureSubscription: 'sc-azure-agromarket'   # Service Connection ARM (nombre exacto)
-  artifactName: 'frontend'                   # Nombre del artefacto publicado
-  zipName: 'frontend.zip'                    # Nombre del ZIP a desplegar
-  feRoot: '.'                                # Carpeta raíz del proyecto Angular (ajusta si aplica)
-  app_prd: 'az-agromarket-front'             # Azure Web App (Front)
+  azureSubscription: 'sc-azure-agromarket'
+  artifactName: 'frontend'
+  zipName: 'frontend.zip'
+  feRoot: '.'
+  app_prd: 'az-agromarket-front'
 
 # ===== AGENTE (self-hosted Windows) =====
 pool:
@@ -48,49 +48,61 @@ stages:
         echo Build.SourcesDirectory=$(Build.SourcesDirectory)
       displayName: 'Mostrar versiones y paths'
 
-    # ===== SIN LÍMITES: eliminar budgets SOLO en CI (no toca tu repo remoto) =====
+    # ===== SIN LÍMITES: eliminar budgets SOLO en CI (robusto) =====
     - powershell: |
         $ErrorActionPreference = 'Stop'
         Set-StrictMode -Version Latest
+
+        function Remove-PropIfExists([object]$obj, [string]$propName) {
+          if ($null -ne $obj) {
+            $prop = $obj.PSObject.Properties.Match($propName)
+            if ($prop -and $prop.Count -gt 0) {
+              $obj.PSObject.Properties.Remove($propName) | Out-Null
+            }
+          }
+        }
 
         $root = "$(feRoot)"
         $angularPath = Join-Path $root 'angular.json'
         if (-not (Test-Path $angularPath)) { throw "No se encontró angular.json en '$root'." }
 
         $json = Get-Content $angularPath -Raw | ConvertFrom-Json
-
         if (-not $json.projects) { throw "No se encontró la sección 'projects' en angular.json." }
 
-        # Recorre TODOS los proyectos y TODAS las configuraciones, y elimina 'budgets'
         foreach ($projProp in $json.projects.PSObject.Properties) {
           $projName = $projProp.Name
           $proj     = $projProp.Value
+          if ($null -eq $proj) { continue }
 
-          if ($proj.architect -and $proj.architect.build) {
+          # Soportar esquemas nuevos y antiguos: targets.build o architect.build
+          $build = $null
+          if ($proj.targets -and $proj.targets.build) {
+            $build = $proj.targets.build
+          } elseif ($proj.architect -and $proj.architect.build) {
             $build = $proj.architect.build
+          }
 
-            # budgets al nivel base (si existieran)
-            if ($build.budgets) {
-              $build.PSObject.Properties.Remove('budgets') | Out-Null
-            }
+          if ($null -eq $build) { continue }
 
-            # budgets en cada configuración (production, development, etc.)
-            if ($build.configurations) {
-              foreach ($cfgProp in $build.configurations.PSObject.Properties) {
-                $cfg = $cfgProp.Value
-                if ($cfg -and $cfg.budgets) {
-                  $cfg.PSObject.Properties.Remove('budgets') | Out-Null
-                }
-              }
+          # Eliminar budgets al nivel base
+          Remove-PropIfExists -obj $build -propName 'budgets'
+
+          # Eliminar budgets en cada configuración (production, development, etc.)
+          $cfgs = $null
+          if ($build.configurations) { $cfgs = $build.configurations }
+          elseif ($build.options -and $build.options.configurations) { $cfgs = $build.options.configurations } # por si acaso
+
+          if ($cfgs) {
+            foreach ($cfgProp in $cfgs.PSObject.Properties) {
+              $cfg = $cfgProp.Value
+              Remove-PropIfExists -obj $cfg -propName 'budgets'
             }
           }
         }
 
-        # Guarda cambios SOLO en el workspace del agente
         ($json | ConvertTo-Json -Depth 100) | Set-Content $angularPath -Encoding UTF8
 
-        Write-Host "Budgets ELIMINADOS de angular.json SOLO para CI:"
-        Get-Content $angularPath | Write-Host
+        Write-Host "Budgets ELIMINADOS de angular.json SOLO para CI (sin errores si no existían)."
       displayName: 'Eliminar budgets (sin límites) solo en CI'
 
     # Instala dependencias y compila Angular (con diagnósticos)
