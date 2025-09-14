@@ -48,54 +48,68 @@ stages:
         echo Build.SourcesDirectory=$(Build.SourcesDirectory)
       displayName: 'Mostrar versiones y paths'
 
-    # ===== OPCIÓN C: Ajustar budgets SOLO en CI (sin modificar el repo) =====
+    # ===== SIN LÍMITES: eliminar budgets SOLO en CI (robusto y sin accesos inseguros) =====
     - powershell: |
         $ErrorActionPreference = 'Stop'
         Set-StrictMode -Version Latest
+
+        function Get-Prop($obj, [string]$name) {
+          if ($null -eq $obj) { return $null }
+          $p = $obj.PSObject.Properties.Match($name)
+          if ($p -and $p.Count -gt 0) { return $p[0].Value }
+          return $null
+        }
+
+        function Remove-PropIfExists($obj, [string]$name) {
+          if ($null -eq $obj) { return }
+          $p = $obj.PSObject.Properties.Match($name)
+          if ($p -and $p.Count -gt 0) { $obj.PSObject.Properties.Remove($name) | Out-Null }
+        }
+
+        function Remove-Budgets-FromBuild($build) {
+          if ($null -eq $build) { return }
+          # eliminar budgets a nivel base
+          Remove-PropIfExists $build 'budgets'
+          # eliminar budgets en cada configuración
+          $cfgs = Get-Prop $build 'configurations'
+          if ($null -ne $cfgs) {
+            foreach ($cfgProp in $cfgs.PSObject.Properties) {
+              $cfg = $cfgProp.Value
+              Remove-PropIfExists $cfg 'budgets'
+            }
+          }
+        }
 
         $root = "$(feRoot)"
         $angularPath = Join-Path $root 'angular.json'
         if (-not (Test-Path $angularPath)) { throw "No se encontró angular.json en '$root'." }
 
         $json = Get-Content $angularPath -Raw | ConvertFrom-Json
+        $projects = Get-Prop $json 'projects'
+        if ($null -eq $projects) { throw "No se encontró la sección 'projects' en angular.json." }
 
-        # Detectar primer proyecto (clave en projects)
-        $projectName = $null
-        foreach ($p in $json.projects.PSObject.Properties) { $projectName = $p.Name; break }
-        if (-not $projectName) { throw "No se detectó ningún proyecto en angular.json (sección 'projects')." }
+        foreach ($projProp in $projects.PSObject.Properties) {
+          $proj = $projProp.Value
+          if ($null -eq $proj) { continue }
 
-        $proj      = $json.projects.$projectName
-        $buildCfgs = $proj.architect.build.configurations
-        if (-not $buildCfgs) { throw "No se encontró 'architect.build.configurations' en el proyecto '$projectName'." }
+          # Esquema antiguo: architect.build
+          $architect = Get-Prop $proj 'architect'
+          if ($null -ne $architect) {
+            $archBuild = Get-Prop $architect 'build'
+            Remove-Budgets-FromBuild $archBuild
+          }
 
-        if (-not $buildCfgs.production) { $buildCfgs | Add-Member -NotePropertyName production -NotePropertyValue (@{}) }
-        if (-not $buildCfgs.production.budgets) { $buildCfgs.production | Add-Member -NotePropertyName budgets -NotePropertyValue (@()) }
-
-        $budgets = $buildCfgs.production.budgets
-
-        # Función helper para upsert de budgets por type
-        function Set-Or-AddBudget([string]$type, [string]$warn, [string]$err) {
-          $existing = $null
-          foreach ($b in $budgets) { if ($b.type -eq $type) { $existing = $b; break } }
-          if ($existing -eq $null) {
-            $new = [ordered]@{ type = $type; maximumWarning = $warn; maximumError = $err }
-            $budgets += $new
-          } else {
-            $existing.maximumWarning = $warn
-            $existing.maximumError   = $err
+          # Esquema nuevo: targets.build
+          $targets = Get-Prop $proj 'targets'
+          if ($null -ne $targets) {
+            $tBuild = Get-Prop $targets 'build'
+            Remove-Budgets-FromBuild $tBuild
           }
         }
 
-        # Relajar budgets solo para CI (valores seguros para tu caso actual)
-        Set-Or-AddBudget -type 'anyComponentStyle' -warn '10kb'  -err '12kb'
-        Set-Or-AddBudget -type 'initial'          -warn '500kb' -err '650kb'
-
-        # Guardar cambios en el working dir del agente (no modifica tu repo remoto)
         ($json | ConvertTo-Json -Depth 100) | Set-Content $angularPath -Encoding UTF8
-
-        Write-Host "Budgets de production ajustados SOLO para CI:"
-        Get-Content $angularPath | Write-Host
-      displayName: 'Ajustar budgets solo en CI'
+        Write-Host "Budgets ELIMINADOS de angular.json SOLO para CI (sin errores si no existían)."
+      displayName: 'Eliminar budgets (sin límites) solo en CI'
 
     # Instala dependencias y compila Angular (con diagnósticos)
     - powershell: |

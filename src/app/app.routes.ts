@@ -39,6 +39,44 @@ export const routes: Routes = [
     canActivate: [agricultorGuard]
   },
   {
+    path: 'checkout',
+    redirectTo: 'checkout/shipping',
+    pathMatch: 'full'
+  },
+  {
+    path: 'checkout/shipping',
+    loadComponent: () => import('./features/checkout/checkout-shipping/checkout-shipping.page').then(m => m.CheckoutShippingPage)
+  },
+  {
+    path: 'checkout/summary',
+    loadComponent: () => import('./features/checkout/checkout-summary/checkout-summary.page').then(m => m.CheckoutSummaryPage)
+  },
+  {
+    path: 'checkout/payment',
+    loadComponent: () => import('./features/checkout/checkout-payment/checkout-payment.page').then(m => m.CheckoutPaymentPage)
+  },
+  {
+    path: 'checkout/success',
+    loadComponent: () => import('./features/checkout/checkout-success/checkout-success.page').then(m => m.CheckoutSuccessPage)
+  },
+  {
+    path: 'checkout/failure',
+    loadComponent: () => import('./features/checkout/checkout-failure/checkout-failure.page').then(m => m.CheckoutFailurePage)
+  },
+  {
+    path: 'profile',
+    loadChildren: () => import('./features/profile/profile.routes').then(m => m.PROFILE_ROUTES),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'faq',
+    loadComponent: () => import('./features/faq/faq.page').then(m => m.FaqPage)
+  },
+  {
+    path: 'support',
+    loadComponent: () => import('./features/support/support.page').then(m => m.SupportPage)
+  },
+  {
     path: '**',
     redirectTo: ''
   }
