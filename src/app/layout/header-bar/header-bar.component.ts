@@ -219,7 +219,7 @@ export class HeaderBarComponent implements OnDestroy {
   onOrdersClick(): void {
     this.showUserDropdown = false;
     this.showLoggedUserDropdown = false;
-    this.router.navigate(['/orders']);
+    this.router.navigate(['/profile/purchases']);
   }
 
   /**

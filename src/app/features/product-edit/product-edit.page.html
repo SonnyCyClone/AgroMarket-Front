@@ -22,11 +22,11 @@
         <div class="title-section">
           <h1 id="page-title" class="page-title">
             <span class="title-icon">✏️</span>
-            Editar Producto
+            Actualizar Producto
           </h1>
           @if (product()) {
             <p class="page-subtitle">
-              Editando: {{ product()?.variedad }}
+              Actualizando: {{ product()?.variedad }}
             </p>
           }
         </div>
@@ -280,15 +280,35 @@
               @if (imagePreview()) {
                 <div class="image-preview-container">
                   <img [src]="imagePreview()" alt="Preview del producto" class="image-preview">
-                  <button 
-                    id="btn-remove-image-edit"
-                    type="button" 
-                    class="remove-image-btn" 
-                    (click)="removeImage()" 
-                    title="Remover imagen"
-                    aria-label="Remover imagen">
-                    <span class="remove-icon">🗑️</span>
-                  </button>
+                  <div class="image-actions">
+                    @if (selectedImageFile()) {
+                      <button 
+                        id="btn-restore-image-edit"
+                        type="button" 
+                        class="restore-image-btn" 
+                        (click)="restoreOriginalImage()" 
+                        title="Restaurar imagen original"
+                        aria-label="Restaurar imagen original">
+                        <span class="restore-icon">↶</span>
+                        Restaurar
+                      </button>
+                    }
+                    <button 
+                      id="btn-remove-image-edit"
+                      type="button" 
+                      class="remove-image-btn" 
+                      (click)="removeImage()" 
+                      title="Remover imagen"
+                      aria-label="Remover imagen">
+                      <span class="remove-icon">🗑️</span>
+                      Quitar
+                    </button>
+                  </div>
+                  @if (selectedImageFile()) {
+                    <div class="image-status">
+                      <span class="new-image-indicator">Nueva imagen seleccionada</span>
+                    </div>
+                  }
                 </div>
               }
 
@@ -297,7 +317,7 @@
                 <input
                   type="file"
                   id="image-upload-edit"
-                  accept="image/*"
+                  accept=".jpg,.jpeg,.png,.gif,.webp"
                   (change)="onImageFileSelected($event)"
                   class="file-input">
                 <label for="image-upload-edit" class="file-label">
@@ -305,7 +325,7 @@
                   <span class="upload-text">
                     {{ imagePreview() ? 'Cambiar imagen' : 'Seleccionar imagen' }}
                   </span>
-                  <small class="upload-hint">JPG, PNG hasta 5MB</small>
+                  <small class="upload-hint">JPG, JPEG, PNG, GIF, WEBP hasta 5MB</small>
                 </label>
               </div>
             </div>
@@ -392,7 +412,7 @@
                 Guardando...
               } @else {
                 <span class="btn-icon">💾</span>
-                Guardar Cambios
+                Actualizar Producto
               }
             </button>
           </div>

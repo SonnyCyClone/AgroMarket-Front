@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { ProductApiService } from '../../core/services/product/product.api';
@@ -36,6 +36,11 @@ export class RegisterProductPage implements OnInit {
   imagePreviewUrl: string | null = null;
   selectedImageFile: File | null = null;
 
+  // Propiedades para modo de edición
+  isEditMode = false;
+  productId: number | null = null;
+  currentProduct: any = null;
+
   monedas = [
     { codigo: 'COP', nombre: 'Peso Colombiano', simbolo: '$' },
     { codigo: 'USD', nombre: 'Dólar Americano', simbolo: 'US$' },
@@ -45,13 +50,27 @@ export class RegisterProductPage implements OnInit {
   constructor(
     private fb: FormBuilder,
     public router: Router,
+    private route: ActivatedRoute,
     private productApiService: ProductApiService,
     private http: HttpClient
   ) {}
 
   ngOnInit(): void {
+    // Detectar si estamos en modo de edición
+    this.route.params.subscribe(params => {
+      if (params['id']) {
+        this.isEditMode = true;
+        this.productId = parseInt(params['id']);
+      }
+    });
+
     this.initForm();
     this.loadInitialData();
+    
+    // Si estamos en modo edición, cargar los datos del producto
+    if (this.isEditMode && this.productId) {
+      this.loadProductData(this.productId);
+    }
   }
 
   private initForm(): void {
@@ -116,6 +135,57 @@ export class RegisterProductPage implements OnInit {
         this.showError('Error cargando los tipos de producto.');
         this.tiposProducto = [];
         this.isLoadingTipos = false;
+      }
+    });
+  }
+
+  /**
+   * Carga los datos de un producto específico para edición
+   * 
+   * @param {number} productId - ID del producto a cargar
+   * @private
+   */
+  private loadProductData(productId: number): void {
+    this.isLoading = true;
+    
+    this.productApiService.getProductById(productId).subscribe({
+      next: (product: any) => {
+        // Rellenar el formulario con los datos del producto
+        this.productForm.patchValue({
+          variedad: product.variedad || '',
+          descripcion: product.descripcion || '',
+          precio: product.precio || 0,
+          moneda: 'COP', // Siempre COP por defecto
+          cantidadDisponible: product.cantidadDisponible || 1,
+          unidadesId: product.unidadesId || null,
+          categoriaId: null, // Se determinará dinámicamente
+          idTipoProducto: product.idTipoProducto || null,
+          imagenUrl: product.imagenUrl || '',
+          activo: product.activo !== false
+        });
+
+        // Si hay imagen, mostrar preview
+        if (product.imagenUrl) {
+          this.imagePreviewUrl = product.imagenUrl;
+        }
+
+        // Encontrar la categoría del tipo de producto y cargar los tipos
+        if (product.idTipoProducto) {
+          // Cargar todos los tipos de producto para poder seleccionar el correcto
+          this.loadTiposProducto(0); // Cargar todos los tipos inicialmente
+        }
+        
+        this.isLoading = false;
+      },
+      error: (error: any) => {
+        console.error('Error cargando datos del producto:', error);
+        this.showError('Error al cargar los datos del producto. Verificar que el ID sea válido.');
+        this.isLoading = false;
+        
+        // Redirigir de vuelta a la gestión de productos después de un error
+        setTimeout(() => {
+          this.router.navigate(['/products/manage']);
+        }, 3000);
       }
     });
   }

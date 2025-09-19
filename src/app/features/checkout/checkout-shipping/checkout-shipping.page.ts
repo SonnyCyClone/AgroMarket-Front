@@ -13,6 +13,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { CheckoutService, ShippingMethod } from '../../../core/services/checkout/checkout.service';
 
 /**
  * Componente de información de envío
@@ -35,33 +36,20 @@ export class CheckoutShippingPage implements OnInit {
   loading = false;
 
   /** Opciones de método de envío */
-  shippingMethods = [
-    {
-      id: 'standard',
-      name: 'Envío Estándar',
-      description: '3-5 días hábiles',
-      price: 15000,
-      estimated: '3-5 días'
-    },
-    {
-      id: 'express',
-      name: 'Envío Express',
-      description: '1-2 días hábiles',
-      price: 25000,
-      estimated: '1-2 días'
-    }
-  ];
+  shippingMethods: ShippingMethod[] = [];
 
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private checkoutService: CheckoutService
   ) {}
 
   /**
    * Inicialización del componente
    */
   ngOnInit(): void {
+    this.shippingMethods = this.checkoutService.getShippingMethods();
     this.initializeForm();
   }
 
@@ -91,6 +79,21 @@ export class CheckoutShippingPage implements OnInit {
       // Instrucciones especiales
       specialInstructions: ['']
     });
+
+    // Cargar datos existentes si los hay
+    this.loadExistingData();
+  }
+
+  /**
+   * Carga datos existentes del servicio de checkout
+   * 
+   * @private
+   */
+  private loadExistingData(): void {
+    const existingData = this.checkoutService.getShippingData();
+    if (existingData) {
+      this.shippingForm.patchValue(existingData);
+    }
   }
 
   /**
@@ -113,8 +116,8 @@ export class CheckoutShippingPage implements OnInit {
     setTimeout(() => {
       const shippingData = this.shippingForm.value;
       
-      // Guardar datos de envío en localStorage
-      localStorage.setItem('agromarket_shipping_data', JSON.stringify(shippingData));
+      // Guardar datos de envío en el servicio
+      this.checkoutService.setShippingData(shippingData);
       
       this.loading = false;
       this.router.navigate(['/checkout/payment']);
@@ -133,7 +136,7 @@ export class CheckoutShippingPage implements OnInit {
    */
   getSelectedShippingPrice(): number {
     const selectedMethod = this.shippingForm.get('shippingMethod')?.value;
-    const method = this.shippingMethods.find(m => m.id === selectedMethod);
+    const method = this.checkoutService.getShippingMethodById(selectedMethod);
     return method ? method.price : 0;
   }
 
@@ -142,7 +145,7 @@ export class CheckoutShippingPage implements OnInit {
    */
   getSelectedShippingMethodName(): string {
     const selectedMethod = this.shippingForm.get('shippingMethod')?.value;
-    const method = this.shippingMethods.find(m => m.id === selectedMethod);
+    const method = this.checkoutService.getShippingMethodById(selectedMethod);
     return method ? method.name : 'Selecciona un método';
   }
 
@@ -153,14 +156,7 @@ export class CheckoutShippingPage implements OnInit {
    * @returns {string} Precio formateado
    */
   formatPrice(price: number): string {
-    if (price === 0) return 'Gratis';
-    
-    return new Intl.NumberFormat('es-CO', {
-      style: 'currency',
-      currency: 'COP',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0
-    }).format(price);
+    return this.checkoutService.formatPrice(price);
   }
 
   /**

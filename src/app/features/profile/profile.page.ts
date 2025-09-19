@@ -5,9 +5,10 @@
  * para navegar a diferentes secciones del perfil del usuario
  */
 
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { AuthService } from '../../core/services/auth/auth.service';
 import { ProfileCard, MockUserProfile } from './profile.models';
 
 @Component({
@@ -23,7 +24,7 @@ import { ProfileCard, MockUserProfile } from './profile.models';
 
       <div class="profile-grid">
         <div 
-          *ngFor="let card of profileCards()" 
+          *ngFor="let card of visibleProfileCards()" 
           class="profile-card"
           (click)="navigateToSection(card.route)"
           (keydown.enter)="navigateToSection(card.route)"
@@ -291,10 +292,33 @@ export class ProfilePage implements OnInit {
       description: 'Revisa tu historial de compras y pedidos',
       icon: '📦',
       route: '/profile/purchases'
+    },
+    {
+      id: 'sales',
+      title: 'Mis Ventas',
+      description: 'Administra tus productos y revisa tus ventas',
+      icon: '💰',
+      route: '/profile/sales'
     }
   ]);
 
-  constructor(private router: Router) {}
+  // Computed para filtrar las tarjetas según el rol del usuario
+  visibleProfileCards = computed(() => {
+    const allCards = this.profileCards();
+    const isAgricultor = this.authService.isAgricultor();
+    
+    // Si no es agricultor, filtrar la tarjeta de "Mis Ventas"
+    if (!isAgricultor) {
+      return allCards.filter(card => card.id !== 'sales');
+    }
+    
+    return allCards;
+  });
+
+  constructor(
+    private router: Router,
+    private authService: AuthService
+  ) {}
 
   ngOnInit(): void {
     // Verificar si hay una sección favorita guardada

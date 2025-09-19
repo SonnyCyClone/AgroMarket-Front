@@ -17,6 +17,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { Product } from "../../core/models/product.model";
 import { environment } from "../../../environments/environment";
+import { ToastService } from "../../core/services/toast/toast.service";
 
 /**
  * Interfaz para Unidades de medida
@@ -70,6 +71,7 @@ export class ProductEditPage implements OnInit {
   private http = inject(HttpClient);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private toastService = inject(ToastService);
 
   /**
    * ID del producto a editar
@@ -113,14 +115,19 @@ export class ProductEditPage implements OnInit {
   selectedCategoriaId = signal<number | null>(null);
 
   /**
-   * Preview de la imagen seleccionada
-   */
-  imagePreview = signal<string>('');
-
-  /**
    * Archivo de imagen seleccionado
    */
   selectedImageFile = signal<File | null>(null);
+
+  /**
+   * URL de imagen actual (antes de cambios)
+   */
+  currentImageUrl = signal<string>('');
+
+  /**
+   * Preview de la imagen seleccionada o actual
+   */
+  imagePreview = signal<string>('');
 
   /**
    * Mensajes de estado
@@ -164,10 +171,10 @@ export class ProductEditPage implements OnInit {
       
     } catch (error) {
       console.error('Error cargando producto:', error);
-      this.showError.set('Error al cargar el producto. Verifica que existe.');
+      this.toastService.error('Error al cargar el producto. Verifica que existe.', 'Error de Carga');
       setTimeout(() => {
         this.router.navigate(['/products/manage']);
-      }, 3000);
+      }, 2000);
     } finally {
       this.isLoading.set(false);
     }
@@ -178,9 +185,10 @@ export class ProductEditPage implements OnInit {
    */
   private initializeForm() {
     const productData = this.product();
+    const currentProductId = this.productId() || productData?.id || 0;
     
     this.editForm = this.fb.group({
-      id: [productData?.id || 0],
+      id: [currentProductId],
       variedad: [
         productData?.variedad || '',
         [Validators.required, Validators.maxLength(100)]
@@ -209,10 +217,14 @@ export class ProductEditPage implements OnInit {
       activo: [productData?.activo !== false]
     });
 
-    // Configurar preview de imagen existente
+    // Configurar imagen actual y preview
     if (productData?.imagenUrl) {
+      this.currentImageUrl.set(productData.imagenUrl);
       this.imagePreview.set(productData.imagenUrl);
     }
+
+    // Resetear imagen seleccionada al inicializar
+    this.selectedImageFile.set(null);
 
     // Cargar la categoría del tipo de producto si existe
     if (productData?.idTipoProducto) {
@@ -295,42 +307,84 @@ export class ProductEditPage implements OnInit {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
     
-    if (file) {
-      // Validar tamaño (5MB máximo)
-      if (file.size > 5 * 1024 * 1024) {
-        this.showError.set('La imagen no puede ser mayor a 5MB');
-        return;
-      }
+    if (!file) {
+      return;
+    }
 
-      // Validar tipo
-      if (!file.type.startsWith('image/')) {
-        this.showError.set('Solo se permiten archivos de imagen');
-        return;
-      }
+    // Limpiar errores previos
+    this.showError.set('');
 
-      this.selectedImageFile.set(file);
-      
-      // Crear preview
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.imagePreview.set(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+    // Validar tipo de archivo
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+    if (!validTypes.includes(file.type)) {
+      this.toastService.error('Formato de imagen no permitido. Use JPG, PNG, GIF o WEBP.', 'Error de Archivo');
+      this.clearImageInput();
+      return;
+    }
+
+    // Validar tamaño (5MB máximo)
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    if (file.size > maxSize) {
+      this.toastService.error('La imagen supera el tamaño máximo de 5 MB.', 'Archivo Muy Grande');
+      this.clearImageInput();
+      return;
+    }
+
+    // Guardar archivo seleccionado
+    this.selectedImageFile.set(file);
+    
+    // Crear preview
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.imagePreview.set(reader.result as string);
+    };
+    reader.onerror = () => {
+      this.toastService.error('Error al leer el archivo de imagen.', 'Error de Lectura');
+      this.clearImageInput();
+    };
+    reader.readAsDataURL(file);
+  }
+
+  /**
+   * Limpia el input de archivo y resetea referencias
+   */
+  private clearImageInput() {
+    const fileInput = document.getElementById('image-upload-edit') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = '';
+    }
+    this.selectedImageFile.set(null);
+  }
+
+  /**
+   * Remueve la imagen seleccionada y restaura la imagen actual
+   */
+  removeImage() {
+    this.selectedImageFile.set(null);
+    this.clearImageInput();
+    
+    // Restaurar imagen actual o limpiar preview si no había imagen
+    const currentUrl = this.currentImageUrl();
+    if (currentUrl) {
+      this.imagePreview.set(currentUrl);
+    } else {
+      this.imagePreview.set('');
+      this.editForm.patchValue({ imagenUrl: '' });
     }
   }
 
   /**
-   * Remueve la imagen seleccionada
+   * Restaura la imagen original (cancela cambios de imagen)
    */
-  removeImage() {
+  restoreOriginalImage() {
     this.selectedImageFile.set(null);
-    this.imagePreview.set('');
-    this.editForm.patchValue({ imagenUrl: '' });
+    this.clearImageInput();
     
-    // Limpiar el input file
-    const fileInput = document.getElementById('image-upload-edit') as HTMLInputElement;
-    if (fileInput) {
-      fileInput.value = '';
+    const currentUrl = this.currentImageUrl();
+    if (currentUrl) {
+      this.imagePreview.set(currentUrl);
+    } else {
+      this.imagePreview.set('');
     }
   }
 
@@ -369,54 +423,74 @@ export class ProductEditPage implements OnInit {
       try {
         const formData = new FormData();
         const formValues = this.editForm.value;
+        const expectedId = this.productId();
 
-        // Agregar campos según contrato PUT API exacto del sample
-        formData.append('Id', formValues.id.toString());
-        formData.append('Variedad', formValues.variedad);
-        formData.append('Descripcion', formValues.descripcion);
-        formData.append('Precio', formValues.precio.toString());
-        formData.append('CantidadDisponible', formValues.cantidadDisponible.toString());
-        formData.append('UnidadesId', formValues.unidadesId.toString());
-        formData.append('IdTipoProducto', formValues.idTipoProducto.toString());
-        formData.append('Activo', formValues.activo.toString());
-
-        // Manejar imagen según el sample API
-        if (this.selectedImageFile()) {
-          formData.append('Imagen', this.selectedImageFile()!);
-        } else {
-          // Si no hay imagen nueva, enviar ImagenUrl como undefined para mantener la actual
-          formData.append('ImagenUrl', 'undefined');
+        // Validar que el ID del formulario coincida con el ID de la ruta
+        if (!expectedId || formValues.id !== expectedId) {
+          throw new Error(`Error de validación: ID del producto no coincide. Esperado: ${expectedId}, Formulario: ${formValues.id}`);
         }
 
-        // Realizar llamada PUT al API
+        // Agregar campos según contrato PUT API exacto (nombres exactos del backend)
+        formData.append('Id', formValues.id.toString());
+        formData.append('Variedad', formValues.variedad || '');
+        formData.append('Descripcion', formValues.descripcion || '');
+        formData.append('Precio', formValues.precio?.toString() || '0');
+        formData.append('CantidadDisponible', formValues.cantidadDisponible?.toString() || '0');
+        formData.append('UnidadesId', formValues.unidadesId?.toString() || '');
+        formData.append('IdTipoProducto', formValues.idTipoProducto?.toString() || '');
+        formData.append('Activo', formValues.activo ? 'true' : 'false');
+
+        // Manejar imagen según especificación del backend
+        const selectedFile = this.selectedImageFile();
+        if (selectedFile) {
+          // Usuario seleccionó nueva imagen - enviar archivo
+          formData.append('ImagenUrl', selectedFile, selectedFile.name);
+        } else {
+          // No cambió imagen - mantener la actual si existe
+          const currentUrl = this.currentImageUrl();
+          if (currentUrl) {
+            // Solo enviar URL si el backend lo requiere explícitamente
+            // Si no, omitir el campo para mantener imagen actual
+            // formData.append('ImagenUrl', currentUrl);
+          }
+        }
+
+        // Realizar llamada PUT al API (sin Content-Type manual)
         await firstValueFrom(this.http.put(`${this.API_BASE_PRODUCT}/api/Producto`, formData));
 
-        this.showMessage.set('¡Producto actualizado exitosamente!');
+        this.toastService.success('Imagen y producto actualizados correctamente.', 'Actualización Exitosa');
         
-        // Redirigir después de 2 segundos
+        // Actualizar estado después del éxito
+        if (selectedFile) {
+          // Si se subió nueva imagen, actualizar la URL actual con el preview
+          this.currentImageUrl.set(this.imagePreview());
+          this.selectedImageFile.set(null);
+          this.clearImageInput();
+        }
+        
+        // Redirigir después de 1.5 segundos
         setTimeout(() => {
           this.router.navigate(['/products/manage']);
-        }, 2000);
+        }, 1500);
 
       } catch (error: any) {
         console.error('Error actualizando producto:', error);
         
-        let mensaje = 'Error al actualizar el producto. ';
+        let mensaje = 'No se pudo actualizar el producto. Intenta nuevamente.';
         if (error.error?.message) {
-          mensaje += error.error.message;
-        } else if (error.message) {
-          mensaje += error.message;
-        } else {
-          mensaje += 'Por favor, verifica los datos e intenta nuevamente.';
+          mensaje = error.error.message;
+        } else if (error.message && !error.message.includes('ID del producto no coincide')) {
+          mensaje = error.message;
         }
         
-        this.showError.set(mensaje);
+        this.toastService.error(mensaje, 'Error de Actualización');
       } finally {
         this.isSubmitting.set(false);
       }
     } else {
       // Marcar todos los campos como touched para mostrar errores
       this.markFormGroupTouched();
+      this.toastService.error('Completa los campos obligatorios.', 'Formulario Incompleto');
     }
   }
 

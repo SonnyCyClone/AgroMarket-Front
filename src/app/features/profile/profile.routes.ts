@@ -29,4 +29,8 @@ export const PROFILE_ROUTES: Routes = [
     path: 'purchases', 
     loadComponent: () => import('./sections/purchases.page').then(c => c.PurchasesPage) 
   },
+  { 
+    path: 'sales', 
+    loadComponent: () => import('./sales/sales.page').then(c => c.SalesPage) 
+  },
 ];

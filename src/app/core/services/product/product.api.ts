@@ -68,6 +68,19 @@ export class ProductApiService {
   }
 
   /**
+   * Obtiene un producto específico por su ID
+   * 
+   * @description Delega al nuevo servicio para obtener los datos de un producto específico.
+   * Útil para cargar datos en formularios de edición.
+   * 
+   * @param {number} id - ID del producto a obtener
+   * @returns {Observable<any>} Observable con el producto específico
+   */
+  getProductById(id: number): Observable<any> {
+    return this.newProductApi.getProductById<any>(id);
+  }
+
+  /**
    * Crea un nuevo producto
    * 
    * @description Convierte el request legacy al formato esperado

@@ -15,6 +15,7 @@ import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } 
 import { Router } from '@angular/router';
 import { CartService } from '../../../core/services/cart/cart.service';
 import { LoggingService } from '../../../core/services/logging/logging.service';
+import { CheckoutService } from '../../../core/services/checkout/checkout.service';
 
 /**
  * Tipos de métodos de pago disponibles en Colombia
@@ -53,6 +54,9 @@ export interface PaymentResult {
 export class CheckoutPaymentPage implements OnInit {
   /** Servicio de carrito */
   private cartService = inject(CartService);
+  
+  /** Servicio de checkout */
+  private checkoutService = inject(CheckoutService);
   
   /** Servicio de logging */
   private logger = inject(LoggingService);
@@ -235,14 +239,39 @@ export class CheckoutPaymentPage implements OnInit {
   }
 
   /**
-   * Simula el procesamiento de pago con diferentes escenarios
+   * Simula el procesamiento de pago con reglas determinísticas
    */
   private async simulatePaymentProcessing(): Promise<PaymentResult> {
     // Simular tiempo de procesamiento
     await new Promise(resolve => setTimeout(resolve, 2000 + Math.random() * 3000));
 
-    // Simular diferentes resultados (80% éxito, 20% fallo)
-    const isSuccess = Math.random() > 0.2;
+    const formValues = this.paymentForm.value;
+
+    // Validación de fecha de expiración para tarjetas
+    if (this.selectedPaymentMethod === 'credit' || this.selectedPaymentMethod === 'debit') {
+      if (this.isCardExpired(formValues.cardExpiry)) {
+        return {
+          success: false,
+          errorCode: 'EXPIRED_CARD',
+          message: 'La fecha de vencimiento está vencida.'
+        };
+      }
+    }
+
+    // Reglas determinísticas específicas para falla
+    const failureResult = this.checkFailureRules(formValues);
+    if (failureResult) {
+      return failureResult;
+    }
+
+    // Reglas determinísticas específicas para éxito
+    const successResult = this.checkSuccessRules(formValues);
+    if (successResult) {
+      return successResult;
+    }
+
+    // Si no cae en ninguna regla específica, usar lógica aleatoria (70% éxito)
+    const isSuccess = Math.random() > 0.3;
     
     if (isSuccess) {
       return {
@@ -271,6 +300,168 @@ export class CheckoutPaymentPage implements OnInit {
   }
 
   /**
+   * Verifica si una tarjeta está vencida
+   */
+  private isCardExpired(expiryMMYY: string): boolean {
+    if (!expiryMMYY || !expiryMMYY.includes('/')) return false;
+    
+    const [mm, yy] = expiryMMYY.split('/');
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth() + 1; // JavaScript months are 0-indexed
+    
+    // Convertir YY a YYYY
+    let yyyy = parseInt(yy);
+    if (yyyy < 50) {
+      yyyy += 2000; // 00-49 -> 2000-2049
+    } else {
+      yyyy += 1900; // 50-99 -> 1950-1999
+    }
+    
+    const expiryYear = yyyy;
+    const expiryMonth = parseInt(mm);
+    
+    // Comparar con septiembre 2025
+    const cutoffYear = 2025;
+    const cutoffMonth = 9;
+    
+    if (expiryYear < cutoffYear) return true;
+    if (expiryYear === cutoffYear && expiryMonth < cutoffMonth) return true;
+    
+    return false;
+  }
+
+  /**
+   * Verifica reglas específicas que deben fallar
+   */
+  private checkFailureRules(formValues: any): PaymentResult | null {
+    switch (this.selectedPaymentMethod) {
+      case 'pse':
+        // BBVA Colombia con documento específico
+        if (formValues.pseBank === 'bbva' && 
+            formValues.pseUserType === 'natural' &&
+            formValues.pseDocumentType === 'cc' &&
+            formValues.pseDocumentNumber === '111111111111111') {
+          return {
+            success: false,
+            errorCode: 'PSE_TRANSACTION_FAILED',
+            message: 'Error en la transacción PSE. Verificar datos.'
+          };
+        }
+        break;
+
+      case 'bancolombia':
+        // Usuario y contraseña específicos
+        if (formValues.bancolombiaUser === 'pepito.perez' &&
+            formValues.bancolombiaPassword === 'Javeriana2025*') {
+          return {
+            success: false,
+            errorCode: 'BANCOLOMBIA_AUTH_FAILED',
+            message: 'Credenciales inválidas en Bancolombia.'
+          };
+        }
+        break;
+
+      case 'credit':
+        // Tarjeta Visa específica
+        if (formValues.cardType === 'visa' &&
+            formValues.cardNumber === '4111111111111111' &&
+            formValues.cardExpiry === '12/30' &&
+            formValues.cardCVV === '123' &&
+            formValues.cardName.toLowerCase().includes('pepito perez')) {
+          return {
+            success: false,
+            errorCode: 'CARD_DECLINED',
+            message: 'Tarjeta rechazada por el banco emisor.'
+          };
+        }
+        break;
+
+      case 'debit':
+        // Tarjeta débito Visa específica
+        if (formValues.cardType === 'visa' &&
+            formValues.cardNumber === '4231111111111111' &&
+            formValues.cardExpiry === '12/30' &&
+            formValues.cardCVV === '123' &&
+            formValues.cardName.toLowerCase().includes('pepito perez')) {
+          return {
+            success: false,
+            errorCode: 'DEBIT_DECLINED',
+            message: 'Tarjeta débito rechazada. Verificar fondos.'
+          };
+        }
+        break;
+    }
+    
+    return null;
+  }
+
+  /**
+   * Verifica reglas específicas que deben tener éxito
+   */
+  private checkSuccessRules(formValues: any): PaymentResult | null {
+    switch (this.selectedPaymentMethod) {
+      case 'pse':
+        // Bancolombia con documento específico
+        if (formValues.pseBank === 'bancolombia' && 
+            formValues.pseUserType === 'natural' &&
+            formValues.pseDocumentType === 'cc' &&
+            formValues.pseDocumentNumber === '222222222222222') {
+          return {
+            success: true,
+            transactionId: this.generateTransactionId(),
+            message: 'Pago PSE procesado exitosamente'
+          };
+        }
+        break;
+
+      case 'bancolombia':
+        // Usuario y contraseña que deben funcionar
+        if (formValues.bancolombiaUser === 'isabela.caceres' &&
+            formValues.bancolombiaPassword === 'Javeriana2026*') {
+          return {
+            success: true,
+            transactionId: this.generateTransactionId(),
+            message: 'Pago Bancolombia procesado exitosamente'
+          };
+        }
+        break;
+
+      case 'credit':
+        // Tarjeta MasterCard específica
+        if (formValues.cardType === 'mastercard' &&
+            formValues.cardNumber === '5254133674403564' &&
+            formValues.cardExpiry === '12/30' &&
+            formValues.cardCVV === '123' &&
+            formValues.cardName.toLowerCase().includes('isabela caceres')) {
+          return {
+            success: true,
+            transactionId: this.generateTransactionId(),
+            message: 'Pago con tarjeta de crédito exitoso'
+          };
+        }
+        break;
+
+      case 'debit':
+        // Tarjeta débito que debe funcionar (nota: número igual a la de crédito en especificación)
+        if (formValues.cardType === 'visa' &&
+            formValues.cardNumber === '5254133674403564' &&
+            formValues.cardExpiry === '12/30' &&
+            formValues.cardCVV === '123' &&
+            formValues.cardName.toLowerCase().includes('isabela caceres')) {
+          return {
+            success: true,
+            transactionId: this.generateTransactionId(),
+            message: 'Pago con tarjeta débito exitoso'
+          };
+        }
+        break;
+    }
+    
+    return null;
+  }
+
+  /**
    * Genera un ID de transacción simulado
    */
   private generateTransactionId(): string {
@@ -287,6 +478,9 @@ export class CheckoutPaymentPage implements OnInit {
     
     // Limpiar carrito solo en caso de éxito
     this.cartService.clearCart();
+    
+    // Limpiar todos los datos del checkout para reiniciar el flujo
+    this.checkoutService.clearAllCheckoutData();
     
     // Redirigir a página de éxito con datos de transacción
     this.router.navigate(['/checkout/success'], {
@@ -353,15 +547,33 @@ export class CheckoutPaymentPage implements OnInit {
   }
 
   /**
+   * Obtiene el precio de envío actual
+   */
+  getShippingPrice(): number {
+    return this.checkoutService.currentShippingPrice();
+  }
+
+  /**
+   * Obtiene el nombre del método de envío actual
+   */
+  getShippingMethodName(): string {
+    return this.checkoutService.currentShippingMethodName() || 'Envío Estándar';
+  }
+
+  /**
+   * Calcula el total del pedido incluyendo envío
+   */
+  getTotalWithShipping(): number {
+    const cartTotal = this.cartSummary$().total;
+    const shippingCost = this.getShippingPrice();
+    return cartTotal + shippingCost;
+  }
+
+  /**
    * Formatea el precio en pesos colombianos
    */
   formatPrice(price: number): string {
-    return new Intl.NumberFormat('es-CO', {
-      style: 'currency',
-      currency: 'COP',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0
-    }).format(price);
+    return this.checkoutService.formatPrice(price);
   }
 
   /**
