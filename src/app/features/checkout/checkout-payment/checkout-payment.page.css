@@ -88,9 +88,21 @@
 /* ==================== CONTENT LAYOUT ==================== */
 .payment-content {
   display: grid;
-  grid-template-columns: 1fr 2fr;
+  grid-template-columns: 350px 1fr;
   gap: 30px;
   align-items: start;
+}
+
+.payment-left-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.payment-right-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 /* ==================== ORDER SUMMARY ==================== */
@@ -365,21 +377,16 @@
     gap: 20px;
   }
   
-  .order-summary {
-    position: static;
-    order: 2;
-  }
-  
-  .payment-methods {
+  .payment-left-panel {
     order: 1;
   }
   
-  .payment-form {
-    order: 3;
+  .payment-right-panel {
+    order: 2;
   }
   
-  .payment-actions {
-    order: 4;
+  .order-summary {
+    position: static;
   }
   
   .payment-header {

@@ -30,7 +30,7 @@ export const routes: Routes = [
   },
   {
     path: 'products/edit/:id',
-    loadComponent: () => import('./features/register-product/register-product.page').then(m => m.RegisterProductPage),
+    loadComponent: () => import('./features/product-edit/product-edit.page').then(m => m.ProductEditPage),
     canActivate: [agricultorGuard]
   },
   {
