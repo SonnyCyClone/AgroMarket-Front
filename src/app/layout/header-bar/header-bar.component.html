@@ -23,7 +23,7 @@
     </div>
     
     <div class="search-section">
-      <app-search-bar></app-search-bar>
+      <app-search-bar (searchEvent)="onSearch($event)"></app-search-bar>
     </div>
     
     <div class="actions-section">

@@ -59,7 +59,7 @@ export class ProductApiService extends BaseHttpService {
   /**
    * Obtiene el catálogo completo de productos
    * 
-   * @description Realiza GET /api/Producto para obtener todos los productos.
+   * @description Realiza GET /api/v1/Producto para obtener todos los productos.
    * La respuesta incluye productos activos e inactivos; el filtrado por 'activo'
    * debe realizarse en el componente consumidor.
    * 
@@ -75,13 +75,13 @@ export class ProductApiService extends BaseHttpService {
    * ```
    */
   getProducts<T>(): Observable<T> {
-    return this.get<T>('/api/Producto');
+    return this.get<T>('/api/v1/Producto');
   }
 
   /**
    * Obtiene un producto específico por su ID
    * 
-   * @description Realiza GET /api/Producto/{id} para obtener los datos completos
+   * @description Realiza GET /api/v1/Producto/{id} para obtener los datos completos
    * de un producto específico. Útil para cargar datos en formularios de edición.
    * 
    * @template T - Tipo de dato esperado (típicamente Product)
@@ -100,7 +100,7 @@ export class ProductApiService extends BaseHttpService {
    * ```
    */
   getProductById<T>(id: number): Observable<T> {
-    return this.get<T>(`/api/Producto/${id}`);
+    return this.get<T>(`/api/v1/Producto/${id}`);
   }
 
   /**
@@ -132,7 +132,7 @@ export class ProductApiService extends BaseHttpService {
    * ```
    */
   createProduct<T>(productData: FormData): Observable<T> {
-    return this.postFormData<T>('/api/Producto', productData);
+    return this.postFormData<T>('/api/v1/Producto', productData);
   }
 
   /**
@@ -165,7 +165,7 @@ export class ProductApiService extends BaseHttpService {
    * ```
    */
   updateProduct<T>(productData: FormData): Observable<T> {
-    return this.putFormData<T>('/api/Producto', productData);
+    return this.putFormData<T>('/api/v1/Producto', productData);
   }
 
   /**
@@ -189,7 +189,7 @@ export class ProductApiService extends BaseHttpService {
    * ```
    */
   getCategories<T>(): Observable<T> {
-    return this.get<T>('/api/Categoria');
+    return this.get<T>('/api/v1/Categoria');
   }
 
   /**
@@ -215,7 +215,7 @@ export class ProductApiService extends BaseHttpService {
    * ```
    */
   getProductTypes<T>(categoriaId: number = 2): Observable<T> {
-    return this.get<T>(`/api/TipoProducto/Categoria/${categoriaId}`);
+    return this.get<T>(`/api/v1/TipoProducto/Categoria/${categoriaId}`);
   }
 
   /**
@@ -239,6 +239,28 @@ export class ProductApiService extends BaseHttpService {
    * ```
    */
   getUnits<T>(): Observable<T> {
-    return this.get<T>('/api/Uniodades'); // Mantener typo del endpoint real
+    return this.get<T>('/api/v1/Unidades'); // Mantener typo del endpoint real
+  }
+
+  /**
+   * Busca productos por término de búsqueda
+   * 
+   * @description Realiza GET /api/v1/Producto/buscar/{termino} para obtener productos
+   * que coincidan con el término de búsqueda. Según la especificación Postman.
+   * 
+   * @template T - Tipo de dato esperado (típicamente Product[])
+   * @param {string} searchTerm - Término de búsqueda
+   * @returns {Observable<T>} Observable con el array de productos encontrados
+   * 
+   * @example
+   * ```typescript
+   * this.productApi.searchProducts<Product[]>('tomate').subscribe(products => {
+   *   const activeProducts = products.filter(p => p.activo);
+   *   console.log('Productos encontrados:', activeProducts);
+   * });
+   * ```
+   */
+  searchProducts<T>(searchTerm: string): Observable<T> {
+    return this.get<T>(`/api/v1/Producto/buscar/${encodeURIComponent(searchTerm)}`);
   }
 }

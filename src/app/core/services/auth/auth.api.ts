@@ -70,24 +70,24 @@ export class AuthApiService extends BaseHttpService {
       Email: email,
       Password: password
     };
-    return this.post<LoginResponse>('/api/Usuario/login', body);
+    return this.post<LoginResponse>('/api/v1/Auth/login', body);
   }
 
   // Legacy methods for compatibility
   login(credentials: LoginRequest): Observable<AuthResponse> {
-    return this.post<AuthResponse>('/api/auth/login', credentials);
+    return this.post<AuthResponse>('/api/v1/Auth/login', credentials);
   }
 
   register(userData: RegisterRequest): Observable<AuthResponse> {
-    return this.post<AuthResponse>('/api/auth/register', userData);
+    return this.post<AuthResponse>('/api/v1/Auth/register', userData);
   }
 
   refreshToken(): Observable<AuthResponse> {
-    return this.post<AuthResponse>('/api/auth/refresh', {});
+    return this.post<AuthResponse>('/api/v1/Auth/refresh', {});
   }
 
   logout(): Observable<void> {
-    return this.post<void>('/api/auth/logout', {});
+    return this.post<void>('/api/v1/Auth/logout', {});
   }
 
   /**

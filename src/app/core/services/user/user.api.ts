@@ -65,7 +65,7 @@ export class UserApiService {
    * ```
    */
   crearUsuario(userData: CrearUsuarioRequest): Observable<CrearUsuarioResponse> {
-    return this.authApiService.postPublic<CrearUsuarioResponse>('/api/Usuario', userData);
+    return this.authApiService.postPublic<CrearUsuarioResponse>('/api/v1/Auth/register', userData);
   }
 
   /**
@@ -91,7 +91,7 @@ export class UserApiService {
    * ```
    */
   listarTiposDocumento(): Observable<TipoDocumento[]> {
-    return this.authApiService.getPublic<TipoDocumento[]>('/api/TipoDocumento');
+    return this.authApiService.getPublic<TipoDocumento[]>('/api/v1/TipoDocumento');
   }
 
   /**
@@ -116,6 +116,6 @@ export class UserApiService {
    * ```
    */
   listarRoles(): Observable<any[]> {
-    return this.authApiService.getPublic<any[]>('/api/Usuario/roles');
+    return this.authApiService.getPublic<any[]>('/api/v1/Auth/roles');
   }
 }

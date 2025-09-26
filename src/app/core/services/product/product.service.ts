@@ -50,7 +50,7 @@ export class ProductService {
   /**
    * Obtiene todos los productos activos desde el API real
    * 
-   * @description Realiza GET /api/Producto y filtra solo productos activos.
+   * @description Realiza GET /api/v1/Producto y filtra solo productos activos.
    * Retorna un Observable que emite el array de productos procesados.
    * 
    * @returns {Observable<Product[]>} Observable con productos activos
@@ -68,13 +68,49 @@ export class ProductService {
       map((products: Product[]) => {
         // Filtrar solo productos activos
         const activeProducts = products.filter(product => product.activo);
-        // Debug log removed
         return activeProducts;
       }),
       catchError(error => {
         console.error('Error obteniendo productos del API, usando datos mock:', error);
         // En caso de error, retornar productos mock convertidos
         return of(this.convertMockToApiFormat());
+      })
+    );
+  }
+
+  /**
+   * Busca productos por término de búsqueda
+   * 
+   * @description Realiza GET /api/v1/Producto/buscar/{termino} y filtra solo productos activos.
+   * Si el término está vacío, retorna todos los productos activos.
+   * 
+   * @param {string} searchTerm - Término de búsqueda
+   * @returns {Observable<Product[]>} Observable con productos que coinciden con la búsqueda
+   * 
+   * @example
+   * ```typescript
+   * this.productService.searchProducts('tomate').subscribe(products => {
+   *   console.log('Productos encontrados:', products);
+   *   this.searchResults = products;
+   * });
+   * ```
+   */
+  searchProducts(searchTerm: string): Observable<Product[]> {
+    // Si el término está vacío, retornar todos los productos
+    if (!searchTerm || searchTerm.trim().length === 0) {
+      return this.getProducts();
+    }
+
+    return this.productApiService.searchProducts<Product[]>(searchTerm.trim()).pipe(
+      map((products: Product[]) => {
+        // Filtrar solo productos activos
+        const activeProducts = products.filter(product => product.activo);
+        return activeProducts;
+      }),
+      catchError(error => {
+        console.error('Error buscando productos del API:', error);
+        // En caso de error, retornar array vacío
+        return of([]);
       })
     );
   }

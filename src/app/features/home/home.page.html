@@ -66,6 +66,19 @@
             </span>
           </div>
         </div>
+
+        <!-- Información de búsqueda activa -->
+        <div *ngIf="currentSearchTerm" class="search-info">
+          <div class="search-content">
+            <span class="search-icon">🔍</span>
+            <span class="search-text">
+              Resultados para: "<strong>{{ currentSearchTerm }}</strong>"
+            </span>
+            <button class="clear-search-button" (click)="clearSearch()" aria-label="Limpiar búsqueda">
+              <span>✕ Mostrar todos</span>
+            </button>
+          </div>
+        </div>
         
         <div class="product-grid" *ngIf="products.length > 0">
           <app-product-card 

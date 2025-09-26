@@ -7,10 +7,10 @@ export const environment = {
   production: false,
   
   /** URL base para servicios de productos (catálogo, registro, etc.) */
-  apiBaseUrlProduct: 'https://az-agromarket-back-product.azurewebsites.net',
+  apiBaseUrlProduct: 'https://az-agromarket-back.azurewebsites.net',
   
   /** URL base para servicios de autenticación (login, registro usuarios, etc.) */
-  apiBaseUrlAuth: 'https://az-agromarket-back-auth.azurewebsites.net',
+  apiBaseUrlAuth: 'https://az-agromarket-back.azurewebsites.net',
   
   /** 
    * Obtiene la URL base para servicios de productos

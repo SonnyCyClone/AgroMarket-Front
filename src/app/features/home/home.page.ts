@@ -9,12 +9,13 @@
  * @since 2.0.0
  */
 
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ViewChild } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { SidebarFilterComponent } from '../../shared/sidebar-filter/sidebar-filter.component';
 import { ProductCardComponent } from '../../shared/product-card/product-card.component';
 import { FloatingCartComponent } from '../../shared/floating-cart/floating-cart.component';
@@ -22,6 +23,8 @@ import { EditProductModalComponent, EditProductModalResult } from '../../shared/
 import { ProductService } from '../../core/services/product/product.service';
 import { AuthService } from '../../core/services/auth/auth.service';
 import { CartService } from '../../core/services/cart/cart.service';
+import { SearchService } from '../../core/services/search/search.service';
+import { ToastService } from '../../core/services/toast/toast.service';
 import { Product, LegacyProduct } from '../../core/models/product.model';
 
 /**
@@ -38,7 +41,7 @@ import { Product, LegacyProduct } from '../../core/models/product.model';
   templateUrl: './home.page.html',
   styleUrl: './home.page.css'
 })
-export class HomePage implements OnInit {
+export class HomePage implements OnInit, OnDestroy {
   /** Array de productos activos obtenidos del API */
   products: Product[] = [];
   
@@ -56,6 +59,15 @@ export class HomePage implements OnInit {
   
   /** Indica si mostrar el mensaje informativo */
   showInfoMessage = false;
+
+  /** Término de búsqueda actual */
+  currentSearchTerm = '';
+
+  /** Indica si se está realizando una búsqueda */
+  isSearching = false;
+
+  /** Suscripción al servicio de búsqueda */
+  private searchSubscription?: Subscription;
 
   /** Referencia al componente de carrito flotante */
   @ViewChild(FloatingCartComponent) floatingCart?: FloatingCartComponent;
@@ -78,6 +90,8 @@ export class HomePage implements OnInit {
    * @param {MatSnackBar} snackBar - Servicio de notificaciones de Angular Material
    * @param {Router} router - Router para navegación
    * @param {CartService} cartService - Servicio del carrito de compras
+   * @param {SearchService} searchService - Servicio de búsqueda global
+   * @param {ToastService} toastService - Servicio de notificaciones toast
    */
   constructor(
     private productService: ProductService,
@@ -86,14 +100,17 @@ export class HomePage implements OnInit {
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
     private router: Router,
-    private cartService: CartService
+    private cartService: CartService,
+    private searchService: SearchService,
+    private toastService: ToastService
   ) {}
 
   /**
    * Inicialización del componente
    * 
    * @description Se ejecuta después de que Angular inicializa las propiedades
-   * del componente. Carga los productos desde el API real y verifica mensajes.
+   * del componente. Carga los productos desde el API real, verifica mensajes
+   * y se suscribe a los cambios de búsqueda.
    */
   ngOnInit(): void {
     // Verificar si hay mensajes en query parameters
@@ -110,7 +127,23 @@ export class HomePage implements OnInit {
       }
     });
     
+    // Suscribirse a los cambios de búsqueda
+    this.searchSubscription = this.searchService.searchTerm$.subscribe(searchTerm => {
+      this.currentSearchTerm = searchTerm;
+      this.performSearch(searchTerm);
+    });
+    
+    // Cargar productos inicialmente
     this.loadProducts();
+  }
+
+  /**
+   * Limpia las suscripciones al destruir el componente
+   */
+  ngOnDestroy(): void {
+    if (this.searchSubscription) {
+      this.searchSubscription.unsubscribe();
+    }
   }
 
   /**
@@ -148,6 +181,69 @@ export class HomePage implements OnInit {
    */
   retryLoadProducts(): void {
     this.loadProducts();
+  }
+
+  /**
+   * Realiza una búsqueda de productos
+   * 
+   * @description Ejecuta la búsqueda usando el término proporcionado.
+   * Si el término está vacío, carga todos los productos.
+   * 
+   * @param {string} searchTerm - Término de búsqueda
+   * @private
+   */
+  private performSearch(searchTerm: string): void {
+    this.isSearching = true;
+    this.loading = true;
+    this.errorMessage = '';
+
+    if (searchTerm.trim().length === 0) {
+      // Si no hay término, cargar todos los productos
+      this.loadProducts();
+      this.isSearching = false;
+      return;
+    }
+
+    this.productService.searchProducts(searchTerm).subscribe({
+      next: (products) => {
+        this.products = products.filter(product => product.activo);
+        
+        if (this.products.length === 0) {
+          // No se encontraron productos
+          this.infoMessage = `No encontramos productos para '${searchTerm}'. Prueba con otro término.`;
+          this.showInfoMessage = true;
+          
+          // Ocultar mensaje después de 8 segundos
+          setTimeout(() => {
+            this.showInfoMessage = false;
+          }, 8000);
+        } else {
+          this.showInfoMessage = false;
+        }
+        
+        this.sortProducts();
+        this.loading = false;
+        this.isSearching = false;
+      },
+      error: (error) => {
+        console.error('Error al buscar productos:', error);
+        this.toastService.error('Ocurrió un error al buscar productos. Intenta nuevamente.', 'Error de Búsqueda');
+        this.loading = false;
+        this.isSearching = false;
+      }
+    });
+  }
+
+  /**
+   * Limpia la búsqueda activa y muestra todos los productos
+   * 
+   * @description Elimina el término de búsqueda del servicio global
+   * y recarga todos los productos disponibles.
+   */
+  clearSearch(): void {
+    this.searchService.setSearchTerm('');
+    this.loadProducts();
+    this.showInfoMessage = false;
   }
 
   /**

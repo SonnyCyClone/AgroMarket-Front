@@ -16,6 +16,7 @@ import { Router } from '@angular/router';
 import { SearchBarComponent } from '../../shared/search-bar/search-bar.component';
 import { AuthService } from '../../core/services/auth/auth.service';
 import { CartService } from '../../core/services/cart/cart.service';
+import { SearchService } from '../../core/services/search/search.service';
 import { Subscription } from 'rxjs';
 import { User } from '../../core/models/auth.model';
 
@@ -56,6 +57,7 @@ export class HeaderBarComponent implements OnDestroy {
   constructor(
     private authService: AuthService,
     private cartService: CartService,
+    private searchService: SearchService,
     private router: Router
   ) {
     this.userSubscription = this.authService.currentUser$.subscribe(user => {
@@ -140,6 +142,24 @@ export class HeaderBarComponent implements OnDestroy {
    */
   onLogoClick(): void {
     this.router.navigate(['/']);
+  }
+
+  /**
+   * Maneja los eventos de búsqueda del search-bar
+   * 
+   * @description Procesa el término de búsqueda y actualiza el estado global.
+   * Si está en la página principal, actualiza los resultados. Si no, navega al inicio.
+   * 
+   * @param {string} searchTerm - Término de búsqueda emitido por el search-bar
+   */
+  onSearch(searchTerm: string): void {
+    // Actualizar el término de búsqueda en el servicio global
+    this.searchService.setSearchTerm(searchTerm);
+    
+    // Si no estamos en la página principal, navegar allí
+    if (this.router.url !== '/') {
+      this.router.navigate(['/']);
+    }
   }
 
   /**
