@@ -80,7 +80,7 @@ export class AuthApiService extends BaseHttpService {
    * ```
    */
   login<T>(credentials: any): Observable<T> {
-    return this.post<T>('/api/Usuario/login', credentials);
+    return this.post<T>('/api/v1/Auth/login', credentials);
   }
 
   /**

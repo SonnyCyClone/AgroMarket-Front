@@ -156,22 +156,33 @@ export class ProductEditPage implements OnInit {
   }
 
   /**
-   * Carga el producto a editar
+   * Carga el producto a editar usando API v1
    */
   private async loadProduct(productId: number) {
     try {
       this.isLoading.set(true);
       
+      // Usar la API v1 según especificación Postman
       const product = await firstValueFrom(
-        this.http.get<Product>(`${this.API_BASE_PRODUCT}/api/Producto/${productId}`)
+        this.http.get<Product>(`${this.API_BASE_PRODUCT}/api/v1/Producto/${productId}`)
       );
       
       this.product.set(product);
       this.initializeForm();
       
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error cargando producto:', error);
-      this.toastService.error('Error al cargar el producto. Verifica que existe.', 'Error de Carga');
+      
+      // Manejar diferentes tipos de error con mensajes específicos
+      if (error.status === 404) {
+        this.toastService.error('No fue posible cargar el producto. Intenta nuevamente.', 'Producto No Encontrado');
+      } else if (error.status >= 500) {
+        this.toastService.error('No fue posible cargar el producto. Intenta nuevamente.', 'Error del Servidor');
+      } else {
+        this.toastService.error('No fue posible cargar el producto. Intenta nuevamente.', 'Error de Conexión');
+      }
+      
+      // Redirigir después de mostrar el error
       setTimeout(() => {
         this.router.navigate(['/products/manage']);
       }, 2000);
@@ -239,8 +250,8 @@ export class ProductEditPage implements OnInit {
     try {
       // Cargar unidades y categorías en paralelo
       const [unidadesResponse, categoriasResponse] = await Promise.all([
-        firstValueFrom(this.http.get<Unidad[]>(`${this.API_BASE_PRODUCT}/api/Uniodades`)),
-        firstValueFrom(this.http.get<Categoria[]>(`${this.API_BASE_PRODUCT}/api/Categoria`))
+        firstValueFrom(this.http.get<Unidad[]>(`${this.API_BASE_PRODUCT}/api/v1/Unidades`)),
+        firstValueFrom(this.http.get<Categoria[]>(`${this.API_BASE_PRODUCT}/api/v1/Categoria`))
       ]);
 
       this.unidades.set(unidadesResponse || []);
@@ -264,7 +275,7 @@ export class ProductEditPage implements OnInit {
     for (const categoria of categorias) {
       try {
         const tipos = await firstValueFrom(
-          this.http.get<TipoProducto[]>(`${this.API_BASE_PRODUCT}/api/TipoProducto/Categoria/${categoria.id}`)
+          this.http.get<TipoProducto[]>(`${this.API_BASE_PRODUCT}/api/v1/TipoProducto/Categoria/${categoria.id}`)
         );
         
         const tipoActual = tipos?.find(t => t.id === productData.idTipoProducto);
@@ -290,7 +301,7 @@ export class ProductEditPage implements OnInit {
     if (categoriaId) {
       try {
         const tipos = await firstValueFrom(
-          this.http.get<TipoProducto[]>(`${this.API_BASE_PRODUCT}/api/TipoProducto/Categoria/${categoriaId}`)
+          this.http.get<TipoProducto[]>(`${this.API_BASE_PRODUCT}/api/v1/TipoProducto/Categoria/${categoriaId}`)
         );
         this.tiposProducto.set(tipos || []);
       } catch (error) {
@@ -456,7 +467,7 @@ export class ProductEditPage implements OnInit {
         }
 
         // Realizar llamada PUT al API (sin Content-Type manual)
-        await firstValueFrom(this.http.put(`${this.API_BASE_PRODUCT}/api/Producto`, formData));
+        await firstValueFrom(this.http.put(`${this.API_BASE_PRODUCT}/api/v1/Producto`, formData));
 
         this.toastService.success('Imagen y producto actualizados correctamente.', 'Actualización Exitosa');
         
