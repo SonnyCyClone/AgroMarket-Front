@@ -43,7 +43,7 @@ export class AuthApiService extends BaseHttpService {
    * @protected
    */
   protected getBaseUrl(): string {
-    return environment.getAuthApiUrl();
+    return environment.api.authBase;
   }
 
   /**

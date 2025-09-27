@@ -101,29 +101,36 @@
                   class="quantity-btn decrease"
                   [id]="'decrease-' + item.id"
                   (click)="decrementQuantity(item.id)"
+                  [disabled]="item.quantity <= 1"
                   [attr.aria-label]="'Disminuir cantidad de ' + getProductName(item.product)"
+                  [title]="item.quantity <= 1 ? 'La cantidad mínima es 1' : ''"
                 >
                   −
                 </button>
                 <input 
-                  type="number"
+                  type="text"
                   class="quantity-input"
                   [id]="'quantity-' + item.id"
                   [value]="item.quantity"
-                  min="1"
-                  max="99"
-                  (change)="updateQuantity(item.id, +$event.target.value)"
+                  readonly
+                  tabindex="0"
                   [attr.aria-label]="'Cantidad de ' + getProductName(item.product)"
+                  (keydown)="onQuantityKeyDown($event)"
                 >
                 <button 
                   class="quantity-btn increase"
                   [id]="'increase-' + item.id"
                   (click)="incrementQuantity(item.id)"
+                  [disabled]="item.quantity >= getProductStock(item.product)"
                   [attr.aria-label]="'Aumentar cantidad de ' + getProductName(item.product)"
+                  [title]="item.quantity >= getProductStock(item.product) ? 'Cantidad máxima: ' + getProductStock(item.product) : ''"
                 >
                   +
                 </button>
               </div>
+              <small class="stock-info">
+                Stock disponible: {{ getProductStock(item.product) }}
+              </small>
             </div>
 
             <!-- Precio total del item -->

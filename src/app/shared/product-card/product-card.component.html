@@ -3,20 +3,21 @@
   
   Componente reutilizable que muestra información de producto en formato tarjeta.
   Compatible con productos API (nuevo formato) y legacy (formato anterior).
-  Incluye manejo robusto de imágenes con fallback a placeholder.
+  Diseño original con manejo condicional de imágenes.
 -->
 <div class="product-card" (click)="onViewProduct()">
-  <div class="product-image-container">
-    <img 
-      *ngIf="!imageError && getImageUrl()"
-      [src]="getImageUrl()" 
-      [alt]="getName()"
-      class="product-image"
-      (error)="onImageError($event)"
-    >
-    <div *ngIf="imageError || !getImageUrl()" class="placeholder-image">
-      <span>Imagen no disponible</span>
-    </div>
+  <div class="am-card__image">
+    <ng-container *ngIf="getImageUrl(); else noImage">
+      <img [src]="getImageUrl()"
+           alt="Imagen del producto"
+           (error)="imageError = true"
+           loading="lazy"
+           id="product-card__img" />
+    </ng-container>
+    <ng-template #noImage>
+      <div class="am-card__placeholder">Imagen no disponible</div>
+    </ng-template>
+    
     <div *ngIf="hasDiscount" class="discount-badge">
       -{{ getDiscountPercent() }}%
     </div>
@@ -35,27 +36,19 @@
   </div>
   
   <div class="product-info">
-    <!-- Línea 1: Variedad -->
-    <h3 class="product-name" [title]="getName()">{{ getName() }}</h3>
+    <!-- Product Name -->
+    <h3 id="product-card__name">{{ getName() }}</h3>
     
-    <!-- Línea 2: Disponible N unidades -->
-    <p class="product-availability">Disponible: {{ getQuantity() }} {{ getUnitName() }}</p>
+    <!-- Available Quantity (including unit) -->
+    <p id="product-card__stock">Cantidad: {{ getQuantity() }} {{ getQuantity() === 1 ? 'Unidad' : 'Unidades' }}</p>
     
-    <!-- Línea 3: Descripción (máx 1-2 líneas con ellipsis) -->
-    <p class="product-description" [title]="getDescription()">{{ getDescription() }}</p>
+    <!-- Description -->
+    <p id="product-card__desc">{{ getDescripcion() }}</p>
     
-    <!-- Línea 4: Precio COP formateado -->
-    <div class="price-section">
-      <div *ngIf="hasDiscount" class="price-container">
-        <span class="current-price">{{ formatPrice(discountedPrice) }}</span>
-        <span class="original-price">{{ formatPrice(getPrice()) }}</span>
-      </div>
-      <div *ngIf="!hasDiscount" class="price-container">
-        <span class="current-price">{{ formatPrice(getPrice()) }}</span>
-      </div>
-    </div>
+    <!-- Price -->
+    <p id="product-card__price">{{ formatPrice(getPrice()) }}</p>
     
-    <!-- Botones de acción (solo si no es modo edición) -->
+    <!-- Action buttons -->
     <div *ngIf="!canEdit" class="action-buttons">
       <button 
         [id]="'btn-addcart-' + getProductId()"

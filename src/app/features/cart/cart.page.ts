@@ -80,6 +80,46 @@ export class CartPage implements OnInit, OnDestroy {
   private loadCartData(): void {
     this.cartItems = this.cartService.items();
     this.cartSummary = this.cartService.summary();
+    
+    // Validar stock y ajustar cantidades si es necesario
+    this.validateCartStock();
+  }
+
+  /**
+   * Valida el stock de todos los productos en el carrito
+   * y ajusta las cantidades si exceden el stock disponible
+   * 
+   * @private
+   */
+  private validateCartStock(): void {
+    let needsAdjustment = false;
+    
+    this.cartItems.forEach(item => {
+      const stockDisponible = this.getProductStock(item.product);
+      
+      if (item.quantity > stockDisponible) {
+        needsAdjustment = true;
+        const productName = this.getProductName(item.product);
+        
+        if (stockDisponible > 0) {
+          // Ajustar a stock disponible
+          this.updateQuantity(item.id, stockDisponible);
+          this.snackBar.open(
+            `Hemos actualizado la cantidad según el stock disponible (antes: ${item.quantity}, ahora: ${stockDisponible}) - ${productName}`,
+            'Cerrar',
+            { duration: 6000 }
+          );
+        } else {
+          // Sin stock, eliminar del carrito
+          this.removeItem(item.id);
+          this.snackBar.open(
+            `"${productName}" ya no tiene stock disponible y ha sido eliminado del carrito.`,
+            'Cerrar',
+            { duration: 5000 }
+          );
+        }
+      }
+    });
   }
 
   /**
@@ -135,6 +175,17 @@ export class CartPage implements OnInit, OnDestroy {
   incrementQuantity(itemId: string): void {
     const item = this.cartItems.find(i => i.id === itemId);
     if (item) {
+      const stockDisponible = this.getProductStock(item.product);
+      
+      if (item.quantity >= stockDisponible) {
+        this.snackBar.open(
+          'Has alcanzado el stock disponible para este producto.',
+          'Cerrar',
+          { duration: 4000 }
+        );
+        return;
+      }
+      
       this.updateQuantity(itemId, item.quantity + 1);
     }
   }
@@ -147,6 +198,14 @@ export class CartPage implements OnInit, OnDestroy {
   decrementQuantity(itemId: string): void {
     const item = this.cartItems.find(i => i.id === itemId);
     if (item) {
+      if (item.quantity <= 1) {
+        this.snackBar.open(
+          'La cantidad mínima es 1',
+          'Cerrar',
+          { duration: 3000 }
+        );
+        return;
+      }
       this.updateQuantity(itemId, item.quantity - 1);
     }
   }
@@ -273,6 +332,48 @@ export class CartPage implements OnInit, OnDestroy {
       return product.description;
     }
     return product.descripcion;
+  }
+
+  /**
+   * Obtiene el stock disponible de un producto
+   * 
+   * @param {Product | LegacyProduct} product - Producto
+   * @returns {number} Stock disponible
+   */
+  getProductStock(product: Product | LegacyProduct): number {
+    if ('cantidadDisponible' in product) {
+      return product.cantidadDisponible;
+    }
+    // Para LegacyProduct no hay stock definido, usar un valor por defecto alto
+    return 999;
+  }
+
+  /**
+   * Maneja eventos de teclado en el campo de cantidad
+   * Previene edición manual, solo permite navegación
+   * 
+   * @param {KeyboardEvent} event - Evento de teclado
+   */
+  onQuantityKeyDown(event: KeyboardEvent): void {
+    // Solo permitir Tab, Shift+Tab, y teclas de navegación
+    const allowedKeys = [
+      'Tab', 
+      'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight',
+      'Home', 'End'
+    ];
+    
+    if (!allowedKeys.includes(event.key) && !event.shiftKey) {
+      event.preventDefault();
+      
+      // Mostrar mensaje informativo la primera vez
+      if (event.key.length === 1) { // Solo para caracteres normales
+        this.snackBar.open(
+          'Use los botones + y - para cambiar la cantidad',
+          'Cerrar',
+          { duration: 3000 }
+        );
+      }
+    }
   }
 
   /**

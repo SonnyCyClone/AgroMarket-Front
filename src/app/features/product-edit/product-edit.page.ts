@@ -138,7 +138,7 @@ export class ProductEditPage implements OnInit {
   /**
    * URLs base para APIs
    */
-  private readonly API_BASE_PRODUCT = environment.apiBaseUrlProduct || 'https://az-agromarket-back-product.azurewebsites.net';
+  private readonly API_BASE_PRODUCT = environment.api.productBase;
 
   async ngOnInit() {
     // Obtener ID del producto de la ruta

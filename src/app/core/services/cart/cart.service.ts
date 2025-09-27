@@ -9,7 +9,7 @@
  * @since 2.0.0
  */
 
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, inject } from '@angular/core';
 import { BehaviorSubject, Observable, distinctUntilChanged, debounceTime } from 'rxjs';
 import { 
   CartItem, 
@@ -24,6 +24,8 @@ import {
   Currency
 } from '../../models/cart.model';
 import { Product, LegacyProduct } from '../../models/product.model';
+import { ProductService } from '../product/product.service';
+import { ToastService } from '../toast/toast.service';
 
 /**
  * Servicio de carrito de compras
@@ -37,6 +39,10 @@ import { Product, LegacyProduct } from '../../models/product.model';
 export class CartService {
   private readonly STORAGE_KEY = 'agromarket_cart';
   private readonly STORAGE_VERSION = '1.0.0';
+  
+  // Inyección de dependencias
+  private readonly productService = inject(ProductService);
+  private readonly toastService = inject(ToastService);
 
   /**
    * Configuración por defecto del carrito
@@ -299,15 +305,6 @@ export class CartService {
         return this.removeFromCart(itemId);
       }
 
-      if (newQuantity > this.config().maxQuantityPerItem) {
-        return {
-          success: false,
-          message: `Cantidad máxima por producto: ${this.config().maxQuantityPerItem}`,
-          cartState: this.cartState,
-          errorCode: 'MAX_QUANTITY_EXCEEDED'
-        };
-      }
-
       const currentState = this.cartStateSignal();
       const itemIndex = currentState.items.findIndex(item => item.id === itemId);
 
@@ -322,6 +319,22 @@ export class CartService {
 
       const existingItem = currentState.items[itemIndex];
       const previousQuantity = existingItem.quantity;
+
+      // Validar stock disponible (reemplaza el límite fijo de 99)
+      const stockDisponible = this.getAvailableStock(existingItem.product);
+      const maxQuantity = Math.max(stockDisponible, 1); // Permitir al menos 1 si hay stock
+
+      if (newQuantity > maxQuantity) {
+        // Mostrar toast informativo
+        this.toastService.warning(`Cantidad máxima por producto: ${maxQuantity} unidades`);
+        
+        return {
+          success: false,
+          message: `Stock disponible: ${stockDisponible} unidades`,
+          cartState: this.cartState,
+          errorCode: 'INSUFFICIENT_STOCK'
+        };
+      }
 
       const updatedItem: CartItem = {
         ...existingItem,
@@ -632,6 +645,22 @@ export class CartService {
    */
   private emitCartUpdate(event: CartUpdateEvent): void {
     this.cartUpdates$.next(event);
+  }
+
+  /**
+   * Obtiene el stock disponible de un producto
+   * 
+   * @description Extrae la cantidad disponible del producto según el formato
+   * @param {Product | LegacyProduct} product - Producto
+   * @returns {number} Stock disponible
+   * @private
+   */
+  private getAvailableStock(product: Product | LegacyProduct): number {
+    if ('cantidadDisponible' in product) {
+      return product.cantidadDisponible;
+    }
+    // Para LegacyProduct no hay stock definido, usar un valor por defecto alto
+    return 999;
   }
 
   /**

@@ -23,6 +23,7 @@ import { Observable } from 'rxjs';
 import { AuthApiService } from '../auth/auth.api';
 import { CrearUsuarioRequest, CrearUsuarioResponse } from '../../models/crear-usuario.model';
 import { TipoDocumento } from '../../models/tipo-documento.model';
+import { environment } from '../../../../environments/environment';
 
 /**
  * Servicio para interactuar con endpoints relacionados con usuarios
@@ -65,7 +66,7 @@ export class UserApiService {
    * ```
    */
   crearUsuario(userData: CrearUsuarioRequest): Observable<CrearUsuarioResponse> {
-    return this.authApiService.postPublic<CrearUsuarioResponse>('/api/v1/Auth/register', userData);
+    return this.authApiService.postPublic<CrearUsuarioResponse>(environment.api.authRegister, userData);
   }
 
   /**
@@ -91,7 +92,7 @@ export class UserApiService {
    * ```
    */
   listarTiposDocumento(): Observable<TipoDocumento[]> {
-    return this.authApiService.getPublic<TipoDocumento[]>('/api/v1/TipoDocumento');
+    return this.authApiService.getPublic<TipoDocumento[]>(environment.api.documentTypes);
   }
 
   /**
@@ -116,6 +117,6 @@ export class UserApiService {
    * ```
    */
   listarRoles(): Observable<any[]> {
-    return this.authApiService.getPublic<any[]>('/api/v1/Auth/roles');
+    return this.authApiService.getPublic<any[]>(environment.api.authRoles);
   }
 }

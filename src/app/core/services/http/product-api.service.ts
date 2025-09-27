@@ -19,8 +19,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { BaseHttpService } from './base-http.service';
 import { environment } from '../../../../environments/environment';
+import { mapToProduct, mapToProductDetailed } from '../../mappers/product.mapper';
+import { Product } from '../../models/product.model';
 
 /**
  * Servicio para operaciones HTTP del dominio de Productos
@@ -47,13 +50,12 @@ export class ProductApiService extends BaseHttpService {
    * Obtiene la URL base para servicios de productos
    * 
    * @description Implementa el método abstracto de BaseHttpService.
-   * Utiliza environment.getProductApiUrl() que verifica overrides en localStorage.
    * 
    * @returns {string} URL base para peticiones de productos
    * @protected
    */
   protected getBaseUrl(): string {
-    return environment.getProductApiUrl();
+    return environment.api.productBase;
   }
 
   /**
@@ -75,7 +77,7 @@ export class ProductApiService extends BaseHttpService {
    * ```
    */
   getProducts<T>(): Observable<T> {
-    return this.get<T>('/api/v1/Producto');
+    return this.get<T>(environment.api.product);
   }
 
   /**
@@ -100,7 +102,41 @@ export class ProductApiService extends BaseHttpService {
    * ```
    */
   getProductById<T>(id: number): Observable<T> {
-    return this.get<T>(`/api/v1/Producto/${id}`);
+    return this.get<T>(environment.api.productById(id));
+  }
+
+  /**
+   * Obtiene catálogo de productos con mapeo seguro
+   * 
+   * @description Versión segura de getProducts que aplica mapeo automático
+   * para proteger contra valores null/undefined que puedan romper la UI.
+   * Todos los productos retornados tendrán campos válidos y valores por defecto.
+   * 
+   * @returns {Observable<Product[]>} Observable con productos mapeados de forma segura
+   */
+  getProductsSafe(): Observable<Product[]> {
+    return this.get<any[]>(environment.api.product).pipe(
+      map((products: any[]) => {
+        // Aplicar mapper seguro a cada producto
+        return (products || []).map((dto: any) => mapToProduct(dto));
+      })
+    );
+  }
+
+  /**
+   * Obtiene producto por ID con mapeo seguro
+   * 
+   * @description Versión segura de getProductById que aplica mapeo automático
+   * para proteger contra valores null/undefined. El producto retornado tendrá
+   * todos los campos válidos con valores por defecto seguros.
+   * 
+   * @param {number} id - ID del producto a obtener
+   * @returns {Observable<Product>} Observable con producto mapeado de forma segura
+   */
+  getProductByIdSafe(id: number): Observable<Product> {
+    return this.get<any>(environment.api.productById(id)).pipe(
+      map((dto: any) => mapToProduct(dto))
+    );
   }
 
   /**
@@ -132,7 +168,7 @@ export class ProductApiService extends BaseHttpService {
    * ```
    */
   createProduct<T>(productData: FormData): Observable<T> {
-    return this.postFormData<T>('/api/v1/Producto', productData);
+    return this.postFormData<T>(environment.api.product, productData);
   }
 
   /**
@@ -165,7 +201,7 @@ export class ProductApiService extends BaseHttpService {
    * ```
    */
   updateProduct<T>(productData: FormData): Observable<T> {
-    return this.putFormData<T>('/api/v1/Producto', productData);
+    return this.putFormData<T>(environment.api.product, productData);
   }
 
   /**
@@ -189,7 +225,7 @@ export class ProductApiService extends BaseHttpService {
    * ```
    */
   getCategories<T>(): Observable<T> {
-    return this.get<T>('/api/v1/Categoria');
+    return this.get<T>(environment.api.category);
   }
 
   /**
@@ -215,7 +251,7 @@ export class ProductApiService extends BaseHttpService {
    * ```
    */
   getProductTypes<T>(categoriaId: number = 2): Observable<T> {
-    return this.get<T>(`/api/v1/TipoProducto/Categoria/${categoriaId}`);
+    return this.get<T>(environment.api.productTypeByCategory(categoriaId));
   }
 
   /**
@@ -239,7 +275,7 @@ export class ProductApiService extends BaseHttpService {
    * ```
    */
   getUnits<T>(): Observable<T> {
-    return this.get<T>('/api/v1/Unidades'); // Mantener typo del endpoint real
+    return this.get<T>(environment.api.units);
   }
 
   /**
@@ -261,6 +297,27 @@ export class ProductApiService extends BaseHttpService {
    * ```
    */
   searchProducts<T>(searchTerm: string): Observable<T> {
-    return this.get<T>(`/api/v1/Producto/buscar/${encodeURIComponent(searchTerm)}`);
+    return this.get<T>(environment.api.productSearch(searchTerm));
+  }
+
+  /**
+   * Métodos helper para acceso a categorías - compatibilidad con código existente
+   */
+  listCategorias<T>(): Observable<T> {
+    return this.getCategories<T>();
+  }
+
+  /**
+   * Métodos helper para acceso a unidades - compatibilidad con código existente
+   */
+  listUnidades<T>(): Observable<T> {
+    return this.getUnits<T>();
+  }
+
+  /**
+   * Métodos helper para acceso a tipos por categoría - compatibilidad con código existente
+   */
+  listTiposByCategoria<T>(categoriaId: number): Observable<T> {
+    return this.getProductTypes<T>(categoriaId);
   }
 }

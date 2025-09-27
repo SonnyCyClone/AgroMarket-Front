@@ -44,7 +44,7 @@ export class HttpService {
    */
   constructor(private http: HttpClient) {
     // Verificar override en localStorage primero, luego usar environment (default a productos)
-    this.baseUrl = localStorage.getItem('agromarket_apiBaseUrl') || environment.getProductApiUrl();
+    this.baseUrl = localStorage.getItem('agromarket_apiBaseUrl') || environment.api.productBase;
   }
 
   /**
