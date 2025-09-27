@@ -4,23 +4,23 @@
  */
 export const environment = {
   production: true,
+  apiBaseUrl: 'https://az-apim-use-agromarket.azure-api.net',
+  apimKey: 'd47baf874da1405a99db2198f4fb95bd',
   
   /** 
    * Configuración centralizada de APIs
-   * Todos los servicios deben usar estos endpoints
+   * Todos los servicios deben usar estos endpoints con apiBaseUrl
    */
   api: {
-    /** URL base para servicios de productos */
-    productBase: 'https://az-agromarket-back.azurewebsites.net',
     /** Endpoint base de productos */
     product: '/api/v1/Producto',
     /** Búsqueda de productos */
     productSearch: (q: string) => `/api/v1/Producto/buscar/${encodeURIComponent(q)}`,
     /** Producto por ID */
     productById: (id: number) => `/api/v1/Producto/${id}`,
+    /** Productos por agricultor */
+    productByAgricultor: '/api/v1/Producto/agricultor',
     
-    /** URL base para servicios de autenticación */
-    authBase: 'https://az-agromarket-back.azurewebsites.net',
     /** Login de usuario */
     authLogin: '/api/v1/Auth/login',
     /** Registro de usuario */

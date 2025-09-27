@@ -21,6 +21,7 @@ import { Observable, map, of, catchError } from 'rxjs';
 import { ProductApiService } from '../http/product-api.service';
 import { Product, LegacyProduct, CreateProductRequest } from '../../models/product.model';
 import { mapToProduct } from '../../mappers/product.mapper';
+import { environment } from '../../../../environments/environment';
 
 /**
  * Servicio para gestión de productos
@@ -117,6 +118,44 @@ export class ProductService {
   }
 
   /**
+   * Obtiene productos por agricultor específico
+   * 
+   * @description Realiza GET /api/v1/Producto/agricultor/{userId} y filtra solo productos activos.
+   * Retorna un Observable que emite el array de productos del agricultor especificado.
+   * 
+   * @param {string} userId - ID del agricultor
+   * @returns {Observable<Product[]>} Observable con productos del agricultor
+   * 
+   * @example
+   * ```typescript
+   * const userId = localStorage.getItem('am_user_id');
+   * if (userId) {
+   *   this.productService.getProductsByAgricultor(userId).subscribe(products => {
+   *     console.log('Productos del agricultor:', products);
+   *     this.myProducts = products;
+   *   });
+   * }
+   * ```
+   */
+  getProductsByAgricultor(userId: string): Observable<Product[]> {
+    if (!userId || userId.trim().length === 0) {
+      console.error('Error: userId es requerido para obtener productos por agricultor');
+      return of([]);
+    }
+    
+    return this.productApiService.getProductsByAgricultor<Product[]>(userId).pipe(
+      map((products: Product[]) => {
+        // Filtrar solo productos activos
+        return products.filter(product => product.activo);
+      }),
+      catchError(error => {
+        console.error('Error obteniendo productos del agricultor desde el API:', error);
+        return of([]);
+      })
+    );
+  }
+
+  /**
    * Crea un nuevo producto usando FormData
    * 
    * @description Envía los datos del producto al endpoint POST /api/Producto
@@ -146,6 +185,12 @@ export class ProductService {
   createProduct(productData: CreateProductRequest): Observable<any> {
     const formData = new FormData();
     
+    // Verificar y obtener userId
+    const userId = localStorage.getItem('am_user_id');
+    if (!userId) {
+      throw new Error('No se encontró el usuario autenticado. Inicia sesión e inténtalo de nuevo.');
+    }
+    
     // Agregar campos según especificación del API
     formData.append('variedad', productData.variedad);
     formData.append('descripcion', productData.descripcion);
@@ -154,6 +199,7 @@ export class ProductService {
     formData.append('unidadesId', productData.unidadesId.toString());
     formData.append('idTipoProducto', productData.idTipoProducto.toString());
     formData.append('activo', productData.activo.toString());
+    formData.append('UserId', userId); // Agregar UserId requerido
     
     // Agregar imagen si existe
     if (productData.imagen) {
@@ -189,6 +235,12 @@ export class ProductService {
   updateProduct(product: Product, newImage?: File | null): Observable<any> {
     const formData = new FormData();
     
+    // Verificar y obtener userId
+    const userId = localStorage.getItem('am_user_id');
+    if (!userId) {
+      throw new Error('No se encontró el usuario autenticado. Inicia sesión e inténtalo de nuevo.');
+    }
+    
     // Agregar ID del producto para la actualización
     formData.append('id', product.id.toString());
     
@@ -200,6 +252,7 @@ export class ProductService {
     formData.append('unidadesId', product.unidadesId.toString());
     formData.append('idTipoProducto', product.idTipoProducto.toString());
     formData.append('activo', product.activo.toString());
+    formData.append('UserId', userId); // Agregar UserId requerido
     
     // Agregar nueva imagen si se proporciona
     if (newImage) {

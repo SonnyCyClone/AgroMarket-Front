@@ -138,7 +138,7 @@ export class ProductEditPage implements OnInit {
   /**
    * URLs base para APIs
    */
-  private readonly API_BASE_PRODUCT = environment.api.productBase;
+  private readonly API_BASE_PRODUCT = environment.apiBaseUrl;
 
   async ngOnInit() {
     // Obtener ID del producto de la ruta
@@ -432,6 +432,14 @@ export class ProductEditPage implements OnInit {
       this.showError.set('');
       
       try {
+        // Verificar que exista usuario autenticado
+        const userId = localStorage.getItem('am_user_id');
+        if (!userId) {
+          this.showError.set('No se encontró el usuario autenticado. Inicia sesión e inténtalo de nuevo.');
+          this.isSubmitting.set(false);
+          return;
+        }
+
         const formData = new FormData();
         const formValues = this.editForm.value;
         const expectedId = this.productId();
@@ -450,6 +458,7 @@ export class ProductEditPage implements OnInit {
         formData.append('UnidadesId', formValues.unidadesId?.toString() || '');
         formData.append('IdTipoProducto', formValues.idTipoProducto?.toString() || '');
         formData.append('Activo', formValues.activo ? 'true' : 'false');
+        formData.append('UserId', userId); // Agregar UserId requerido por APIM
 
         // Manejar imagen según especificación del backend
         const selectedFile = this.selectedImageFile();

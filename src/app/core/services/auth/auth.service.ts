@@ -248,6 +248,11 @@ export class AuthService {
     // Guardar token
     localStorage.setItem(this.tokenKey, response.token);
     
+    // Guardar ID de usuario para operaciones que lo requieren
+    if (response.id) {
+      localStorage.setItem('am_user_id', response.id);
+    }
+    
     // Guardar nombre
     localStorage.setItem(this.userNombreKey, response.nombre);
     
@@ -260,7 +265,7 @@ export class AuthService {
     }
     
     const user: User = {
-      id: 1, // Mock ID since real API doesn't provide it
+      id: response.id || 1, // Usar ID real del API si está disponible
       nombre: `${response.nombre} ${response.apellido}`,
       email: response.email || '',
       rol: response.role // Usar response.role aquí también
@@ -303,6 +308,7 @@ export class AuthService {
     localStorage.removeItem('agromarket_user_nombre');
     localStorage.removeItem('agromarket_user_apellido');
     localStorage.removeItem('agromarket_user_rol');
+    localStorage.removeItem('am_user_id'); // Remover ID de usuario
     
     // Limpiar completamente localStorage para asegurar que no queden datos
     localStorage.clear();
@@ -457,8 +463,8 @@ export class AuthService {
    */
   getServiceConfiguration() {
     return {
-      authBaseUrl: environment.api.authBase,
-      productBaseUrl: environment.api.productBase,
+      authBaseUrl: environment.apiBaseUrl,
+      productBaseUrl: environment.apiBaseUrl,
       overrideAuthUrl: localStorage.getItem('overrideAuthUrl'),
       overrideProductUrl: localStorage.getItem('overrideProductUrl'),
       isProduction: environment.production
