@@ -1,176 +1,429 @@
-# AgroMarket
+# AgroMarket 🌱
 
-AgroMarket es una aplicación moderna de marketplace agrícola construida con Angular 20+ utilizando componentes standalone. La aplicación imita el diseño de listado de productos de Miravia con un diseño responsivo que incluye navegación en el header, barra lateral de filtros, grilla de productos y footer.
+AgroMarket es una plataforma moderna de marketplace agrícola construida con Angular 20+ utilizando componentes standalone. La aplicación conecta productores agrícolas con compradores a través de un sistema completo de ecommerce especializado en productos agrícolas.
 
-## Características
+## ✨ Características Principales
 
-- 🌱 **Marketplace Agrícola**: Especializado en equipos y suministros agrícolas
-- 🛍️ **Catálogo de Productos**: Navegar y ver productos agrícolas con información detallada
-- 🔍 **Búsqueda y Filtros**: Buscar productos y filtrar por categoría, marca y rango de precio
-- 👤 **Autenticación Simulada**: Sistema de login simple con almacenamiento de token en localStorage
-- ➕ **Registro de Productos**: Agregar nuevos productos al marketplace (requiere login)
-- 📱 **Diseño Responsivo**: Layout completamente responsivo para escritorio y móviles
-- 🎨 **UI Moderna**: Diseño limpio y profesional solo con CSS
-- 💰 **Moneda Colombiana**: Precios mostrados en Pesos Colombianos (COP)
+### 🛍️ **Marketplace Completo**
+- 🌾 **Catálogo de Productos**: Navegación y visualización de productos agrícolas con información detallada
+- 🔍 **Búsqueda Avanzada**: Motor de búsqueda inteligente por términos específicos
+- 📊 **Filtros Dinámicos**: Filtrado por categoría, tipo de producto, rango de precio y más
+- 🛒 **Carrito de Compras**: Sistema completo de carrito con persistencia y gestión de cantidades
+- 💳 **Proceso de Checkout**: Flujo de compra con opciones de envío, pago y confirmación
 
-## Stack Tecnológico
+### 👥 **Sistema de Usuarios Multi-Rol**
+- � **Autenticación Robusta**: Login seguro con JWT y Azure APIM
+- 🚜 **Rol Agricultor**: Gestión completa de productos propios, registro y edición
+- 🛒 **Rol Comprador**: Navegación, compra y gestión de órdenes
+- 👤 **Perfiles de Usuario**: Gestión de información personal y configuraciones
 
-- **Angular 20+** con componentes standalone
-- **TypeScript** para seguridad de tipos
-- **CSS Puro** (sin SCSS o librerías de UI)
-- **localStorage** para persistencia de datos
-- **Sin backend requerido** - aplicación completamente del lado del cliente
+### 🌐 **Integración con Azure APIM**
+- ☁️ **API Centralizada**: Todos los endpoints gestionados a través de Azure API Management
+- 🔑 **Autenticación Automática**: Headers de suscripción inyectados automáticamente
+- 🛡️ **Seguridad**: Interceptores para manejo seguro de FormData y autenticación
+- 📈 **Escalabilidad**: Arquitectura preparada para producción en la nube
 
-## Estructura del Proyecto
+### 🎯 **Funcionalidades por Rol**
+
+#### Para Agricultores:
+- ➕ **Registro de Productos**: Crear nuevos productos con imágenes y especificaciones
+- ✏️ **Gestión de Productos**: Editar, activar/desactivar productos propios
+- � **Dashboard Personal**: Ver únicamente productos creados por el agricultor autenticado
+- 📊 **Inventario**: Control de cantidades disponibles y precios
+
+#### Para Compradores:
+- 🛍️ **Explorar Catálogo**: Navegar todos los productos disponibles
+- 🔍 **Búsqueda Personalizada**: Encontrar productos específicos
+- 🛒 **Gestión de Carrito**: Agregar, modificar y eliminar productos del carrito
+- 💫 **Animaciones Interactivas**: Efectos visuales fly-to-cart para mejor UX
+
+### 📱 **Experiencia de Usuario**
+- 🎨 **Diseño Moderno**: UI limpia inspirada en plataformas como Miravia
+- � **Totalmente Responsivo**: Adaptado para escritorio, tablet y móviles
+- 🌟 **Animaciones Fluidas**: Transiciones y efectos visuales atractivos
+- 💰 **Moneda Local**: Precios en Pesos Colombianos (COP) con formato local
+
+## 🛠️ Stack Tecnológico
+
+### Frontend
+- **Angular 20+** con arquitectura standalone components
+- **TypeScript 5+** para desarrollo type-safe
+- **Angular Material** para componentes UI consistentes
+- **CSS3** con variables CSS y flexbox/grid
+- **RxJS** para programación reactiva
+
+### Backend Integration  
+- **Azure API Management** para gestión centralizada de APIs
+- **REST APIs** con arquitectura RESTful
+- **JWT Authentication** para autenticación segura
+- **HTTP Interceptors** para manejo automático de headers
+
+### Herramientas de Desarrollo
+- **Angular CLI** para scaffolding y build
+- **TypeScript Compiler** para transpilación
+- **Webpack** (vía Angular CLI) para bundling
+- **Jasmine + Karma** para testing unitario
+
+## 📁 Estructura del Proyecto
 
 \`\`\`
 src/app/
-├── core/
-│   ├── guards/auth/          # Guards de rutas
-│   ├── models/              # Modelos de datos
-│   └── services/            # Servicios de lógica de negocio
-├── layout/                  # Componentes de layout
-│   ├── app-shell/
-│   ├── header-bar/
-│   └── footer-bar/
-├── shared/                  # Componentes reutilizables
-│   ├── search-bar/
-│   ├── sidebar-filter/
-│   ├── product-card/
-│   └── confirm-dialog/
-└── features/               # Páginas de funcionalidades
-    ├── home/
-    ├── login/
-    └── register-product/
+├── core/                    # Funcionalidades centrales
+│   ├── guards/             # Protección de rutas (auth, roles)
+│   ├── models/             # Interfaces TypeScript y tipos
+│   ├── services/           # Servicios de lógica de negocio
+│   │   ├── auth/          # Autenticación y autorización
+│   │   ├── cart/          # Gestión del carrito de compras
+│   │   ├── product/       # Operaciones de productos
+│   │   ├── user/          # Gestión de usuarios
+│   │   └── http/          # Servicios HTTP y API clients
+│   ├── interceptors/      # HTTP interceptors (APIM, Auth)
+│   └── mappers/           # Transformadores de datos API ↔ UI
+├── features/               # Módulos funcionales
+│   ├── home/              # Página principal con catálogo
+│   ├── login/             # Autenticación de usuarios
+│   ├── cart/              # Carrito de compras
+│   ├── checkout/          # Proceso de compra completo
+│   │   ├── shipping/      # Información de envío
+│   │   ├── payment/       # Métodos de pago
+│   │   ├── summary/       # Resumen de orden
+│   │   ├── success/       # Confirmación exitosa
+│   │   └── failure/       # Manejo de errores
+│   ├── account/           # Gestión de perfil usuario
+│   ├── product-edit/      # Edición de productos
+│   ├── products-manage/   # Dashboard de productos del agricultor
+│   ├── register-product/  # Registro de nuevos productos
+│   ├── register-user/     # Registro de nuevos usuarios
+│   └── support/           # Soporte y FAQ
+├── layout/                # Componentes de estructura
+│   ├── app-shell/         # Shell principal de la aplicación
+│   ├── header-bar/        # Barra de navegación superior
+│   └── footer-bar/        # Pie de página
+├── shared/                # Componentes reutilizables
+│   ├── product-card/      # Tarjeta de producto
+│   ├── product-preview/   # Modal de vista previa
+│   ├── floating-cart/     # Botón flotante de carrito (FAB)
+│   ├── fly-to-cart-overlay/ # Animaciones de compra
+│   ├── search-bar/        # Barra de búsqueda
+│   ├── sidebar-filter/    # Panel de filtros laterales
+│   ├── confirm-dialog/    # Diálogos de confirmación
+│   ├── edit-product-modal/ # Modal de edición rápida
+│   └── image-upload/      # Componente de subida de imágenes
+└── environments/          # Configuraciones por entorno
+    ├── environment.ts     # Desarrollo
+    └── environment.prod.ts # Producción
 \`\`\`
 
-## Comenzando
+## 🚀 Comenzando
 
-### Prerequisitos
+### 📋 Prerequisitos
 
-- Node.js (v18 o superior)
-- npm (v9 o superior)
-- Angular CLI (v20 o superior)
+- **Node.js** (v18 o superior)
+- **npm** (v9 o superior)  
+- **Angular CLI** (v20 o superior)
+- **Acceso a Azure APIM** (para funcionalidad completa)
 
-### Instalación
+### 🔧 Instalación
 
-1. Clonar el repositorio
-2. Instalar dependencias:
+1. **Clonar el repositorio**
+   \`\`\`bash
+   git clone https://github.com/SonnyCyClone/AgroMarket-Front.git
+   cd AgroMarket-Front
+   \`\`\`
+
+2. **Instalar dependencias**
    \`\`\`bash
    npm install
    \`\`\`
 
-3. Iniciar el servidor de desarrollo:
+3. **Configurar entornos**
+   - Verificar configuración en \`src/environments/environment.ts\`
+   - Asegurar que \`apiBaseUrl\` apunte al Azure APIM correcto
+   - Validar que \`apimKey\` tenga la clave de suscripción correcta
+
+4. **Iniciar servidor de desarrollo**
    \`\`\`bash
    ng serve -o
    \`\`\`
 
-La aplicación se abrirá automáticamente en su navegador en \`http://localhost:4200/\`.
+La aplicación se abrirá automáticamente en \`http://localhost:4200/\`.
 
-## Rutas
+### 🔑 Configuración de Azure APIM
 
-- \`/\` - Página principal con catálogo de productos
-- \`/login\` - Página de inicio de sesión
-- \`/products/new\` - Página de registro de productos (requiere autenticación)
+La aplicación está configurada para conectarse a Azure API Management:
 
-## Autenticación
+\`\`\`typescript
+// src/environments/environment.ts
+export const environment = {
+  apiBaseUrl: 'https://az-apim-use-agromarket.azure-api.net',
+  apimKey: 'tu-clave-de-suscripcion-apim',
+  // ... otros endpoints
+};
+\`\`\`
 
-### Credenciales de Login de Prueba
+**Nota**: Los headers de autenticación APIM se inyectan automáticamente a través del interceptor configurado.
 
-La aplicación incluye un sistema de autenticación simulado. Puede iniciar sesión usando:
+## 🛣️ Rutas de la Aplicación
 
-- **Email**: \`admin@example.com\`
-- **Contraseña**: \`password\`
+### 🏠 **Públicas**
+- \`/\` - Página principal con catálogo completo de productos
+- \`/login\` - Inicio de sesión
+- \`/register\` - Registro de nuevos usuarios
 
-Alternativamente, puede usar cualquier combinación de email y contraseña no vacíos.
+### 🔐 **Autenticadas** 
+- \`/cart\` - Carrito de compras
+- \`/profile\` - Perfil del usuario
+- \`/account/forgot-password\` - Recuperación de contraseña
 
-### Características de Autenticación
+### 🚜 **Exclusivas para Agricultores**
+- \`/products/manage\` - Dashboard de productos del agricultor
+- \`/products/new\` - Registro de nuevos productos
+- \`/products/edit/:id\` - Edición de productos existentes
 
-- Token almacenado en localStorage bajo la clave \`agromarket_token\`
-- Protección de rutas para la página de registro de productos
-- Redirección automática al login para rutas protegidas
-- Funcionalidad de logout con limpieza de token
+### 🛍️ **Proceso de Compra**
+- \`/checkout/shipping\` - Información de envío
+- \`/checkout/payment\` - Métodos de pago  
+- \`/checkout/summary\` - Resumen de la orden
+- \`/checkout/success\` - Confirmación de compra exitosa
+- \`/checkout/failure\` - Manejo de errores de compra
 
-## Almacenamiento de Datos
+### ℹ️ **Soporte**
+- \`/support\` - Centro de ayuda y contacto
+- \`/faq\` - Preguntas frecuentes
 
-La aplicación usa un store en memoria con respaldo en localStorage:
+## 🔐 Sistema de Autenticación
 
-- **Productos**: Almacenados bajo la clave \`agromarket_products\`
-- **Token de Auth**: Almacenado bajo la clave \`agromarket_token\`
-- **Datos Semilla**: La aplicación automáticamente carga 10 productos agrícolas de muestra en la primera carga
+### 🎭 **Roles de Usuario**
 
-## Productos de Muestra
+#### 🚜 **Agricultor (AGRICULTOR)**
+- Gestionar productos propios (crear, editar, activar/desactivar)
+- Dashboard personalizado con productos del usuario
+- Acceso completo al sistema de ventas
 
-La aplicación viene pre-cargada con productos agrícolas de muestra incluyendo:
+#### 🛒 **Comprador (COMPRADOR)**  
+- Navegar catálogo completo de productos
+- Sistema de carrito y proceso de compra
+- Gestión de perfil y órdenes
 
-- Herramientas de jardín (azadas, carretillas)
-- Semillas (variedades orgánicas)
-- Equipos de invernadero
-- Sistemas de riego
-- Mobiliario de jardín
-- Fertilizantes y equipos de monitoreo
+### 🔑 **Características de Autenticación**
 
-Algunos productos incluyen precios con descuento para demostrar la funcionalidad de badge de descuento.
+- **JWT Tokens**: Autenticación basada en JSON Web Tokens
+- **Azure APIM**: Integración completa con Azure API Management
+- **Persistencia Segura**: Tokens almacenados en localStorage
+- **Auto-renovación**: Manejo automático de expiración de tokens
+- **Guards de Ruta**: Protección automática de rutas por roles
+- **Interceptores**: Inyección automática de headers de autenticación
 
-## Manejo de Imágenes Faltantes
+### 🧪 **Testing y Desarrollo**
 
-La aplicación incluye manejo de imágenes rotas:
+Para pruebas, crear usuarios a través de \`/register\` o usar credenciales existentes:
 
-- **Producto "Semillas de Tomate Orgánico"** tiene una URL de imagen rota intencionalmente
-- Cuando una imagen falla al cargar, se muestra un placeholder con el texto "Imagen no disponible"
-- El placeholder tiene un estilo consistente con el diseño general
+\`\`\`bash
+# Ejemplo de flujo de desarrollo
+1. Registrar nuevo usuario en /register
+2. Seleccionar rol (AGRICULTOR o COMPRADOR)
+3. Login automático después del registro
+4. Navegación basada en rol asignado
+\`\`\`
 
-## Desarrollo
+### 🔄 **Flujo de Autenticación**
 
-### Scripts Disponibles
+1. **Login** → Envío de credenciales a Azure APIM
+2. **Token JWT** → Recepción y almacenamiento seguro
+3. **User ID** → Extracción y persistencia del ID de usuario
+4. **Redirección** → Navegación basada en el rol del usuario
+5. **Interceptors** → Headers automáticos en todas las peticiones
 
-- \`npm start\` - Iniciar servidor de desarrollo
-- \`npm run build\` - Construir para producción
-- \`npm test\` - Ejecutar pruebas unitarias
-- \`npm run watch\` - Construir en modo watch
+## 💾 Gestión de Datos
 
-### Estilo de Código
+### 🔄 **Persistencia y Almacenamiento**
+- **Carrito**: Estado persistente en localStorage con clave \`agromarket_cart\`
+- **Autenticación**: JWT token bajo \`agromarket_token\`
+- **Usuario**: ID de usuario en \`am_user_id\`
+- **Configuración**: Preferencias de usuario en \`user_preferences\`
 
-- **Componentes**: Nombres de clase en PascalCase, nombres de archivo en kebab-case
-- **Servicios**: PascalCase con sufijo \`.service.ts\`
-- **Modelos**: Interfaces en PascalCase con sufijo \`.model.ts\`
-- **Estilos**: CSS puro con convenciones de nomenclatura tipo BEM
+### 🌐 **API Integration**
+- **Azure APIM**: Conexión completa con backend en la nube
+- **Interceptores**: Manejo automático de headers y errores
+- **Caché Inteligente**: Optimización de peticiones repetitivas
+- **Offline Support**: Funcionamiento básico sin conexión
 
-### Agregar Nuevos Productos
+### 🖼️ **Gestión de Imágenes**
 
-Use el formulario de registro de productos (\`/products/new\`) para agregar nuevos productos. Campos requeridos:
+#### **Manejo Robusto de Imágenes**
+- **Detección de Errores**: Detección automática de imágenes rotas
+- **Placeholders**: Imágenes de respaldo consistentes con el diseño
+- **Optimización**: Carga lazy de imágenes para mejor performance
+- **Formatos**: Soporte para JPG, PNG, WebP y SVG
 
-- Nombre del producto
-- Categoría (de lista predefinida)
-- Marca
-- Precio (en COP)
-- URL de imagen
-- Descripción
+#### **Upload de Imágenes**
+- **Validación**: Verificación de formato y tamaño
+- **Preview**: Vista previa antes de subir
+- **Compresión**: Optimización automática de calidad
+- **Base64**: Conversión automática para almacenamiento
 
-Campos opcionales:
-- Porcentaje de descuento
+### 📊 **Datos de Desarrollo**
+- **Mock Data**: Productos de muestra para desarrollo
+- **Seed Data**: Datos iniciales automáticos
+- **Testing**: Fixtures para pruebas unitarias
 
-## Soporte de Navegadores
+## 🎯 Funcionalidades Avanzadas
 
-- Chrome (última versión)
-- Firefox (última versión)
-- Safari (última versión)
-- Edge (última versión)
+### 🛒 **Sistema de Carrito**
+- **Persistencia**: Carrito preservado entre sesiones
+- **Gestión de Cantidades**: Incrementar/decrementar productos
+- **Validación**: Control de stock disponible
+- **Cálculos**: Subtotales, impuestos y totales automáticos
+- **Animaciones**: Efectos visuales fly-to-cart
 
-## Mejoras Futuras
+### 🔍 **Motor de Búsqueda**
+- **Búsqueda en Tiempo Real**: Resultados instantáneos mientras escribes
+- **Filtros Avanzados**: Por categoría, precio, disponibilidad
+- **Ordenamiento**: Por nombre, precio, fecha de creación
+- **Resultados Inteligentes**: Búsqueda tolerante a errores
 
-- Validación de formularios
-- Búsqueda y filtrado avanzado
-- Página de detalles de producto
-- Funcionalidad de carrito de compras
-- Perfiles de usuario
-- Gestión de órdenes
-- Integración con backend real
+### 👤 **Gestión de Productos por Agricultor**
+- **Dashboard Personal**: Ver solo productos propios del usuario autenticado
+- **CRUD Completo**: Crear, leer, actualizar y desactivar productos
+- **Filtrado Automático**: Solo productos del agricultor logueado
+- **Validación de Propiedad**: Verificación de permisos por usuario
 
-## Licencia
+### 🎨 **Experiencia de Usuario**
+- **Responsive Design**: Adaptado a todos los dispositivos
+- **Animaciones Fluidas**: Transiciones suaves y atractivas
+- **Loading States**: Indicadores visuales de carga
+- **Error Handling**: Manejo elegante de errores con mensajes claros
 
-Este proyecto es para propósitos de demostración. Todos los derechos reservados.
+## 👨‍💻 Desarrollo
+
+### 📜 **Scripts Disponibles**
+
+\`\`\`bash
+npm start              # Servidor de desarrollo (puerto 4200)
+npm run build          # Build de producción optimizado
+npm run build:prod     # Build con optimizaciones avanzadas
+npm test               # Pruebas unitarias con Karma
+npm run test:watch     # Pruebas en modo watch
+npm run e2e            # Pruebas end-to-end
+npm run lint           # Linter de código TypeScript
+npm run lint:fix       # Auto-corrección de linting
+\`\`\`
+
+### 🎨 **Convenciones de Código**
+
+#### **Arquitectura**
+- **Standalone Components**: Solo componentes standalone, no NgModules
+- **Signals**: Estado reactivo con Angular Signals
+- **Dependency Injection**: Función \`inject()\` sobre constructor injection
+- **Reactive Forms**: FormControl y FormBuilder sobre template-driven
+
+#### **Nomenclatura**
+- **Componentes**: \`PascalCase\` para clases, \`kebab-case\` para archivos
+- **Servicios**: \`PascalCase\` con sufijo \`.service.ts\`
+- **Interfaces**: \`PascalCase\` con sufijo \`.model.ts\` o \`.interface.ts\`
+- **Funciones**: \`camelCase\` descriptivo
+
+#### **Organización**
+- **Por Feature**: Agrupación por funcionalidad, no por tipo de archivo
+- **Core/Shared**: Separación clara entre funcionalidades centrales y compartidas
+- **Lazy Loading**: Carga diferida de módulos de features
+
+### 🧪 **Testing**
+
+#### **Estrategia de Testing**
+- **Unit Tests**: Componentes, servicios y utilidades
+- **Integration Tests**: Flujos completos de usuario
+- **E2E Tests**: Casos de uso críticos end-to-end
+
+#### **Herramientas**
+- **Jasmine**: Framework de testing
+- **Karma**: Test runner
+- **Angular Testing Utilities**: TestBed, ComponentFixture
+- **Cypress**: E2E testing (configuración futura)
+
+### 🚀 **Deployment**
+
+#### **Build de Producción**
+\`\`\`bash
+npm run build:prod     # Build optimizado para producción
+\`\`\`
+
+#### **Configuraciones de Entorno**
+- **Development**: \`environment.ts\` - Configuración local
+- **Production**: \`environment.prod.ts\` - Azure APIM producción
+- **Staging**: \`environment.staging.ts\` - Entorno de pruebas
+
+#### **Azure Integration**
+- **APIM**: Configuración completa de Azure API Management
+- **Authentication**: JWT con Azure Active Directory
+- **Monitoring**: Application Insights para métricas
+- **CDN**: Distribución global de assets estáticos
+
+## 🌐 Soporte de Navegadores
+
+| Navegador | Versión Mínima | Estado |
+|-----------|---------------|---------|
+| Chrome | 90+ | ✅ Totalmente compatible |
+| Firefox | 88+ | ✅ Totalmente compatible |
+| Safari | 14+ | ✅ Totalmente compatible |
+| Edge | 90+ | ✅ Totalmente compatible |
+| iOS Safari | 14+ | ✅ Responsive |
+| Android Chrome | 90+ | ✅ Responsive |
+
+## 🔮 Roadmap y Mejoras Futuras
+
+### 🎯 **Próximas Funcionalidades**
+- [ ] **Sistema de Notificaciones**: Push notifications para nuevos productos
+- [ ] **Chat en Tiempo Real**: Comunicación directa agricultor-comprador  
+- [ ] **Geolocalización**: Productos por ubicación geográfica
+- [ ] **Sistema de Reviews**: Calificaciones y comentarios de productos
+- [ ] **Dashboard Analytics**: Métricas de ventas para agricultores
+
+### 🛠️ **Mejoras Técnicas**
+- [ ] **Progressive Web App**: Instalación y offline support
+- [ ] **Server-Side Rendering**: SSR con Angular Universal
+- [ ] **Micro-frontends**: Arquitectura escalable por equipos
+- [ ] **GraphQL**: Migración de REST a GraphQL
+- [ ] **Real-time Updates**: WebSockets para actualizaciones en tiempo real
+
+### 🎨 **UX/UI Enhancements**
+- [ ] **Dark Mode**: Tema oscuro alternativo
+- [ ] **Accesibilidad**: WCAG 2.1 AA compliance
+- [ ] **Internacionalización**: Soporte multi-idioma (i18n)
+- [ ] **Animaciones Avanzadas**: Micro-interacciones y transiciones
+
+## 📞 Soporte y Contribución
+
+### 🐛 **Reportar Issues**
+- Usar GitHub Issues para bugs y feature requests
+- Incluir pasos para reproducir el problema
+- Especificar navegador y versión del sistema
+
+### 🤝 **Contribuir**
+1. Fork del repositorio
+2. Crear feature branch (\`git checkout -b feature/nueva-funcionalidad\`)
+3. Commit cambios (\`git commit -m 'Añadir nueva funcionalidad'\`)
+4. Push al branch (\`git push origin feature/nueva-funcionalidad\`)
+5. Crear Pull Request
+
+### 📋 **Guidelines**
+- Seguir convenciones de código establecidas
+- Incluir tests para nuevas funcionalidades
+- Documentar cambios en el README
+- Usar commits semánticos
+
+## 📄 Licencia
+
+Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE.md](LICENSE.md) para más detalles.
+
+## 🙏 Agradecimientos
+
+- **Angular Team** por el excelente framework
+- **Microsoft Azure** por los servicios en la nube
+- **Comunidad Open Source** por las librerías utilizadas
 
 ---
 
-Construido con ❤️ usando Angular 20+
+**🌱 Construido con ❤️ por el equipo AgroMarket usando Angular 20+ y Azure Cloud**
+
+**📧 Contacto**: [soporte@agromarket.com](mailto:soporte@agromarket.com) | **🌐 Web**: [www.agromarket.com](https://www.agromarket.com)
