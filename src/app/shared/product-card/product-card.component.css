@@ -15,10 +15,11 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-.product-image-container {
+.product-image-container,
+.am-card__image {
   position: relative;
   width: 100%;
-  height: 200px;
+  height: 160px;
   overflow: hidden;
   background: #f8f9fa;
 }
@@ -26,8 +27,10 @@
 .product-image {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain; /* Cambio: contain para mostrar la imagen completa */
+  object-position: center;
   transition: transform 0.2s;
+  background: #f8f9fa; /* Fondo para el espacio extra */
 }
 
 .product-card:hover .product-image {
@@ -97,11 +100,11 @@
 }
 
 .product-info {
-  padding: 12px;
+  padding: 8px 12px 12px 12px;
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 6px; /* Espacio compacto entre elementos */
+  gap: 4px; /* Espacio más compacto entre elementos */
 }
 
 .product-name {
@@ -180,24 +183,24 @@
 .action-buttons {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 8px;
+  gap: 6px;
   margin-top: 8px;
 }
 
 .add-to-cart-button,
 .buy-button {
-  padding: 10px 8px;
+  padding: 8px 6px;
   border: none;
   border-radius: 6px;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: 3px;
   text-align: center;
 }
 
@@ -249,4 +252,155 @@
     padding: 8px;
     font-size: 12px;
   }
+}
+
+/* === ESTILOS PARA ROBUSTEZ CONTRA NULOS === */
+
+/* Descripción alternativa cuando no hay descripción disponible */
+.product-no-description {
+  color: var(--am-gray-600, #6c757d);
+  font-size: 14px;
+  font-style: italic;
+  margin: 8px 0;
+  text-align: center;
+}
+
+/* Placeholder de imagen según diseño original */
+.placeholder-image,
+.am-card__placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background: #f8f9fa;
+  color: var(--am-gray-600, #6c757d);
+  font-size: 14px;
+  text-align: center;
+  border: none;
+}
+
+/* Mejoras en la información del producto */
+.product-name {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--am-text-primary, #2c3e50);
+  line-height: 1.4;
+  text-align: left;
+}
+
+.product-name strong {
+  font-weight: 700;
+}
+
+.product-availability {
+  margin: 0 0 4px 0;
+  font-size: 14px;
+  color: var(--am-success, #28a745);
+  text-align: left;
+  font-weight: 500;
+}
+
+.product-availability strong {
+  font-weight: 700;
+}
+
+.product-unit {
+  margin: 0 0 8px 0;
+  font-size: 13px;
+  color: var(--am-gray-600, #6c757d);
+  text-align: left;
+  font-style: italic;
+  text-transform: uppercase;
+}
+
+.product-description {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  color: var(--am-text-secondary, #6c757d);
+  line-height: 1.5;
+  text-align: left;
+  /* Ellipsis para descripción truncada */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-wrap: break-word;
+  hyphens: auto;
+}
+
+/* Estados de carga y error para robustez */
+.product-card.loading {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.product-card.error {
+  border: 2px solid var(--am-danger-light, #f8d7da);
+  background: var(--am-danger-lightest, #fdfdfe);
+}
+
+/* Animaciones suaves para transiciones */
+.product-info > * {
+  transition: opacity 0.2s ease-in-out;
+}
+
+.product-card.loading .product-info > * {
+  opacity: 0.5;
+}
+
+/* === ESTILOS ESPECÍFICOS PARA IDs === */
+
+/* Estilos específicos para elementos con ID */
+#product-card__name {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--am-text-primary, #2c3e50);
+  text-align: left;
+  line-height: 1.3;
+}
+
+#product-card__stock {
+  margin: 0;
+  font-size: 13px;
+  color: var(--am-success, #28a745);
+  text-align: left;
+  font-weight: 500;
+}
+
+#product-card__desc {
+  margin: 0;
+  font-size: 13px;
+  color: var(--am-text-secondary, #6c757d);
+  line-height: 1.4;
+  text-align: left;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#product-card__price {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--am-success, #28a745);
+  text-align: left;
+}
+
+/* === CORRECCIÓN DE IMÁGENES === */
+
+/* Corrección para visualización adecuada de imágenes */
+#product-card__img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* Mostrar imagen completa sin recortar */
+  object-position: center;
+  border-radius: 0;
+  background: #f8f9fa; /* Fondo para espacios vacíos */
 }

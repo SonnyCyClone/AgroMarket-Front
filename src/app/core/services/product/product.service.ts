@@ -20,6 +20,7 @@ import { Injectable } from '@angular/core';
 import { Observable, map, of, catchError } from 'rxjs';
 import { ProductApiService } from '../http/product-api.service';
 import { Product, LegacyProduct, CreateProductRequest } from '../../models/product.model';
+import { mapToProduct } from '../../mappers/product.mapper';
 
 /**
  * Servicio para gestión de productos
@@ -64,16 +65,16 @@ export class ProductService {
    * ```
    */
   getProducts(): Observable<Product[]> {
-    return this.productApiService.getProducts<Product[]>().pipe(
+    return this.productApiService.getProductsSafe().pipe(
       map((products: Product[]) => {
+        // Los productos ya vienen mapeados de forma segura
         // Filtrar solo productos activos
-        const activeProducts = products.filter(product => product.activo);
-        return activeProducts;
+        return products.filter(product => product.activo);
       }),
       catchError(error => {
         console.error('Error obteniendo productos del API, usando datos mock:', error);
-        // En caso de error, retornar productos mock convertidos
-        return of(this.convertMockToApiFormat());
+        // En caso de error, retornar productos mock convertidos con mapeo seguro
+        return of(this.convertMockToApiFormatSafe());
       })
     );
   }
@@ -288,6 +289,36 @@ export class ProductService {
       fechaCreacion: mockProduct.createdAt,
       fechaActualizacion: mockProduct.createdAt
     }));
+  }
+
+  /**
+   * Convierte productos mock a formato API con mapeo seguro
+   * 
+   * @description Versión segura de convertMockToApiFormat que aplica
+   * el mapper para garantizar que no hay valores null/undefined.
+   * 
+   * @returns {Product[]} Array de productos mock mapeados de forma segura
+   * @private
+   */
+  private convertMockToApiFormatSafe(): Product[] {
+    return this.mockProducts.map((mockProduct, index) => {
+      const dto = {
+        id: parseInt(mockProduct.id) || index + 1,
+        variedad: mockProduct.name,
+        descripcion: mockProduct.description,
+        precio: mockProduct.price,
+        cantidadDisponible: 100, // Mock quantity
+        unidadesId: 1, // Mock unit ID
+        idTipoProducto: 1, // Mock type ID
+        imagenUrl: mockProduct.imageUrl,
+        activo: true,
+        fechaCreacion: mockProduct.createdAt,
+        fechaActualizacion: mockProduct.createdAt
+      };
+      
+      // Aplicar mapper seguro para proteger contra nulls
+      return mapToProduct(dto);
+    });
   }
 
   // === MÉTODOS LEGACY PARA COMPATIBILIDAD ===

@@ -304,8 +304,8 @@ export class RegisterProductPage implements OnInit {
           console.log(key, ':', value);
         }
         
-        // Llamada directa a la API usando HttpClient
-        const url = `${environment.apiBaseUrlProduct}/api/v1/Producto`;
+        // Llamada directa a la API usando HttpClient y environment centralizado
+        const url = `${environment.api.productBase}${environment.api.product}`;
         // Sending product creation request
         const response = await firstValueFrom(this.http.post(url, formData));
         

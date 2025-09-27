@@ -46,13 +46,12 @@ export class AuthApiService extends BaseHttpService {
    * Obtiene la URL base para servicios de autenticación
    * 
    * @description Implementa el método abstracto de BaseHttpService.
-   * Utiliza environment.getAuthApiUrl() que verifica overrides en localStorage.
    * 
    * @returns {string} URL base para peticiones de autenticación
    * @protected
    */
   protected getBaseUrl(): string {
-    return environment.getAuthApiUrl();
+    return environment.api.authBase;
   }
 
   /**
@@ -75,12 +74,11 @@ export class AuthApiService extends BaseHttpService {
    * this.authApi.login<LoginResponse>(loginData).subscribe(response => {
    *   localStorage.setItem('agromarket_token', response.token);
    *   localStorage.setItem('agromarket_user', JSON.stringify(response.user));
-   *   console.log('Usuario autenticado:', response);
    * });
    * ```
    */
   login<T>(credentials: any): Observable<T> {
-    return this.post<T>('/api/v1/Auth/login', credentials);
+    return this.post<T>(environment.api.authLogin, credentials);
   }
 
   /**
@@ -98,7 +96,7 @@ export class AuthApiService extends BaseHttpService {
       Email: email,
       Password: password
     };
-    return this.post<any>('/api/Usuario/login', body);
+    return this.post<any>(environment.api.userLogin, body);
   }
 
   /**
@@ -143,7 +141,7 @@ export class AuthApiService extends BaseHttpService {
    * ```
    */
   register<T>(userData: any): Observable<T> {
-    return this.post<T>('/api/Usuario', userData);
+    return this.post<T>(environment.api.userCreate, userData);
   }
 
   /**
@@ -166,7 +164,7 @@ export class AuthApiService extends BaseHttpService {
    * ```
    */
   getRoles<T>(): Observable<T> {
-    return this.get<T>('/api/Usuario/roles');
+    return this.get<T>(environment.api.authRoles);
   }
 
   /**
@@ -190,6 +188,6 @@ export class AuthApiService extends BaseHttpService {
    * ```
    */
   getDocumentTypes<T>(): Observable<T> {
-    return this.get<T>('/api/TipoDocumento');
+    return this.get<T>(environment.api.documentTypes);
   }
 }

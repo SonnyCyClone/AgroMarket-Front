@@ -12,6 +12,7 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Product, LegacyProduct } from '../../core/models/product.model';
+import { getSafeString, truncateText } from '../../core/mappers/product.mapper';
 
 /**
  * Componente de tarjeta de producto
@@ -47,6 +48,9 @@ export class ProductCardComponent {
   
   /** Estado de error de imagen para fallback */
   imageError = false;
+
+  /** URL de imagen actual para manejo de fallback */
+  imgSrc: string | null = null;
 
   /**
    * Precio con descuento aplicado (solo para productos legacy)
@@ -89,14 +93,15 @@ export class ProductCardComponent {
    * @description Retorna el nombre del producto adaptándose al formato:
    * - API nuevo: usa 'variedad' 
    * - Legacy: usa 'name'
+   * Maneja valores null/undefined de forma segura.
    * 
-   * @returns {string} Nombre del producto
+   * @returns {string} Nombre del producto (nunca null)
    */
   getName(): string {
     if (this.isLegacyProduct()) {
-      return (this.product as LegacyProduct).name;
+      return getSafeString((this.product as LegacyProduct)?.name, 'Producto');
     } else {
-      return (this.product as Product).variedad;
+      return getSafeString((this.product as Product)?.variedad, 'Producto');
     }
   }
 
@@ -106,14 +111,15 @@ export class ProductCardComponent {
    * @description Retorna la descripción adaptándose al formato:
    * - API nuevo: usa 'descripcion'
    * - Legacy: usa 'description'
+   * Maneja valores null/undefined de forma segura.
    * 
-   * @returns {string} Descripción del producto
+   * @returns {string} Descripción del producto (nunca null)
    */
   getDescription(): string {
     if (this.isLegacyProduct()) {
-      return (this.product as LegacyProduct).description;
+      return getSafeString((this.product as LegacyProduct)?.description, 'Sin descripción');
     } else {
-      return (this.product as Product).descripcion;
+      return getSafeString((this.product as Product)?.descripcion, 'Sin descripción');
     }
   }
 
@@ -140,15 +146,25 @@ export class ProductCardComponent {
    * @description Retorna la URL de imagen adaptándose al formato:
    * - API nuevo: usa 'imagenUrl' (puede ser null)
    * - Legacy: usa 'imageUrl' (string)
+   * Valida que la URL no esté vacía o sea solo espacios.
    * 
-   * @returns {string | null} URL de la imagen
+   * @returns {string | null} URL de la imagen o null si no es válida
    */
   getImageUrl(): string | null {
+    let url: string | null = null;
+    
     if (this.isLegacyProduct()) {
-      return (this.product as LegacyProduct).imageUrl;
+      url = (this.product as LegacyProduct)?.imageUrl || null;
     } else {
-      return (this.product as Product).imagenUrl;
+      url = (this.product as Product)?.imagenUrl || null;
     }
+    
+    // Validar que la URL no esté vacía o solo sea espacios
+    if (url && getSafeString(url).length > 0) {
+      return url.trim();
+    }
+    
+    return null;
   }
 
   /**
@@ -217,13 +233,31 @@ export class ProductCardComponent {
    * Maneja errores de carga de imagen
    * 
    * @description Se ejecuta cuando falla la carga de una imagen.
-   * Establece el estado de error y oculta el elemento img fallido.
+   * Establece el fallback al placeholder estándar.
    * 
    * @param {Event} event - Evento de error de la imagen
    */
   onImageError(event: any): void {
+    this.imgSrc = 'assets/img/placeholder.png';
     this.imageError = true;
-    event.target.style.display = 'none';
+  }
+
+  /**
+   * Obtiene la URL de imagen con fallback a placeholder
+   * 
+   * @description Retorna la URL de imagen del producto o un placeholder
+   * si la imagen original no está disponible o falló al cargar.
+   * 
+   * @returns {string} URL de imagen o placeholder
+   */
+  getImageUrlWithFallback(): string {
+    const imageUrl = this.getImageUrl();
+    
+    if (this.imageError || !imageUrl) {
+      return 'assets/icon/placeholder.png';
+    }
+    
+    return imageUrl;
   }
 
   /**
@@ -304,42 +338,34 @@ export class ProductCardComponent {
    * Obtiene la cantidad disponible del producto
    * 
    * @description Retorna la cantidad disponible según el tipo de producto.
+   * Maneja valores null/undefined con fallback a 0.
    * 
-   * @returns {number} Cantidad disponible
+   * @returns {number} Cantidad disponible (nunca negative o NaN)
    */
   getQuantity(): number {
     if (this.isLegacyProduct()) {
       // Para productos legacy, usar un valor por defecto
       return 1;
     }
-    return (this.product as Product).cantidadDisponible || 0;
+    const quantity = Number((this.product as Product)?.cantidadDisponible ?? 0);
+    return isNaN(quantity) || quantity < 0 ? 0 : quantity;
   }
 
   /**
-   * Obtiene el nombre de la unidad de medida
+   * Obtiene la descripción del producto con fallback seguro
    * 
-   * @description Retorna el nombre de la unidad según el tipo de producto.
-   * Por ahora usa mapeo básico, en el futuro se conectará con servicio real.
+   * @description Retorna la descripción del producto o un texto por defecto
+   * si no está disponible, manejando valores null/undefined.
    * 
-   * @returns {string} Nombre de la unidad
+   * @returns Descripción del producto o texto por defecto
    */
-  getUnitName(): string {
+  getDescripcion(): string {
     if (this.isLegacyProduct()) {
-      // Para productos legacy, usar unidad genérica
-      return 'unidades';
+      const legacyProduct = this.product as LegacyProduct;
+      return legacyProduct?.description?.trim() || 'Sin descripción disponible';
+    } else {
+      const apiProduct = this.product as Product;
+      return apiProduct?.descripcion?.trim() || 'Sin descripción disponible';
     }
-    
-    // Para productos del API real, usar mapeo básico por ID
-    const product = this.product as Product;
-    
-    // Mapeo básico de IDs comunes (esto se reemplazará con servicio real)
-    const unitMap: {[key: number]: string} = {
-      1: 'kg',
-      2: 'lb', 
-      3: 'unidades',
-      4: 'cajas'
-    };
-    
-    return unitMap[product.unidadesId] || 'unidades';
   }
 }

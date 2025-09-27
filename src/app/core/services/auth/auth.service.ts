@@ -457,8 +457,8 @@ export class AuthService {
    */
   getServiceConfiguration() {
     return {
-      authBaseUrl: environment.getAuthApiUrl(),
-      productBaseUrl: environment.getProductApiUrl(),
+      authBaseUrl: environment.api.authBase,
+      productBaseUrl: environment.api.productBase,
       overrideAuthUrl: localStorage.getItem('overrideAuthUrl'),
       overrideProductUrl: localStorage.getItem('overrideProductUrl'),
       isProduction: environment.production
