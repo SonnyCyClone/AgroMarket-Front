@@ -51,7 +51,7 @@ export class AuthApiService extends BaseHttpService {
    * @protected
    */
   protected getBaseUrl(): string {
-    return environment.api.authBase;
+    return environment.apiBaseUrl;
   }
 
   /**

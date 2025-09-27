@@ -55,7 +55,7 @@ export class ProductApiService extends BaseHttpService {
    * @protected
    */
   protected getBaseUrl(): string {
-    return environment.api.productBase;
+    return environment.apiBaseUrl;
   }
 
   /**
@@ -144,11 +144,12 @@ export class ProductApiService extends BaseHttpService {
    * 
    * @description Realiza POST /api/Producto con FormData según especificación Postman.
    * El FormData debe incluir: variedad, descripcion, precio, cantidadDisponible,
-   * unidadesId, idTipoProducto, imagen (file), activo.
+   * unidadesId, idTipoProducto, imagen (file), activo y UserId (requerido).
    * 
    * @template T - Tipo de dato esperado en la respuesta
    * @param {FormData} productData - Datos del producto en formato FormData
    * @returns {Observable<T>} Observable con la respuesta del servidor
+   * @throws {Error} Si no se encuentra el usuario autenticado
    * 
    * @example
    * ```typescript
@@ -168,6 +169,18 @@ export class ProductApiService extends BaseHttpService {
    * ```
    */
   createProduct<T>(productData: FormData): Observable<T> {
+    // Verificar que exista usuario autenticado
+    const userId = localStorage.getItem('am_user_id');
+    if (!userId) {
+      throw new Error('No se encontró el usuario autenticado. Inicia sesión e inténtalo de nuevo.');
+    }
+    
+    // Asegurar que UserId esté en el FormData (eliminar si existe y agregar el correcto)
+    if (productData.has('UserId')) {
+      productData.delete('UserId');
+    }
+    productData.append('UserId', userId);
+    
     return this.postFormData<T>(environment.api.product, productData);
   }
 
@@ -176,11 +189,12 @@ export class ProductApiService extends BaseHttpService {
    * 
    * @description Realiza PUT /api/Producto con FormData según especificación Postman.
    * El FormData debe incluir todos los campos del producto incluyendo el campo Id
-   * para identificar el producto a actualizar.
+   * para identificar el producto a actualizar y UserId (requerido).
    * 
    * @template T - Tipo de dato esperado en la respuesta
    * @param {FormData} productData - Datos del producto incluyendo Id en formato FormData
    * @returns {Observable<T>} Observable con la respuesta del servidor
+   * @throws {Error} Si no se encuentra el usuario autenticado
    * 
    * @example
    * ```typescript
@@ -201,6 +215,18 @@ export class ProductApiService extends BaseHttpService {
    * ```
    */
   updateProduct<T>(productData: FormData): Observable<T> {
+    // Verificar que exista usuario autenticado
+    const userId = localStorage.getItem('am_user_id');
+    if (!userId) {
+      throw new Error('No se encontró el usuario autenticado. Inicia sesión e inténtalo de nuevo.');
+    }
+    
+    // Asegurar que UserId esté en el FormData (eliminar si existe y agregar el correcto)
+    if (productData.has('UserId')) {
+      productData.delete('UserId');
+    }
+    productData.append('UserId', userId);
+    
     return this.putFormData<T>(environment.api.product, productData);
   }
 
@@ -312,6 +338,31 @@ export class ProductApiService extends BaseHttpService {
    */
   listUnidades<T>(): Observable<T> {
     return this.getUnits<T>();
+  }
+
+  /**
+   * Obtiene productos por agricultor específico
+   * 
+   * @description Realiza GET /api/v1/Producto/agricultor/{userId} para obtener productos
+   * creados por un agricultor específico. Según especificación del API de Azure APIM.
+   * 
+   * @template T - Tipo de dato esperado (típicamente Product[])
+   * @param {string} userId - ID del agricultor
+   * @returns {Observable<T>} Observable con el array de productos del agricultor
+   * 
+   * @example
+   * ```typescript
+   * const userId = localStorage.getItem('am_user_id');
+   * if (userId) {
+   *   this.productApi.getProductsByAgricultor<Product[]>(userId).subscribe(products => {
+   *     console.log('Productos del agricultor:', products);
+   *   });
+   * }
+   * ```
+   */
+  getProductsByAgricultor<T>(userId: string): Observable<T> {
+    const endpoint = `${environment.api.productByAgricultor}/${userId}`;
+    return this.get<T>(endpoint);
   }
 
   /**

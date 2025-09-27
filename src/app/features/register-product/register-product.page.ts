@@ -279,6 +279,14 @@ export class RegisterProductPage implements OnInit {
       try {
         const formValues = this.productForm.value;
         
+        // Verificar que exista usuario autenticado
+        const userId = localStorage.getItem('am_user_id');
+        if (!userId) {
+          this.showError('No se encontró el usuario autenticado. Inicia sesión e inténtalo de nuevo.');
+          this.isLoading = false;
+          return;
+        }
+
         // Crear FormData para envío con imagen
         const formData = new FormData();
         formData.append('Variedad', formValues.variedad);
@@ -288,6 +296,7 @@ export class RegisterProductPage implements OnInit {
         formData.append('UnidadesId', formValues.unidadesId.toString());
         formData.append('IdTipoProducto', formValues.idTipoProducto.toString());
         formData.append('Activo', formValues.activo.toString());
+        formData.append('UserId', userId); // Agregar UserId requerido por APIM
         
         // Agregar imagen si existe (el campo debe coincidir con lo que espera el backend)
         if (this.selectedImageFile) {
@@ -297,15 +306,18 @@ export class RegisterProductPage implements OnInit {
           formData.append('ImagenUrl', '');
           // No image file selected
         }
+        // No agregar campo vacío si no hay imagen
         
         // Debug: mostrar el contenido del FormData
         console.log('FormData contents:');
         for (const [key, value] of formData.entries()) {
           console.log(key, ':', value);
         }
+        console.log('UserId from localStorage:', userId);
+        console.log('API URL:', `${environment.apiBaseUrl}${environment.api.product}`);
         
         // Llamada directa a la API usando HttpClient y environment centralizado
-        const url = `${environment.api.productBase}${environment.api.product}`;
+        const url = `${environment.apiBaseUrl}${environment.api.product}`;
         // Sending product creation request
         const response = await firstValueFrom(this.http.post(url, formData));
         
@@ -319,9 +331,19 @@ export class RegisterProductPage implements OnInit {
         
       } catch (error: any) {
         console.error('Error creando producto:', error);
+        console.error('Error status:', error.status);
+        console.error('Error details:', error.error);
         
         let mensaje = 'Error al registrar el producto. ';
-        if (error.error?.message) {
+        
+        // Manejar errores específicos de APIM
+        if (error.status === 401) {
+          mensaje = 'Error de autenticación. Inicia sesión e inténtalo de nuevo.';
+        } else if (error.status === 403) {
+          mensaje = 'No tienes permisos para realizar esta acción.';
+        } else if (error.status === 500) {
+          mensaje = 'Error interno del servidor. Por favor, intenta más tarde.';
+        } else if (error.error?.message) {
           mensaje += error.error.message;
         } else if (error.message) {
           mensaje += error.message;

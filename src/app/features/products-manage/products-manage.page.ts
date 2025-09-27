@@ -1,9 +1,9 @@
 /**
  * Página de gestión de productos para AgroMarket
  * 
- * @description Página para administrar productos, similar al Home pero con
- * controles de edición visibles para usuarios autorizados (AGRICULTOR).
- * Incluye funcionalidades de carrito, ordenamiento y gestión.
+ * @description Página para administrar productos creados por el agricultor autenticado.
+ * Muestra únicamente los productos del agricultor actual con controles de edición.
+ * Incluye funcionalidades de carrito, ordenamiento y gestión específicos del usuario.
  * 
  * @author AgroMarket Team
  * @since 2.0.0
@@ -77,7 +77,7 @@ export class ProductsManagePage implements OnInit {
   }
 
   /**
-   * Carga los productos desde el API
+   * Carga los productos del agricultor autenticado desde el API
    * 
    * @private
    */
@@ -85,16 +85,26 @@ export class ProductsManagePage implements OnInit {
     this.loading = true;
     this.errorMessage = '';
 
-    this.productService.getProducts().subscribe({
+    // Obtener el ID del usuario autenticado
+    const userId = localStorage.getItem('am_user_id');
+    
+    if (!userId) {
+      console.error('No se encontró el ID del usuario autenticado');
+      this.errorMessage = 'No se pudo identificar al usuario. Por favor, inicia sesión nuevamente.';
+      this.loading = false;
+      return;
+    }
+
+    this.productService.getProductsByAgricultor(userId).subscribe({
       next: (products) => {
-        // Mostrar todos los productos (activos e inactivos) para gestión
+        // Mostrar todos los productos del agricultor (activos e inactivos) para gestión
         this.products = products;
         this.sortProducts();
         this.loading = false;
       },
       error: (error) => {
-        console.error('Error al cargar productos:', error);
-        this.errorMessage = 'Error al cargar los productos. Por favor, intenta de nuevo.';
+        console.error('Error al cargar productos del agricultor:', error);
+        this.errorMessage = 'Error al cargar tus productos. Por favor, intenta de nuevo.';
         this.loading = false;
       }
     });
